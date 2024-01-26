@@ -80,6 +80,15 @@
     <Image Include="Data\Images\Overlay.bmp">
       <Filter>Fichiers de ressources</Filter>
     </Image>
+    <Image Include="Data\Images\Tile Enemy Spawner.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="Data\Images\Turret Shadow.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="Data\Images\Turret.bmp">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">

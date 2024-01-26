@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include "SDL2/SDL.h"
 #include "Vector2D.h"
 #include "Level.h"
@@ -12,10 +13,11 @@ class Unit
 {
 public:
 	Unit(SDL_Renderer* renderer, Vector2D setPos);
-	void update(float dT, Level& level, std::vector<Unit>& listUnits);
+	void update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool checkOverlap(Vector2D posOther, float sizeOther);
 	bool getIsAlive() const { return isAlive; }
+	Vector2D getPos() const;
 
 private:
 	Vector2D pos;

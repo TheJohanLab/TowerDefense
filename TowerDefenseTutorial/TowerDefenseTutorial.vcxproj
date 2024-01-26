@@ -153,8 +153,11 @@
     <Image Include="Data\Images\Tile Arrow Up Right.bmp" />
     <Image Include="Data\Images\Tile Arrow Up.bmp" />
     <Image Include="Data\Images\Tile Empty.bmp" />
+    <Image Include="Data\Images\Tile Enemy Spawner.bmp" />
     <Image Include="Data\Images\Tile Target.bmp" />
     <Image Include="Data\Images\Tile Wall.bmp" />
+    <Image Include="Data\Images\Turret Shadow.bmp" />
+    <Image Include="Data\Images\Turret.bmp" />
     <Image Include="Data\Images\Unit.bmp" />
   </ItemGroup>
   <ItemGroup>

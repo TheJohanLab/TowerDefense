@@ -2,6 +2,7 @@
 
 
 const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f);
+const float Turret::weaponRange = 5.0f;
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos)
 	:pos(setPos), angle(0.0f)
@@ -10,11 +11,52 @@ Turret::Turret(SDL_Renderer* renderer, Vector2D setPos)
 	textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 }
 
-void Turret::update(float dT)
+void Turret::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits)
 {
-	angle += speedAngular * dT;
+	/* angle += speedAngular * dT;
 	if (angle > MathAddon::angleDegToRad(360.0f))
 		angle -= MathAddon::angleDegToRad(360.0f);
+	*/
+
+
+	//check if a target has been found but is no longer alive or is out of weapon range
+	if (auto targetUnitSP = targetUnit.lock()) 
+	{
+		if (!targetUnitSP->getIsAlive() || (targetUnitSP->getPos() - pos).magnitude() > weaponRange)
+		{
+			targetUnit.reset();
+		}
+	}
+
+	//find the enemy unit
+	if (targetUnit.expired())
+		targetUnit = findEnemyUnit(listUnits);
+
+	if (auto targetUnitSP = targetUnit.lock())
+	{
+		//determine the direction normal to the target
+		Vector2D directionNormalToTarget = (targetUnitSP->getPos() - pos).normalize();
+
+		//Determine the angle to the target
+		float angleToTarget = directionNormalToTarget.angleBetween(Vector2D(angle));
+
+		//update the angle as required
+		if (abs(angleToTarget) > 0.0f)
+		{
+			//determine the angle to move this frame
+			float angleMove = -copysign(speedAngular * dT, angleToTarget);
+			if (abs(angleMove) > abs(angleToTarget))
+			{
+				//It will point directly at its target this frame
+				angle = directionNormalToTarget.angle();
+			}
+			else
+			{
+				//It won't reach its target this frame
+				angle += angleMove;
+			}
+		}
+	}
 }
 
 void Turret::draw(SDL_Renderer* renderer, int tileSize)
@@ -45,4 +87,32 @@ void Turret::drawTextureWithOffset(SDL_Renderer* renderer, SDL_Texture* textureS
 		SDL_RenderCopyEx(renderer, textureSelected, NULL, &rect,
 			MathAddon::angleRadToDeg(angle), NULL, SDL_FLIP_NONE);
 	}
+}
+
+std::weak_ptr<Unit> Turret::findEnemyUnit(std::vector<std::shared_ptr<Unit>>& listUnits)
+{
+	//find the closest Enemy for this turret
+
+	std::weak_ptr<Unit> closestUnit;
+	float closestDistance = 0.0f;
+
+	//Loop through the entire list of units
+	for (auto& selectedUnit : listUnits)
+	{
+		if (selectedUnit != nullptr)
+		{
+			//calculate the distance to the enemy unit
+			float currentDistance = (pos - selectedUnit->getPos()).magnitude();
+			//Check of the unit is within range, and no closest unit has been detected 
+			//or the selected unit is closer than the previous closest unit
+			if (currentDistance <= weaponRange &&
+				(closestUnit.expired() || currentDistance < closestDistance))
+			{
+				closestUnit = selectedUnit;
+				closestDistance = currentDistance;
+			}
+
+		}
+	}
+	return closestUnit;
 }
