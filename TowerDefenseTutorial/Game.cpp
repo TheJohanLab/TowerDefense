@@ -156,7 +156,7 @@ void Game::updateUnits(float dT) {
             (*it)->update(dT, level, listUnits);
 
             //Check if the unit is still alive.  If not then erase it and don't increment the iterator.
-            if ((*it)->getIsAlive() == false) {
+            if ((*it)->isAlive() == false) {
                 it = listUnits.erase(it);
                 increment = false;
             }
@@ -172,7 +172,7 @@ void Game::updateProjectiles(float dT)
     auto projIt = listProjectiles.begin();
     while (projIt != listProjectiles.end())
     {
-        projIt->update(dT);
+        projIt->update(dT, listUnits);
 
         //Check if the projectile has collided or not
         if (projIt->getCollisionOccured())

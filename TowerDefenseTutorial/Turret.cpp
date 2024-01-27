@@ -26,7 +26,7 @@ void Turret::update(SDL_Renderer* renderer, float dT,
 	//check if a target has been found but is no longer alive or is out of weapon range
 	if (auto targetUnitSP = targetUnit.lock()) 
 	{
-		if (!targetUnitSP->getIsAlive() || (targetUnitSP->getPos() - pos).magnitude() > weaponRange)
+		if (!targetUnitSP->isAlive() || (targetUnitSP->getPos() - pos).magnitude() > weaponRange)
 		{
 			targetUnit.reset();
 		}

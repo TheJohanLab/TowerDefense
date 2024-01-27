@@ -9,7 +9,8 @@ const float Unit::size = 0.48f;
 
 
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos) {
+	pos(setPos), hitTimer(0.25f) 
+{
 	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
 
 }
@@ -17,12 +18,14 @@ Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
 
 
 void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& listUnits) {
+	hitTimer.countDown(dT);
+
 	//Determine the distance to the target from the unit's current position.
 	float distanceToTarget = (level.getTargetPos() - pos).magnitude();
 
 	if (distanceToTarget < 0.5f)
 	{
-		isAlive = false;
+		currentHealth = 0;
 	}
 
 	//Determine the distance to move this frame.
@@ -84,6 +87,13 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 void Unit::draw(SDL_Renderer* renderer, int tileSize) {
 	if (renderer != nullptr) {
+
+		//Set the texture's draw color to red if this unit was hit recently
+		if (!hitTimer.timeSIsZero())
+			SDL_SetTextureColorMod(texture, 255, 0, 0);
+		else
+			SDL_SetTextureColorMod(texture, 255, 255, 255);
+
 		//Draw a rectangle at the unit's position.
 		int w, h;
 		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
@@ -102,7 +112,25 @@ bool Unit::checkOverlap(Vector2D posOther, float sizeOther) {
 	return (posOther - pos).magnitude() <= (sizeOther + size) / 2.0f;
 }
 
+bool Unit::isAlive() const
+{
+	return currentHealth > 0;
+}
+
 Vector2D Unit::getPos() const
 {
 	return pos;
+}
+
+void Unit::removeHealth(int damage)
+{
+	if (damage > 0)
+	{
+		currentHealth -= damage;
+		if (currentHealth < 0)
+			currentHealth = 0;
+
+		hitTimer.resetToMax();
+	}
+
 }

@@ -11,7 +11,7 @@ Projectile::Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDire
 	texture = TextureLoader::loadTexture(renderer, "Projectile.bmp");
 }
 
-void Projectile::update(float dT)
+void Projectile::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits)
 {
 	//move the projectile forward
 	float distanceMoved = speed * dT;
@@ -20,6 +20,8 @@ void Projectile::update(float dT)
 	distanceTraveled += distanceMoved;
 	if (distanceTraveled >= distanceTraveledMax)
 		collisionOccured = true;
+
+	checkCollisions(listUnits);
 }
 
 void Projectile::draw(SDL_Renderer* renderer, int tileSize)
@@ -42,4 +44,22 @@ void Projectile::draw(SDL_Renderer* renderer, int tileSize)
 bool Projectile::getCollisionOccured() const
 {
 	return collisionOccured;
+}
+
+void Projectile::checkCollisions(std::vector<std::shared_ptr<Unit>>& listUnits)
+{
+	//Check for the collision for any of the units
+	if (!collisionOccured)
+	{
+		//Check if this overlap any of the enemy units or not
+		for (int count = 0; count < listUnits.size() && !collisionOccured; count++)
+		{
+			auto& selectedUnit = listUnits[count];
+			if (selectedUnit != nullptr && selectedUnit->checkOverlap(pos, size))
+			{
+				selectedUnit->removeHealth(1);
+				collisionOccured = true;
+			}
+		}
+	}
 }

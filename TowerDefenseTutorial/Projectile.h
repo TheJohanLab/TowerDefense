@@ -10,7 +10,7 @@ class Projectile
 {
 public:
 	Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDirectionNormal);
-	void update(float dT);
+	void update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool getCollisionOccured() const;
 
@@ -22,5 +22,7 @@ private:
 	SDL_Texture* texture = nullptr;
 
 	bool collisionOccured = false;
+
+	void checkCollisions(std::vector<std::shared_ptr<Unit>>& listUnits);
 };
 
