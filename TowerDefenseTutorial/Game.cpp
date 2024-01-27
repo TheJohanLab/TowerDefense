@@ -137,7 +137,10 @@ void Game::update(SDL_Renderer* renderer, float dT) {
 
     //Update the turrets
     for (auto& turretSelected : listTurrets)
-        turretSelected.update(dT, listUnits);
+        turretSelected.update(renderer, dT, listUnits, listProjectiles);
+
+    //Update the projectiles
+    updateProjectiles(dT);
 
     updateSpawnUnitsIfRequired(renderer, dT);
 }
@@ -162,6 +165,22 @@ void Game::updateUnits(float dT) {
         if (increment)
             it++;
     }
+}
+
+void Game::updateProjectiles(float dT)
+{
+    auto projIt = listProjectiles.begin();
+    while (projIt != listProjectiles.end())
+    {
+        projIt->update(dT);
+
+        //Check if the projectile has collided or not
+        if (projIt->getCollisionOccured())
+            projIt = listProjectiles.erase(projIt);
+        else
+            projIt++;
+    }
+        
 }
 
 void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
@@ -210,6 +229,11 @@ void Game::draw(SDL_Renderer* renderer) {
     //Draw the turrets
     for (auto& turretSelected : listTurrets)
         turretSelected.draw(renderer, tileSize);
+
+
+    //Draw the projectiles
+    for (auto& projectileSelected : listProjectiles)
+        projectileSelected.draw(renderer, tileSize);
 
     //Draw the overlay.
     if (textureOverlay != nullptr && overlayVisible) {

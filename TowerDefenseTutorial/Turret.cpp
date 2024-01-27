@@ -5,19 +5,23 @@ const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f);
 const float Turret::weaponRange = 5.0f;
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos)
-	:pos(setPos), angle(0.0f)
+	:pos(setPos), angle(0.0f), timerWeapon(1.0f)
 {
 	textureMain = TextureLoader::loadTexture(renderer, "Turret.bmp");
 	textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 }
 
-void Turret::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits)
+void Turret::update(SDL_Renderer* renderer, float dT, 
+	std::vector<std::shared_ptr<Unit>>& listUnits,
+	std::vector<Projectile>& listProjectiles)
 {
 	/* angle += speedAngular * dT;
 	if (angle > MathAddon::angleDegToRad(360.0f))
 		angle -= MathAddon::angleDegToRad(360.0f);
 	*/
 
+	//Update the timer
+	timerWeapon.countDown(dT);
 
 	//check if a target has been found but is no longer alive or is out of weapon range
 	if (auto targetUnitSP = targetUnit.lock()) 
@@ -32,6 +36,15 @@ void Turret::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits)
 	if (targetUnit.expired())
 		targetUnit = findEnemyUnit(listUnits);
 
+	//update the angle and shoot a projectile if needed
+	if (updateAngle(dT))
+		shootProjectile(renderer, listProjectiles);
+	
+	
+}
+
+bool Turret::updateAngle(float dT)
+{
 	if (auto targetUnitSP = targetUnit.lock())
 	{
 		//determine the direction normal to the target
@@ -41,21 +54,34 @@ void Turret::update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits)
 		float angleToTarget = directionNormalToTarget.angleBetween(Vector2D(angle));
 
 		//update the angle as required
-		if (abs(angleToTarget) > 0.0f)
+
+		//determine the angle to move this frame
+		float angleMove = -copysign(speedAngular * dT, angleToTarget);
+		if (abs(angleMove) > abs(angleToTarget))
 		{
-			//determine the angle to move this frame
-			float angleMove = -copysign(speedAngular * dT, angleToTarget);
-			if (abs(angleMove) > abs(angleToTarget))
-			{
-				//It will point directly at its target this frame
-				angle = directionNormalToTarget.angle();
-			}
-			else
-			{
-				//It won't reach its target this frame
-				angle += angleMove;
-			}
+			//It will point directly at its target this frame
+			angle = directionNormalToTarget.angle();
+			return true;
 		}
+		else
+		{
+			//It won't reach its target this frame
+			angle += angleMove;
+		}
+		
+	}
+
+	return false;
+}
+
+void Turret::shootProjectile(SDL_Renderer* renderer, std::vector<Projectile>& listProjectiles)
+{
+	//Shoot a projectile towards the target unit if the weapon timer is ready
+	if (timerWeapon.timeSIsZero())
+	{
+		listProjectiles.push_back(Projectile(renderer, pos, Vector2D(angle)));
+
+		timerWeapon.resetToMax();
 	}
 }
 

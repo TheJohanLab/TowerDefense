@@ -7,6 +7,7 @@
 #include "Level.h"
 #include "Timer.h"
 #include "Turret.h"
+#include "Projectile.h"
 
 
 class Game
@@ -27,6 +28,7 @@ private:
 	void processEvents(SDL_Renderer* renderer, bool& running);
 	void update(SDL_Renderer* renderer, float dT);
 	void updateUnits(float dT);
+	void updateProjectiles(float dT);
 	void updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT);
 	void draw(SDL_Renderer* renderer);
 	void addUnit(SDL_Renderer* renderer, Vector2D posMouse);
@@ -40,6 +42,7 @@ private:
 	
 	std::vector<std::shared_ptr<Unit>> listUnits;
 	std::vector<Turret> listTurrets;
+	std::vector<Projectile> listProjectiles;
 
 	SDL_Texture* textureOverlay = nullptr;
 	bool overlayVisible = true;
