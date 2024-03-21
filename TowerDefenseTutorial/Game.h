@@ -8,6 +8,7 @@
 #include "Timer.h"
 #include "Turret.h"
 #include "Projectile.h"
+#include "UI.h"
 
 
 class Game
@@ -25,6 +26,8 @@ public:
 
 
 private:
+	UI* m_UI = nullptr;
+
 	void processEvents(SDL_Renderer* renderer, bool& running);
 	void update(SDL_Renderer* renderer, float dT);
 	void updateUnits(float dT);

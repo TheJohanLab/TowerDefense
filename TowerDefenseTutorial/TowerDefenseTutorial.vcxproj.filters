@@ -45,6 +45,9 @@
     <ClInclude Include="HealthBar.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Tile Arrow Down Left.bmp">
@@ -128,6 +131,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="HealthBar.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

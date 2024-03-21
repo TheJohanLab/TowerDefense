@@ -141,6 +141,7 @@
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Turret.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>

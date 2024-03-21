@@ -4,12 +4,16 @@
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
     placementModeCurrent(PlacementMode::wall), 
-    level(renderer, windowWidth / tileSize, windowHeight / tileSize),
+    level(renderer, windowWidth / tileSize, (windowHeight*0.8) / tileSize),
     spawnTimer(0.25f), roundTimer(5.0f)
 {
 
     //Run the game.
     if (window != nullptr && renderer != nullptr) {
+        
+        std::cout << windowWidth << ", " << windowHeight << "\n";
+        m_UI = new UI(renderer, windowWidth, windowHeight * 0.8);
+        
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
@@ -46,6 +50,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 Game::~Game() {
     //Clean up.
     TextureLoader::deallocateTextures();
+    delete m_UI;
 }
 
 
@@ -217,6 +222,7 @@ void Game::draw(SDL_Renderer* renderer) {
     SDL_RenderClear(renderer);
 
 
+    m_UI->draw(renderer);
     //Draw everything here.
     //Draw the level.
     level.draw(renderer, tileSize);
