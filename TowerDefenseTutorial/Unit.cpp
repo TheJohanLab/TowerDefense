@@ -9,7 +9,7 @@ const float Unit::size = 0.48f;
 
 
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos), hitTimer(0.25f) 
+	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH)
 {
 	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
 
@@ -103,9 +103,13 @@ void Unit::draw(SDL_Renderer* renderer, int tileSize) {
 			w,
 			h };
 		SDL_RenderCopy(renderer, texture, NULL, &rect);
+
+		
+ 		//Draw the healthbar above every unit's position
+		m_HealthBar.draw(renderer, ((pos.x * tileSize) - w / 2), ((pos.y * tileSize) - h / 2));
+
 	}
 }
-
 
 
 bool Unit::checkOverlap(Vector2D posOther, float sizeOther) {
@@ -124,12 +128,13 @@ Vector2D Unit::getPos() const
 
 void Unit::removeHealth(int damage)
 {
-	if (damage > 0)
+	if (hitTimer.timeSIsZero() && damage > 0)
 	{
 		currentHealth -= damage;
 		if (currentHealth < 0)
 			currentHealth = 0;
 
+		m_HealthBar.setHealth(currentHealth);
 		hitTimer.resetToMax();
 	}
 

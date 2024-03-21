@@ -193,7 +193,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
         roundTimer.countDown(dT);
         if (roundTimer.timeSIsZero())
         {
-            spawnUnitCount = 15;
+            spawnUnitCount = 30;
             roundTimer.resetToMax();
         }
     }
@@ -236,12 +236,12 @@ void Game::draw(SDL_Renderer* renderer) {
         projectileSelected.draw(renderer, tileSize);
 
     //Draw the overlay.
-    if (textureOverlay != nullptr && overlayVisible) {
+    /*if (textureOverlay != nullptr && overlayVisible) {
         int w = 0, h = 0;
         SDL_QueryTexture(textureOverlay, NULL, NULL, &w, &h);
         SDL_Rect rect = { 40, 40, w, h };
         SDL_RenderCopy(renderer, textureOverlay, NULL, &rect);
-    }
+    }*/
 
     //Send the image to the window.
     SDL_RenderPresent(renderer);

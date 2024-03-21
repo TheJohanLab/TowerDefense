@@ -6,9 +6,10 @@
 #include "Level.h"
 #include "TextureLoader.h"
 #include "Timer.h"
+#include "HealthBar.h"
 
+#define MAX_HEALTH (uint8_t)10
 class Game;
-
 
 
 class Unit
@@ -20,17 +21,19 @@ public:
 	bool checkOverlap(Vector2D posOther, float sizeOther);
 	bool isAlive() const;
 	Vector2D getPos() const;
+
 	void removeHealth(int damage);
 
 private:
 	Vector2D pos;
 	static const float speed;
 	static const float size;
+	const int maxHealth = MAX_HEALTH;
+	HealthBar m_HealthBar;
 
 	SDL_Texture* texture = nullptr;
 
 	Timer hitTimer;
 
-	const int maxHealth = 2;
 	int currentHealth = maxHealth;
 };
