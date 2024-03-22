@@ -1,8 +1,7 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 #include "Game.h"
-
-
+#include "SDL_ttf.h"
 
 
 int main(int argc, char* args[]) {
@@ -10,11 +9,15 @@ int main(int argc, char* args[]) {
 	//numbers every time the game is run.
 	srand((unsigned)time(NULL));
 
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		std::cout << "Error: Couldn't initialize SDL Video = " << SDL_GetError() << std::endl;
 		return 1;
 	}
 	else {
+
+		TTF_Init();
+
 		//Create the window.
 		SDL_Window* window = SDL_CreateWindow("Tower Base Defense", 
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 576, 0);

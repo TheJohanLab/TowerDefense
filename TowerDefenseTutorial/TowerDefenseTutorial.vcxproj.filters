@@ -45,7 +45,16 @@
     <ClInclude Include="HealthBar.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h">
+    <ClInclude Include="View\UI.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Listeners\Listener.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Listeners\OnDestroyUnitListener.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Listeners\OnBaseReachedListener.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -133,7 +142,7 @@
     <ClCompile Include="HealthBar.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
+    <ClCompile Include="View\UI.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

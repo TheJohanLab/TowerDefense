@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#include "View/UI.h"
 
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
@@ -12,8 +12,11 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
     if (window != nullptr && renderer != nullptr) {
         
         std::cout << windowWidth << ", " << windowHeight << "\n";
-        m_UI = new UI(renderer, windowWidth, windowHeight * 0.8);
+        m_UI = UI::getInstance();
+        m_UI->initUI(renderer, windowWidth, windowHeight);
         
+
+
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
@@ -50,7 +53,6 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 Game::~Game() {
     //Clean up.
     TextureLoader::deallocateTextures();
-    delete m_UI;
 }
 
 
@@ -222,7 +224,7 @@ void Game::draw(SDL_Renderer* renderer) {
     SDL_RenderClear(renderer);
 
 
-    m_UI->draw(renderer);
+    
     //Draw everything here.
     //Draw the level.
     level.draw(renderer, tileSize);
@@ -249,6 +251,7 @@ void Game::draw(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, textureOverlay, NULL, &rect);
     }*/
 
+    m_UI->draw(renderer);
     //Send the image to the window.
     SDL_RenderPresent(renderer);
 }

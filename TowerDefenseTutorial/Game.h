@@ -8,7 +8,7 @@
 #include "Timer.h"
 #include "Turret.h"
 #include "Projectile.h"
-#include "UI.h"
+#include "Listeners/OnDestroyUnitListener.h"
 
 
 class Game
@@ -26,8 +26,8 @@ public:
 
 
 private:
-	UI* m_UI = nullptr;
 
+	UI* m_UI = nullptr;
 	void processEvents(SDL_Renderer* renderer, bool& running);
 	void update(SDL_Renderer* renderer, float dT);
 	void updateUnits(float dT);
@@ -52,4 +52,6 @@ private:
 
 	Timer spawnTimer, roundTimer;
 	int spawnUnitCount = 0;
+
+	OnDestroyUnitListener onDestroyUnitListener;
 };

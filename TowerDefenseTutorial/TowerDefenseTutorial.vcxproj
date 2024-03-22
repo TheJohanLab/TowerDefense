@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_TFF\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\lib\x64;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\lib\x64;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_TFF\lib\x64;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,12 +136,15 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="Listeners\Listener.h" />
+    <ClInclude Include="Listeners\OnBaseReachedListener.h" />
+    <ClInclude Include="Listeners\OnDestroyUnitListener.h" />
     <ClInclude Include="MathAddon.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Turret.h" />
-    <ClInclude Include="UI.h" />
+    <ClInclude Include="View\UI.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vector2D.h" />
   </ItemGroup>
@@ -173,7 +176,7 @@
     <ClCompile Include="TextureLoader.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Turret.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="View\UI.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>

@@ -6,8 +6,6 @@ const float Unit::speed = 2.0f;
 const float Unit::size = 0.48f;
 
 
-
-
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
 	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH)
 {
@@ -25,6 +23,8 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 	if (distanceToTarget < 0.5f)
 	{
+		//Todo Add this notification on a new UI thread (post)
+		onBaseReachedObserver.notify(15);
 		currentHealth = 0;
 	}
 
@@ -131,8 +131,11 @@ void Unit::removeHealth(int damage)
 	if (hitTimer.timeSIsZero() && damage > 0)
 	{
 		currentHealth -= damage;
-		if (currentHealth < 0)
+		if (currentHealth <= 0)
+		{
+			onDestroyUnitObserver.notify();
 			currentHealth = 0;
+		}
 
 		m_HealthBar.setHealth(currentHealth);
 		hitTimer.resetToMax();

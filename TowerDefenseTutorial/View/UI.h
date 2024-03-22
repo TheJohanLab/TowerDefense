@@ -3,11 +3,8 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 #include <map>
-#include "Vector2D.h"
-
-
-
-
+#include "../Vector2D.h"
+#include "SDL_ttf.h"
 
 class UI
 {
@@ -18,6 +15,12 @@ class UI
 	};
 
 private:
+	static UI* instance;
+	UI() {};
+
+	SDL_Renderer* m_renderer = nullptr;
+	TTF_Font* m_uiFont = nullptr;
+
 	size_t m_UIWidth;
 	size_t m_UIHeight;
 	uint8_t m_Health;
@@ -35,8 +38,10 @@ private:
 
 public:
 	
-	UI(SDL_Renderer* renderer, int UIWidth, int uiHeight);
+	static UI* getInstance(); 
 	~UI();
+
+	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight);
 
 	void draw(SDL_Renderer* renderer) const;
 	void updateHealth(uint8_t health);

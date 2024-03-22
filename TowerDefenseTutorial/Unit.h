@@ -8,6 +8,9 @@
 #include "Timer.h"
 #include "HealthBar.h"
 
+#include "Listeners/OnBaseReachedListener.h"
+#include "Listeners/OnDestroyUnitListener.h"
+
 #define MAX_HEALTH (uint8_t)10
 class Game;
 
@@ -36,4 +39,8 @@ private:
 	Timer hitTimer;
 
 	int currentHealth = maxHealth;
+
+	OnBaseReachedListener onBaseReachedObserver;
+	OnDestroyUnitListener onDestroyUnitObserver;
+
 };
