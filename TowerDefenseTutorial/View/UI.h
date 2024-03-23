@@ -5,6 +5,7 @@
 #include <map>
 #include "../Vector2D.h"
 #include "SDL_ttf.h"
+#include "../Shop.h"
 
 class UI
 {
@@ -18,12 +19,13 @@ private:
 	static UI* instance;
 	UI() {};
 
+	Shop m_Shop;
 	SDL_Renderer* m_renderer = nullptr;
 	TTF_Font* m_uiFont = nullptr;
 
 	size_t m_UIWidth;
 	size_t m_UIHeight;
-	uint8_t m_Health;
+	int m_Health;
 	size_t m_Coins;
 
 	item m_SelectedItem;

@@ -1,13 +1,13 @@
 #include "Unit.h"
 #include "Game.h"
-
+#include <cmath>
 
 const float Unit::speed = 2.0f;
 const float Unit::size = 0.48f;
 
 
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH)
+	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0})
 {
 	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
 
@@ -24,7 +24,7 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 	if (distanceToTarget < 0.5f)
 	{
 		//Todo Add this notification on a new UI thread (post)
-		onBaseReachedObserver.notify(15);
+		onBaseReachedObserver.notify(1);
 		currentHealth = 0;
 	}
 
@@ -35,12 +35,20 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 	//Find the normal from the flow field.
 	Vector2D directionNormal(level.getFlowNormal((int)pos.x, (int)pos.y));
+	if ( directionNormal.x != m_CurrDirection.x || directionNormal.y != m_CurrDirection.y)
+	{
+		float ent;
+		if ((abs(modf(pos.x, &ent) - 0.5f) < 0.05f) && (abs(modf(pos.y, &ent) - 0.5f) < 0.05f) || m_CurrDirection.x == 0.0 && m_CurrDirection.y == 0.0f)
+			m_CurrDirection = directionNormal;
+	}
 
 	// If this reached the target tile, then modify directionNormal to point to the target Tile.
 	if ((int)pos.x == (int)level.getTargetPos().x && (int)pos.y == (int)level.getTargetPos().y)
-		directionNormal = (level.getTargetPos() - pos).normalize();
+		m_CurrDirection = (level.getTargetPos() - pos).normalize();
 
-	Vector2D posAdd = directionNormal * distanceMove;
+	Vector2D posAdd = m_CurrDirection * distanceMove;
+	std::cout << pos.x << ", " << pos.y << "\n";
+
 
 	//Check if the new position would overlap any other units or not.
 	bool moveOk = true;

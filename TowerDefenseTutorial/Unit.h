@@ -34,6 +34,8 @@ private:
 	const int maxHealth = MAX_HEALTH;
 	HealthBar m_HealthBar;
 
+	Vector2D m_CurrDirection;
+
 	SDL_Texture* texture = nullptr;
 
 	Timer hitTimer;

@@ -200,7 +200,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
         roundTimer.countDown(dT);
         if (roundTimer.timeSIsZero())
         {
-            spawnUnitCount = 30;
+            spawnUnitCount = 50;
             roundTimer.resetToMax();
         }
     }

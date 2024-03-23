@@ -5,7 +5,7 @@
 Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY) :
     tileCountX(setTileCountX), tileCountY(setTileCountY),
     targetX(setTileCountX / 2), targetY(setTileCountY / 2) {
-    textureTileWall = TextureLoader::loadTexture(renderer, "Tile Wall.bmp");
+    textureTileWall = TextureLoader::loadTexture(renderer, "TileWall2.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
     textureTileEnemySpawner = TextureLoader::loadTexture(renderer, "Tile Enemy Spawner.bmp");
 

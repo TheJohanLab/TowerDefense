@@ -41,7 +41,6 @@ public:
 	Vector2D getFlowNormal(int x, int y);
 
 
-
 private:
 	void drawTile(SDL_Renderer* renderer, int x, int y, int tileSize);
 	void calculateFlowField();

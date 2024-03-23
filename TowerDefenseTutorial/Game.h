@@ -40,7 +40,7 @@ private:
 
 	int mouseDownStatus = 0;
 
-	const int tileSize = 64;
+	const int tileSize = 32;
 	Level level;
 	
 	std::vector<std::shared_ptr<Unit>> listUnits;
