@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Listener.h"
+#include "Observer.h"
 #include "../View/UI.h"
 
-class OnDestroyUnitListener : public Listener<>
+class OnDestroyUnitListener : public Observer<int>
 {
 public:
-	void notify() override
+	void observe(int amount) override
 	{
 		UI* UI = UI::getInstance();
-		UI->updateCoins(10);
+		UI->getShop()->addMoney(amount);
 	}
 };

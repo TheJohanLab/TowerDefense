@@ -48,7 +48,7 @@
     <ClInclude Include="View\UI.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Listeners\Listener.h">
+    <ClInclude Include="Listeners\Observer.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Listeners\OnDestroyUnitListener.h">

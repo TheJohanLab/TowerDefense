@@ -139,7 +139,7 @@
     <ClInclude Include="View\ItemPlacementPreview.h" />
     <ClInclude Include="ItemSelectionZone.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="Listeners\Listener.h" />
+    <ClInclude Include="Listeners\Observer.h" />
     <ClInclude Include="Listeners\OnBaseReachedListener.h" />
     <ClInclude Include="Listeners\OnClickListener.h" />
     <ClInclude Include="Listeners\OnDestroyUnitListener.h" />

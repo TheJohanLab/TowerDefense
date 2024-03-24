@@ -5,6 +5,11 @@
 
 UI* UI::instance = nullptr;
 
+Shop* UI::getShop()
+{
+	return &m_Shop;
+}
+
 void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
 {
 	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
@@ -20,7 +25,6 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
 	m_UIHeight = windowsHeight * 0.8;
 
 	m_Health = 150;
-	m_Coins = 150;
 	m_SelectedItem = itemEnum::WallItem;
 
 	if (renderer != nullptr)
@@ -143,7 +147,7 @@ void UI::drawCoins(SDL_Renderer* renderer) const
 {
 	SDL_Color color = { 50, 50, 50, 255 };
 
-	SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(m_Coins).c_str(), color);
+	SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(m_Shop.getMoneyAmount()).c_str(), color);
 	if (surface == nullptr) {
 		SDL_Log("Erreur lors de la création de la surface de texte : %s", TTF_GetError());
 		return;
@@ -196,11 +200,6 @@ void UI::updateHealth(uint8_t damages)
 	m_Health = std::max(0, (int)m_Health);
 }
 
-void UI::updateCoins(uint8_t coinsReceived)
-{
-	m_Coins += coinsReceived;
-	std::cout << m_Coins << "\n";
-}
 
 void UI::selectItem(itemEnum selectedItem, int x, int y)
 {
@@ -215,8 +214,9 @@ uint8_t UI::getPlayersHealth() const
 
 void UI::purchaseTurret()
 {
-	m_Coins -= itemPrice[m_SelectedItem];
-	m_Coins = std::max((int)m_Coins, 0);
+	
+	//m_Coins -= itemPrice[m_SelectedItem];
+	//m_Coins = std::max((int)m_Coins, 0);
 }
 
 void UI::setItemSelectionZone(const itemEnum& itemEnum, const ItemSelectionZone& zone)

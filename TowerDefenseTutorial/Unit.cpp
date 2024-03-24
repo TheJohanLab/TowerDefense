@@ -45,7 +45,7 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 	// If this reached the target tile, then modify directionNormal to point to the target Tile.
 	if ((int)pos.x == (int)level.getTargetPos().x && (int)pos.y == (int)level.getTargetPos().y)
 	{
-		onBaseReachedObserver.notify(1);
+		onBaseReachedObserver.observe(1);
 		currentHealth = 0;
 		//m_CurrDirection = (level.getTargetPos() - pos).normalize();
 	}
@@ -143,7 +143,7 @@ void Unit::removeHealth(int damage)
 		currentHealth -= damage;
 		if (currentHealth <= 0)
 		{
-			onDestroyUnitObserver.notify();
+			onDestroyUnitObserver.observe(10);
 			currentHealth = 0;
 		}
 

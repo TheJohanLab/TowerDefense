@@ -6,8 +6,6 @@
 #include "Vector2D.h"
 #include "TextureLoader.h"
 
-
-
 class Level
 {
 private:
@@ -36,7 +34,9 @@ public:
 	Vector2D getRandomEnemySpawnerLocation() const;
 
 	bool isTileWall(int x, int y);
-	void setTileWall(int x, int y, bool setWall);
+	void setTileWall(int x, int y);
+	void removeWall(int x, int y);
+
 	Vector2D getTargetPos() const;
 	Vector2D getFlowNormal(int x, int y);
 

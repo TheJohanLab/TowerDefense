@@ -8,6 +8,7 @@
 #include "../Shop.h"
 #include "../ItemSelectionZone.h"
 #include "../Utils.h"
+#include "../Shop.h"
 
 
 class UI
@@ -25,7 +26,6 @@ private:
 	size_t m_UIWidth;
 	size_t m_UIHeight;
 	int m_Health;
-	size_t m_Coins;
 
 	itemEnum m_SelectedItem;
 
@@ -37,19 +37,21 @@ private:
 	void drawHealth(SDL_Renderer* renderer) const;
 	void drawCoins(SDL_Renderer* renderer) const;
 
+	//void updateCoins(uint8_t coins);
+
 public:
 	
 	static UI* getInstance(); 
 	~UI();
 
+	Shop* getShop();
 	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight);
 
 	void draw(SDL_Renderer* renderer) const;
-	void updateHealth(uint8_t health);
-	void updateCoins(uint8_t coins);
 
 	void selectItem(itemEnum selectedItem, int x, int y);
 
+	void updateHealth(uint8_t health);
 	uint8_t getPlayersHealth() const;
 	void purchaseTurret();
 

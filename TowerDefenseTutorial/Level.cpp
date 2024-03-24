@@ -157,13 +157,20 @@ bool Level::isTileWall(int x, int y)
 }
 
 
-void Level::setTileWall(int x, int y, bool setWall) 
+void Level::setTileWall(int x, int y) 
 {
     // A spawner cannot be changed
     if (getTileType(x, y) != TileType::ENEMYSPAWNER)
-        setTileType(x, y, (setWall ? TileType::WALL : TileType::EMPTY));
+        setTileType(x, y, TileType::WALL);
 
 }
+
+void Level::removeWall(int x, int y)
+{
+    if (getTileType(x, y) != TileType::ENEMYSPAWNER)
+        setTileType(x, y,TileType::EMPTY);
+}
+
 
 Level::TileType Level::getTileType(int x, int y) const
 {

@@ -30,6 +30,7 @@ private:
 
 	UI* m_UI = nullptr;
 	InputManager* m_InputManager = nullptr;
+	Shop* m_Shop = nullptr;
 
 	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	void update(SDL_Renderer* renderer, float dT);
@@ -39,7 +40,7 @@ private:
 	void draw(SDL_Renderer* renderer);
 	void addUnit(SDL_Renderer* renderer, Vector2D posMouse);
 	void addTurret(SDL_Renderer* renderer, Vector2D posMouse);
-	void removeTurretsAtMousePosition(Vector2D posMouse);
+	bool removeTurretsAtMousePosition(Vector2D posMouse);
 
 	int mouseDownStatus = 0;
 
