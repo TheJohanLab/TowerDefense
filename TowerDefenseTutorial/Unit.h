@@ -11,7 +11,7 @@
 #include "Listeners/OnBaseReachedListener.h"
 #include "Listeners/OnDestroyUnitListener.h"
 
-#define MAX_HEALTH (uint8_t)10
+#define MAX_HEALTH (uint8_t)4
 class Game;
 
 

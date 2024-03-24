@@ -5,10 +5,10 @@ const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f);
 const float Turret::weaponRange = 5.0f;
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos)
-	:pos(setPos), angle(0.0f), timerWeapon(1.0f)
+	:pos(setPos), angle(0.0f), timerWeapon(0.5f)
 {
-	textureMain = TextureLoader::loadTexture(renderer, "Turret.bmp");
-	textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
+	textureMain = TextureLoader::loadTexture(renderer, "Turret2.bmp");
+	textureShadow = TextureLoader::loadTexture(renderer, "TurretShadow2.bmp");
 }
 
 void Turret::update(SDL_Renderer* renderer, float dT, 

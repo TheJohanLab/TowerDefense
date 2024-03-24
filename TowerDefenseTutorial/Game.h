@@ -9,6 +9,7 @@
 #include "Turret.h"
 #include "Projectile.h"
 #include "Listeners/OnDestroyUnitListener.h"
+#include "InputManager.h"
 
 
 class Game
@@ -28,7 +29,9 @@ public:
 private:
 
 	UI* m_UI = nullptr;
-	void processEvents(SDL_Renderer* renderer, bool& running);
+	InputManager* m_InputManager = nullptr;
+
+	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	void update(SDL_Renderer* renderer, float dT);
 	void updateUnits(float dT);
 	void updateProjectiles(float dT);
@@ -43,6 +46,7 @@ private:
 	const int tileSize = 32;
 	Level level;
 	
+	itemEnum* m_SelectedItem = nullptr;
 	std::vector<std::shared_ptr<Unit>> listUnits;
 	std::vector<Turret> listTurrets;
 	std::vector<Projectile> listProjectiles;
@@ -53,5 +57,4 @@ private:
 	Timer spawnTimer, roundTimer;
 	int spawnUnitCount = 0;
 
-	OnDestroyUnitListener onDestroyUnitListener;
 };

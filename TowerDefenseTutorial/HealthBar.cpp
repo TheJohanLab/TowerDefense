@@ -2,18 +2,15 @@
 
 HealthBar::HealthBar()
 {
-	std::cout << "Healthbar par défaut" << "\n";
 }
 
 HealthBar::HealthBar(uint8_t maxHealth)
 	: m_MaxHealth(maxHealth), m_CurrentHealth(maxHealth) 
 {
-	std::cout << "Healthbar value" << "\n";
 }
 
 HealthBar::~HealthBar()
 {
-	std::cout << "Destructeur healthbar" << "\n";
 }
 
 void HealthBar::setHealth(uint8_t healthValue)

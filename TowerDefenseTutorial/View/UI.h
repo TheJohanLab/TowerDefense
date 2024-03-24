@@ -6,20 +6,19 @@
 #include "../Vector2D.h"
 #include "SDL_ttf.h"
 #include "../Shop.h"
+#include "../ItemSelectionZone.h"
+#include "../Utils.h"
+
 
 class UI
 {
-	enum item
-	{
-		Wall,
-		Turret
-	};
 
 private:
 	static UI* instance;
 	UI() {};
 
 	Shop m_Shop;
+	std::map<itemEnum, ItemSelectionZone> m_mapItemSelectionZone;
 	SDL_Renderer* m_renderer = nullptr;
 	TTF_Font* m_uiFont = nullptr;
 
@@ -28,7 +27,7 @@ private:
 	int m_Health;
 	size_t m_Coins;
 
-	item m_SelectedItem;
+	itemEnum m_SelectedItem;
 
 	SDL_Texture* m_WallTexture = nullptr;
 	SDL_Texture* m_TurretTexture = nullptr;
@@ -49,14 +48,19 @@ public:
 	void updateHealth(uint8_t health);
 	void updateCoins(uint8_t coins);
 
-	void selectItem(item selectedItem);
+	void selectItem(itemEnum selectedItem, int x, int y);
 
 	uint8_t getPlayersHealth() const;
 	void purchaseTurret();
 
-	std::map<item, uint8_t> itemPrice = {
-	{item::Wall, 10},
-	{item::Turret, 15}
+	void setItemSelectionZone(const itemEnum& itemEnum, const ItemSelectionZone& zone);
+	const ItemSelectionZone& getItemSelectionZone(itemEnum itemSelectionZone);
+	itemEnum* getSelectedItem();
+	
+
+	std::map<itemEnum, uint8_t> itemPrice = {
+	{itemEnum::WallItem, 10},
+	{itemEnum::TurretItem, 15}
 	};
 
 	

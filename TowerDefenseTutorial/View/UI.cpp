@@ -5,7 +5,31 @@
 
 UI* UI::instance = nullptr;
 
+void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
+{
+	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
+	if (m_uiFont == nullptr) {
+		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
+		TTF_Quit();
+		return;
+	}
 
+
+	m_renderer = renderer;
+	m_UIWidth = windowsWidth;
+	m_UIHeight = windowsHeight * 0.8;
+
+	m_Health = 150;
+	m_Coins = 150;
+	m_SelectedItem = itemEnum::WallItem;
+
+	if (renderer != nullptr)
+	{
+		m_WallTexture = TextureLoader::loadTexture(m_renderer, "TileWall2.bmp");
+		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret2.bmp");
+	}
+
+}
 
 void UI::drawBackground(SDL_Renderer* renderer) const
 {
@@ -48,16 +72,27 @@ void UI::drawItems(SDL_Renderer* renderer) const
 {
 	if (renderer != nullptr)
 	{
+		
 		// Draw the Wall texture
 		int w, h;
-		SDL_QueryTexture(m_WallTexture, NULL, NULL, &w, &h);
+		if (m_SelectedItem == itemEnum::WallItem)
+		{
+			SDL_SetTextureColorMod(m_WallTexture, 255, 0, 0);
+			SDL_SetTextureColorMod(m_TurretTexture, 255, 255, 255);
+		}
+		else
+		{
+			SDL_SetTextureColorMod(m_TurretTexture, 255, 0, 0);
+			SDL_SetTextureColorMod(m_WallTexture, 255, 255, 255);
+		}
 
+		SDL_QueryTexture(m_WallTexture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
-			(int)(m_UIWidth / 8) - w / 2,
-			(int)(m_UIHeight + (m_UIHeight / 0.8) * 0.1) - h / 2,
-			w,
-			h
+			(int)(m_UIWidth / 8) - w ,
+			(int)(m_UIHeight + (m_UIHeight / 0.8) * 0.1) - h ,
+			w*2,
+			h*2
 		};
 		SDL_RenderCopy(renderer, m_WallTexture, NULL, &rect);
 
@@ -67,10 +102,10 @@ void UI::drawItems(SDL_Renderer* renderer) const
 
 		rect =
 		{
-			(int)(m_UIWidth * 3 / 8) - w / 2,
-			(int)(m_UIHeight +(m_UIHeight / 0.8) * 0.1) - h / 2,
-			w,
-			h
+			(int)(m_UIWidth * 3 / 8) - w ,
+			(int)(m_UIHeight +(m_UIHeight / 0.8) * 0.1) - h ,
+			w*2,
+			h*2
 		};
 		SDL_RenderCopy(renderer, m_TurretTexture, NULL, &rect);
 	}
@@ -143,30 +178,7 @@ UI::~UI()
 	std::cout << "UI Destr\n";
 }
 
-void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
-{
-	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24); 
-	if (m_uiFont == nullptr) {
-		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
-		TTF_Quit();
-		return;
-	}
-	
-	m_renderer = renderer;
-	m_UIWidth = windowsWidth;
-	m_UIHeight = windowsHeight * 0.8;
 
-	m_Health = 150;
-	m_Coins = 150;
-	m_SelectedItem = item::Wall;
-
-	if (renderer != nullptr)
-	{
-		m_WallTexture = TextureLoader::loadTexture(m_renderer, "Tile Wall.bmp");
-		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret.bmp");
-	}
-
-}
 
 
 
@@ -190,9 +202,10 @@ void UI::updateCoins(uint8_t coinsReceived)
 	std::cout << m_Coins << "\n";
 }
 
-void UI::selectItem(item selectedItem)
+void UI::selectItem(itemEnum selectedItem, int x, int y)
 {
 	m_SelectedItem = selectedItem;
+	purchaseTurret();
 }
 
 uint8_t UI::getPlayersHealth() const
@@ -204,4 +217,20 @@ void UI::purchaseTurret()
 {
 	m_Coins -= itemPrice[m_SelectedItem];
 	m_Coins = std::max((int)m_Coins, 0);
+}
+
+void UI::setItemSelectionZone(const itemEnum& itemEnum, const ItemSelectionZone& zone)
+{
+	m_mapItemSelectionZone[itemEnum] = zone;
+}
+
+const ItemSelectionZone& UI::getItemSelectionZone(itemEnum itemKey)
+{
+	if (m_mapItemSelectionZone.count(itemKey))
+		return m_mapItemSelectionZone.at(itemKey);
+}
+
+itemEnum* UI::getSelectedItem()
+{
+	return &m_SelectedItem;
 }

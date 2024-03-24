@@ -3,9 +3,10 @@
 
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
-    placementModeCurrent(PlacementMode::wall), 
-    level(renderer, windowWidth / tileSize, (windowHeight*0.8) / tileSize),
-    spawnTimer(0.25f), roundTimer(5.0f)
+    placementModeCurrent(PlacementMode::wall),
+    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize),
+    spawnTimer(0.25f), roundTimer(5.0f),
+    m_InputManager(new InputManager())
 {
 
     //Run the game.
@@ -14,8 +15,19 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
         std::cout << windowWidth << ", " << windowHeight << "\n";
         m_UI = UI::getInstance();
         m_UI->initUI(renderer, windowWidth, windowHeight);
-        
 
+        ItemSelectionZone wallZone( 0, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
+        ItemSelectionZone TurretZone( windowWidth/4, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::TurretItem);
+        ItemSelectionZone PlayingZone( 0, 0, windowWidth, windowHeight * 0.8);
+        wallZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y) ; });
+        TurretZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item,  x, y); });
+        PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processEvents(renderer, mouseButtonStatus, x, y); });
+
+        m_InputManager->addItemSelectionZone(&wallZone);
+        m_InputManager->addItemSelectionZone(&TurretZone);
+        m_InputManager->addItemSelectionZone(&PlayingZone);
+
+        m_SelectedItem = m_UI->getSelectedItem();
 
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
@@ -41,7 +53,8 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
                 //Store the new time for the next frame.
                 time1 = time2;
 
-                processEvents(renderer, running);
+                //processEvents(renderer, running);
+                m_InputManager->handleEvents(renderer, running);
                 update(renderer, dT);
                 draw(renderer);
             }
@@ -53,14 +66,15 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 Game::~Game() {
     //Clean up.
     TextureLoader::deallocateTextures();
+    delete m_InputManager;
 }
 
 
 
-void Game::processEvents(SDL_Renderer* renderer, bool& running) {
+void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY) {
     bool mouseDownThisFrame = false;
-
-    //Process events.
+    
+    /*//Process events.
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -101,25 +115,25 @@ void Game::processEvents(SDL_Renderer* renderer, bool& running) {
             }
         }
     }
-
+    */
 
     //Process input from the mouse cursor.
-    int mouseX = 0, mouseY = 0;
-    SDL_GetMouseState(&mouseX, &mouseY);
+    //int mouseX = 0, mouseY = 0;
+    //SDL_GetMouseState(&mouseX, &mouseY);
     //Convert from the window's coordinate system to the game's coordinate system.
     Vector2D posMouse((float)mouseX / tileSize, (float)mouseY / tileSize);
 
-    if (mouseDownStatus > 0) {
-        switch (mouseDownStatus) {
+    if (mouseButtonStatus > 0) {
+        switch (mouseButtonStatus) {
         case SDL_BUTTON_LEFT:
-            switch (placementModeCurrent) {
-            case PlacementMode::wall:
+            switch (*m_SelectedItem) {
+            case itemEnum::WallItem:
                 //Add wall at the mouse position.
                 level.setTileWall((int)posMouse.x, (int)posMouse.y, true);
                 break;
-            case PlacementMode::turret:
+            case itemEnum::TurretItem:
                 //Add the selected unit at the mouse position.
-                if (mouseDownThisFrame)
+                //if (mouseDownThisFrame)
                     addTurret(renderer, posMouse);
                 break;
             }
@@ -200,7 +214,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
         roundTimer.countDown(dT);
         if (roundTimer.timeSIsZero())
         {
-            spawnUnitCount = 50;
+            spawnUnitCount = 10;
             roundTimer.resetToMax();
         }
     }

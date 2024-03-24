@@ -9,7 +9,7 @@ const float Unit::size = 0.48f;
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
 	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0})
 {
-	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
+	texture = TextureLoader::loadTexture(renderer, "enemy.bmp");
 
 }
 
@@ -21,12 +21,12 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 	//Determine the distance to the target from the unit's current position.
 	float distanceToTarget = (level.getTargetPos() - pos).magnitude();
 
-	if (distanceToTarget < 0.5f)
+	/*if (distanceToTarget < 0.5f)
 	{
 		//Todo Add this notification on a new UI thread (post)
-		onBaseReachedObserver.notify(1);
+		//onBaseReachedObserver.notify(1);
 		currentHealth = 0;
-	}
+	}*/
 
 	//Determine the distance to move this frame.
 	float distanceMove = speed * dT;
@@ -44,11 +44,13 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 	// If this reached the target tile, then modify directionNormal to point to the target Tile.
 	if ((int)pos.x == (int)level.getTargetPos().x && (int)pos.y == (int)level.getTargetPos().y)
-		m_CurrDirection = (level.getTargetPos() - pos).normalize();
+	{
+		onBaseReachedObserver.notify(1);
+		currentHealth = 0;
+		//m_CurrDirection = (level.getTargetPos() - pos).normalize();
+	}
 
 	Vector2D posAdd = m_CurrDirection * distanceMove;
-	std::cout << pos.x << ", " << pos.y << "\n";
-
 
 	//Check if the new position would overlap any other units or not.
 	bool moveOk = true;

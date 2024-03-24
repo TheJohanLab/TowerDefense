@@ -136,9 +136,12 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="View\ItemPlacementPreview.h" />
+    <ClInclude Include="ItemSelectionZone.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Listeners\Listener.h" />
     <ClInclude Include="Listeners\OnBaseReachedListener.h" />
+    <ClInclude Include="Listeners\OnClickListener.h" />
     <ClInclude Include="Listeners\OnDestroyUnitListener.h" />
     <ClInclude Include="MathAddon.h" />
     <ClInclude Include="Projectile.h" />
@@ -146,6 +149,7 @@
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Turret.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="View\UI.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vector2D.h" />
@@ -173,6 +177,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="View\ItemPlacementPreview.cpp" />
+    <ClCompile Include="ItemSelectionZone.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathAddon.cpp" />
