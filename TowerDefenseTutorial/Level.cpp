@@ -1,6 +1,6 @@
 #include "Level.h"
 
-
+#include "Turret.h"
 
 Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY) :
     tileCountX(setTileCountX), tileCountY(setTileCountY),
@@ -151,7 +151,7 @@ void Level::drawTile(SDL_Renderer* renderer, int x, int y, int tileSize) {
 
 
 
-bool Level::isTileWall(int x, int y) 
+bool Level::isTileWall(int x, int y) const
 {
     return (getTileType(x, y) == TileType::WALL);
 }
@@ -169,6 +169,17 @@ void Level::removeWall(int x, int y)
 {
     if (getTileType(x, y) != TileType::ENEMYSPAWNER)
         setTileType(x, y,TileType::EMPTY);
+}
+
+bool Level::isTurret(const std::vector<Turret>& listTurrets, int x, int y) const
+{
+    for (Turret currTurret : listTurrets)
+    {
+        if (currTurret.checkIfOnTile(x, y))
+            return true;
+    }
+
+    return false;
 }
 
 

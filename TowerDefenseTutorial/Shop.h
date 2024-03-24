@@ -9,7 +9,7 @@ class Shop
 {
 
 private:
-	uint16_t m_Money = 100;
+	uint16_t m_Money = 200;
 	std::map<itemEnum, uint16_t> m_ItemPrices =
 	{
 		{itemEnum::WallItem , 10},

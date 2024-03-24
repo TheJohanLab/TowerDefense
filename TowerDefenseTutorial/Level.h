@@ -6,6 +6,8 @@
 #include "Vector2D.h"
 #include "TextureLoader.h"
 
+class Turret;
+
 class Level
 {
 private:
@@ -33,9 +35,11 @@ public:
 
 	Vector2D getRandomEnemySpawnerLocation() const;
 
-	bool isTileWall(int x, int y);
+	bool isTileWall(int x, int y) const;
 	void setTileWall(int x, int y);
 	void removeWall(int x, int y);
+
+	bool isTurret(const std::vector<Turret>& listTurrets, int x, int y) const;
 
 	Vector2D getTargetPos() const;
 	Vector2D getFlowNormal(int x, int y);

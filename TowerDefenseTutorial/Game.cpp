@@ -140,8 +140,11 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
             case itemEnum::TurretItem:
                 //Add the selected unit at the mouse position.
                 //if (mouseDownThisFrame)
-                addTurret(renderer, posMouse);
-                m_Shop->purchaseItem(*m_SelectedItem);
+                if (level.isTileWall((int)posMouse.x, (int)posMouse.y) && !level.isTurret(listTurrets, (int)posMouse.x, (int)posMouse.y))
+                {
+                    addTurret(renderer, posMouse);
+                    m_Shop->purchaseItem(*m_SelectedItem);
+                }
                 break;
             }
             
@@ -232,7 +235,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
         roundTimer.countDown(dT);
         if (roundTimer.timeSIsZero())
         {
-            spawnUnitCount = 10;
+            spawnUnitCount = 20;
             roundTimer.resetToMax();
         }
     }

@@ -2,8 +2,9 @@
 #include "Game.h"
 #include <cmath>
 
-const float Unit::speed = 2.0f;
-const float Unit::size = 0.48f;
+const float Unit::speed = 1.6f;
+//const float Unit::size = 0.48f;
+const float Unit::size = 0.24f;
 
 
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
