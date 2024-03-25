@@ -5,6 +5,7 @@
 #include "../Utils.h"
 #include "../Vector2D.h"
 #include "../Level.h"
+#include "../Shop.h"
 #include <vector>
 
 class ItemPlacementPreview : public OnMouseMotionListener
@@ -19,8 +20,12 @@ private:
 
 	Vector2D m_LastPreviewPos;
 	Vector2D* m_PreviewPos = nullptr;
-	Level* m_Level;
-	std::vector<Turret>* m_ListTurrets;
+	Level& m_Level;
+	Shop& m_Shop;
+	std::vector<Turret>& m_ListTurrets;
+
+	bool m_IsBuildable = false;
+
 
 private:
 
@@ -28,7 +33,7 @@ private:
 	
 
 public:
-	ItemPlacementPreview(SDL_Renderer* renderer, std::vector<Turret>* listTurrets, Level* level, int x, int y, int w, int h);
+	ItemPlacementPreview(SDL_Renderer* renderer, std::vector<Turret>& listTurrets, Level& level, Shop& shop, int x, int y, int w, int h);
 	~ItemPlacementPreview();
 
 	void draw(SDL_Renderer* renderer, int TileSize) const;

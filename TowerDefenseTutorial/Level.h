@@ -16,7 +16,9 @@ private:
 	{	
 		EMPTY,
 		WALL,
-		ENEMYSPAWNER
+		TURRET,
+		ENEMYSPAWNER,
+		TARGET
 	};
 	
 	static const unsigned char flowDistanceMax = 255;
@@ -30,16 +32,20 @@ private:
 
 
 public:
-	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY);
+	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target);
 	void draw(SDL_Renderer* renderer, int tileSize);
 
 	Vector2D getRandomEnemySpawnerLocation() const;
+
+	bool isTileTarget(int x, int y) const;
 
 	bool isTileWall(int x, int y) const;
 	void setTileWall(int x, int y);
 	void removeWall(int x, int y);
 
 	bool isTurret(const std::vector<Turret>& listTurrets, int x, int y) const;
+	void setTurret(int x, int y);
+	void removeTurret(int x, int y);
 
 	Vector2D getTargetPos() const;
 	Vector2D getFlowNormal(int x, int y);

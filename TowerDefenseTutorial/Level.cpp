@@ -2,9 +2,11 @@
 
 #include "Turret.h"
 
-Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY) :
+Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target) :
     tileCountX(setTileCountX), tileCountY(setTileCountY),
-    targetX(setTileCountX / 2), targetY(setTileCountY / 2) {
+    //targetX(target.x), targetY(target.y) 
+    targetX(0), targetY(0)
+{
     textureTileWall = TextureLoader::loadTexture(renderer, "TileWall2.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
     textureTileEnemySpawner = TextureLoader::loadTexture(renderer, "Tile Enemy Spawner.bmp");
@@ -21,6 +23,7 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY) :
 
     size_t listTilesSize = (size_t)tileCountX * tileCountY;
     listTiles.assign(listTilesSize, Tile{});
+    setTileType(targetX, targetY, TileType::TARGET);
 
     initializeEnemySpawners();
 
@@ -109,6 +112,11 @@ Vector2D Level::getRandomEnemySpawnerLocation() const
     
 }
 
+bool Level::isTileTarget(int x, int y) const
+{
+    return (x == targetX && y == targetY);
+}
+
 
 
 void Level::drawTile(SDL_Renderer* renderer, int x, int y, int tileSize) {
@@ -159,27 +167,43 @@ bool Level::isTileWall(int x, int y) const
 
 void Level::setTileWall(int x, int y) 
 {
-    // A spawner cannot be changed
-    if (getTileType(x, y) != TileType::ENEMYSPAWNER)
+    TileType tileType = getTileType(x, y);
+    if (tileType != TileType::ENEMYSPAWNER && tileType != TileType::TARGET)
         setTileType(x, y, TileType::WALL);
 
 }
 
 void Level::removeWall(int x, int y)
 {
-    if (getTileType(x, y) != TileType::ENEMYSPAWNER)
+    if (getTileType(x, y) == TileType::WALL)
         setTileType(x, y,TileType::EMPTY);
 }
 
+
+
 bool Level::isTurret(const std::vector<Turret>& listTurrets, int x, int y) const
 {
+    return getTileType(x, y) == TileType::TURRET;
+    /*
     for (Turret currTurret : listTurrets)
     {
         if (currTurret.checkIfOnTile(x, y))
             return true;
     }
 
-    return false;
+    return false;*/
+}
+
+void Level::setTurret(int x, int y)
+{
+    if (getTileType(x, y) == TileType::WALL)
+        setTileType(x, y, TileType::TURRET);
+}
+
+void Level::removeTurret(int x, int y)
+{
+    if (getTileType(x, y) == TileType::TURRET)
+        setTileType(x, y, TileType::WALL);
 }
 
 

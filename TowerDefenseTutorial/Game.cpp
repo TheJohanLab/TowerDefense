@@ -4,7 +4,7 @@
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
     placementModeCurrent(PlacementMode::wall),
-    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize),
+    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize, Vector2D((windowWidth / (tileSize * 2)) , (windowHeight * 0.8) / (tileSize * 2))),
     spawnTimer(0.25f), roundTimer(5.0f),
     m_InputManager(new InputManager())
 {
@@ -30,7 +30,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 
         m_SelectedItem = m_UI->getSelectedItem();
 
-        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, &listTurrets, &level, 0, 0, windowWidth, windowHeight * 0.8);
+        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, listTurrets, level, *m_Shop, 0, 0, windowWidth, windowHeight * 0.8);
         m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
 
         //Load the overlay texture.
