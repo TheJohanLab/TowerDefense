@@ -1,11 +1,11 @@
 #include "Level.h"
+#include "Unit.h"
 
-#include "Turret.h"
-
-Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target) :
+Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target)
+    :
     tileCountX(setTileCountX), tileCountY(setTileCountY),
-    //targetX(target.x), targetY(target.y) 
-    targetX(0), targetY(0)
+    targetX(target.x), targetY(target.y),
+    pathFinding(new Pathfinding(setTileCountX, setTileCountY, target))
 {
     textureTileWall = TextureLoader::loadTexture(renderer, "TileWall2.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
@@ -27,10 +27,22 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vecto
 
     initializeEnemySpawners();
 
-    calculateFlowField();
+    //calculateFlowField();
+    //pathFinding->calculateFlowField(listTiles);
 }
 
 
+Level::~Level()
+{
+    delete pathFinding;
+}
+
+
+
+void Level::setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits)
+{
+    m_ListUnits = listUnits;
+}
 
 void Level::draw(SDL_Renderer* renderer, int tileSize) {
 
@@ -50,8 +62,8 @@ void Level::draw(SDL_Renderer* renderer, int tileSize) {
     }
 
    //Uncomment to draw the flow field.
-   //for (int count = 0; count < listTiles.size(); count++)
-   //    drawTile(renderer, (count % tileCountX), (count / tileCountX), tileSize);
+   for (int count = 0; count < listTiles.size(); count++)
+      drawTile(renderer, (count % tileCountX), (count / tileCountX), tileSize);
    
 
     //Draw the spawner tiles.
@@ -73,7 +85,7 @@ void Level::draw(SDL_Renderer* renderer, int tileSize) {
     //Draw the wall tiles.
     for (int y = 0; y < tileCountY; y++) {
         for (int x = 0; x < tileCountX; x++) {
-            if (isTileWall(x, y)) {
+            if (isTileWall(x, y) || isTurret(x, y)) {
                 int w, h;
                 SDL_QueryTexture(textureTileWall, NULL, NULL, &w, &h);
                 SDL_Rect rect = 
@@ -115,6 +127,11 @@ Vector2D Level::getRandomEnemySpawnerLocation() const
 bool Level::isTileTarget(int x, int y) const
 {
     return (x == targetX && y == targetY);
+}
+
+bool Level::isTileSpawner(int x, int y) const
+{
+    return (getTileType(x, y) == TileType::ENEMYSPAWNER);
 }
 
 
@@ -181,17 +198,9 @@ void Level::removeWall(int x, int y)
 
 
 
-bool Level::isTurret(const std::vector<Turret>& listTurrets, int x, int y) const
+bool Level::isTurret( int x, int y) const
 {
     return getTileType(x, y) == TileType::TURRET;
-    /*
-    for (Turret currTurret : listTurrets)
-    {
-        if (currTurret.checkIfOnTile(x, y))
-            return true;
-    }
-
-    return false;*/
 }
 
 void Level::setTurret(int x, int y)
@@ -207,7 +216,7 @@ void Level::removeTurret(int x, int y)
 }
 
 
-Level::TileType Level::getTileType(int x, int y) const
+TileType Level::getTileType(int x, int y) const
 {
     int index = x + y * tileCountX;
     if (index > -1 && index < listTiles.size() &&
@@ -226,7 +235,8 @@ void Level::setTileType(int x, int y, TileType tileType)
         y > -1 && y < tileCountY)
     {
         listTiles[index].type = tileType;
-        calculateFlowField();
+        //calculateFlowField();
+        pathFinding->calculateFlowField(listTiles);
     }
     
 }
@@ -260,7 +270,7 @@ void Level::calculateFlowField() {
         for (auto& tileSelected : listTiles) {
             tileSelected.flowDirectionX = 0;
             tileSelected.flowDirectionY = 0;
-            tileSelected.flowDistance = flowDistanceMax;
+            tileSelected.flowDistance = FLOW_DISTANCE_MAX;
         }
 
         //Calculate the flow field.
@@ -297,10 +307,11 @@ void Level::calculateDistances() {
             if (indexNeighbor > -1 && indexNeighbor < listTiles.size() && 
                 neighborX > -1 && neighborX < tileCountX &&
                 neighborY > -1 && neighborY < tileCountY &&
-                listTiles[indexNeighbor].type != TileType::WALL) {
+                listTiles[indexNeighbor].type != TileType::WALL &&
+                listTiles[indexNeighbor].type != TileType::TURRET) {
 
                 //Check if the tile has been assigned a distance yet or not.
-                if (listTiles[indexNeighbor].flowDistance == flowDistanceMax) {
+                if (listTiles[indexNeighbor].flowDistance == FLOW_DISTANCE_MAX) {
                     //If not the set it's distance and add it to the queue.
                     listTiles[indexNeighbor].flowDistance = listTiles[indexCurrent].flowDistance + 1;
                     listIndicesToCheck.push(indexNeighbor);
@@ -321,7 +332,7 @@ void Level::calculateFlowDirections() {
 
     for (int indexCurrent = 0; indexCurrent < listTiles.size(); indexCurrent++) {
         //Ensure that the tile has been assigned a distance value.
-        if (listTiles[indexCurrent].flowDistance != flowDistanceMax) {
+        if (listTiles[indexCurrent].flowDistance != FLOW_DISTANCE_MAX) {
             //Set the best distance to the current tile's distance.
             unsigned char flowFieldBest = listTiles[indexCurrent].flowDistance;
 
@@ -360,4 +371,20 @@ Vector2D Level::getFlowNormal(int x, int y) {
         return Vector2D((float)listTiles[index].flowDirectionX, (float)listTiles[index].flowDirectionY).normalize();
 
     return Vector2D();
+}
+
+bool Level::isPathObstructed(int x, int y) const
+{
+   return pathFinding->isPathObstructed(listTiles, x, y);
+}
+
+bool Level::isEnemyOnTile(int x, int y)
+{
+    for (const std::shared_ptr<Unit> unit : *m_ListUnits)
+    {
+        if (unit && (int)unit->getPos().x == x && (int)unit->getPos().y == y)
+            return true;
+    }
+
+    return false;
 }

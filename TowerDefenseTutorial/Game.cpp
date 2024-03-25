@@ -12,6 +12,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
     //Run the game.
     if (window != nullptr && renderer != nullptr) {
         
+        level.setListUnits(&listUnits);
         std::cout << windowWidth << ", " << windowHeight << "\n";
         m_UI = UI::getInstance();
         m_UI->initUI(renderer, windowWidth, windowHeight);
@@ -30,7 +31,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 
         m_SelectedItem = m_UI->getSelectedItem();
 
-        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, listTurrets, level, *m_Shop, 0, 0, windowWidth, windowHeight * 0.8);
+        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
         m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
 
         //Load the overlay texture.
@@ -132,29 +133,31 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
         switch (mouseButtonStatus) {
         case SDL_BUTTON_LEFT:
             
-            switch (*m_SelectedItem) {
-            case itemEnum::WallItem:
-                //Add wall at the mouse position.
-                if (!level.isTileWall((int)posMouse.x, (int)posMouse.y))
-                {
-                    level.setTileWall((int)posMouse.x, (int)posMouse.y);
-                    m_Shop->purchaseItem(*m_SelectedItem);
+            if (m_ItemPlacementPreview->isItemPlacementEnabled())
+            {
+                switch (*m_SelectedItem) {
+                case itemEnum::WallItem:
+                    //Add wall at the mouse position.
+                    if (!level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                    {
+                        level.setTileWall((int)posMouse.x, (int)posMouse.y);
+                        m_Shop->purchaseItem(*m_SelectedItem);
+                    }
+                    break;
+                case itemEnum::TurretItem:
+                    //Add the selected unit at the mouse position.
+                    //if (mouseDownThisFrame)
+                    if (level.isTileWall((int)posMouse.x, (int)posMouse.y) && !level.isTurret((int)posMouse.x, (int)posMouse.y))
+                    {
+                        addTurret(renderer, posMouse);
+                        m_Shop->purchaseItem(*m_SelectedItem);
+                    }
+                    break;
                 }
-                break;
-            case itemEnum::TurretItem:
-                //Add the selected unit at the mouse position.
-                //if (mouseDownThisFrame)
-                if (level.isTileWall((int)posMouse.x, (int)posMouse.y) && !level.isTurret(listTurrets, (int)posMouse.x, (int)posMouse.y))
-                {
-                    addTurret(renderer, posMouse);
-                    m_Shop->purchaseItem(*m_SelectedItem);
-                }
-                break;
-            }
             
+                
+            }
             break;
-
-
         case SDL_BUTTON_RIGHT:
             
             //Remove turret is on tile
@@ -239,7 +242,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
         roundTimer.countDown(dT);
         if (roundTimer.timeSIsZero())
         {
-            spawnUnitCount = 20;
+            spawnUnitCount = 30;
             roundTimer.resetToMax();
         }
     }
@@ -262,7 +265,7 @@ void Game::draw(SDL_Renderer* renderer) {
     //Clear the screen.
     SDL_RenderClear(renderer);
 
-
+    
     
     //Draw everything here.
     //Draw the level.
@@ -306,6 +309,7 @@ void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 {
     Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5);
     listTurrets.emplace_back(Turret(renderer, pos));
+    level.setTurret((int)posMouse.x, (int)posMouse.y);
 }
 
 
@@ -316,6 +320,7 @@ bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
     {
         if (it->checkIfOnTile((int)posMouse.x, (int)posMouse.y))
         {
+            level.removeTurret((int)posMouse.x, (int)posMouse.y);
             it = listTurrets.erase(it);
             return true;
         }

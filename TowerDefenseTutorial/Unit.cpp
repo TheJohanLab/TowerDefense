@@ -1,5 +1,6 @@
 #include "Unit.h"
 #include "Game.h"
+#include "Level.h"
 #include <cmath>
 
 const float Unit::speed = 1.6f;
@@ -10,7 +11,7 @@ const float Unit::size = 0.24f;
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
 	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0})
 {
-	texture = TextureLoader::loadTexture(renderer, "enemy.bmp");
+	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
 
 }
 
@@ -36,12 +37,19 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 	//Find the normal from the flow field.
 	Vector2D directionNormal(level.getFlowNormal((int)pos.x, (int)pos.y));
-	if ( directionNormal.x != m_CurrDirection.x || directionNormal.y != m_CurrDirection.y)
+
+	if (directionNormal.x == 0 && directionNormal.y == 0)
+		std::cout;
+	else if ( directionNormal.x != m_CurrDirection.x || directionNormal.y != m_CurrDirection.y)
 	{
 		float ent;
 		if ((abs(modf(pos.x, &ent) - 0.5f) < 0.05f) && (abs(modf(pos.y, &ent) - 0.5f) < 0.05f) || m_CurrDirection.x == 0.0 && m_CurrDirection.y == 0.0f)
 			m_CurrDirection = directionNormal;
 	}
+	
+
+
+
 
 	// If this reached the target tile, then modify directionNormal to point to the target Tile.
 	if ((int)pos.x == (int)level.getTargetPos().x && (int)pos.y == (int)level.getTargetPos().y)
@@ -55,11 +63,12 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 
 	//Check if the new position would overlap any other units or not.
 	bool moveOk = true;
-			for (int count = 0; count < listUnits.size() && moveOk; count++) {
-			auto& unitSelected = listUnits[count];
-			if (unitSelected != nullptr && unitSelected.get() != this &&
-				unitSelected->checkOverlap(pos, size)) 
-			{
+	for (int count = 0; count < listUnits.size() && moveOk; count++) 
+	{
+		auto& unitSelected = listUnits[count];
+		if (unitSelected != nullptr && unitSelected.get() != this &&
+			unitSelected->checkOverlap(pos, size)) 
+		{
 				//They overlap so check and see if this unit is moving towards or away 
 				//from the unit it overlaps.
 				Vector2D directionToOther = (unitSelected->pos - pos);
@@ -74,24 +83,26 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 						//Don't allow the move.
 						moveOk = false;
 				}
-			}
 		}
+	}
 
-		if (moveOk) {
-			//Check if it needs to move in the x direction.  If so then check if the new x position, plus an amount of spacing 
-			//(to keep from moving too close to the wall) is within a wall or not and update the position as required.
-			const float spacing = 0.35f;
-			int x = (int)(pos.x + posAdd.x + copysign(spacing, posAdd.x));
-			int y = (int)(pos.y);
-			if (posAdd.x != 0.0f && level.isTileWall(x, y) == false)
-				pos.x += posAdd.x;
+	if (moveOk) {
+		//Check if it needs to move in the x direction.  If so then check if the new x position, plus an amount of spacing 
+		//(to keep from moving too close to the wall) is within a wall or not and update the position as required.
+		//const float spacing = 0.70f;
+		const float spacing = 0.35f;
+		int x = (int)(pos.x + posAdd.x + copysign(spacing, posAdd.x));
+		int y = (int)(pos.y);
+		//if (posAdd.x != 0.0f && level.isTileWall(x, y) == false)
+		pos.x += posAdd.x;
 
-			//Do the same for the y direction.
-			x = (int)(pos.x);
-			y = (int)(pos.y + posAdd.y + copysign(spacing, posAdd.y));
-			if (posAdd.y != 0.0f && level.isTileWall(x, y) == false)
-				pos.y += posAdd.y;
-		}
+
+		//Do the same for the y direction.
+		x = (int)(pos.x);
+		y = (int)(pos.y + posAdd.y + copysign(spacing, posAdd.y));
+		//if (posAdd.y != 0.0f && level.isTileWall(x, y) == false)
+			pos.y += posAdd.y;
+	}
 }
 
 

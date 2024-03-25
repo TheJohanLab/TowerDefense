@@ -3,7 +3,7 @@
 #include <memory>
 #include "SDL2/SDL.h"
 #include "Vector2D.h"
-#include "Level.h"
+//#include "Level.h"
 #include "TextureLoader.h"
 #include "Timer.h"
 #include "HealthBar.h"
@@ -13,7 +13,7 @@
 
 #define MAX_HEALTH (uint8_t)4
 class Game;
-
+class Level;
 
 class Unit
 {

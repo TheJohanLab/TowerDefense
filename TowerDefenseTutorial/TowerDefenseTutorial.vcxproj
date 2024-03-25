@@ -137,6 +137,7 @@
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Listeners\OnMouseMotionListener.h" />
+    <ClInclude Include="Controller\Pathfinding.h" />
     <ClInclude Include="View\ItemPlacementPreview.h" />
     <ClInclude Include="ItemSelectionZone.h" />
     <ClInclude Include="Level.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Controller\Pathfinding.cpp" />
     <ClCompile Include="View\ItemPlacementPreview.cpp" />
     <ClCompile Include="ItemSelectionZone.cpp" />
     <ClCompile Include="Level.cpp" />

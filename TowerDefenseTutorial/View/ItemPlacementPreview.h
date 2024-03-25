@@ -22,9 +22,8 @@ private:
 	Vector2D* m_PreviewPos = nullptr;
 	Level& m_Level;
 	Shop& m_Shop;
-	std::vector<Turret>& m_ListTurrets;
 
-	bool m_IsBuildable = false;
+	bool m_Buildable = false;
 
 
 private:
@@ -33,11 +32,13 @@ private:
 	
 
 public:
-	ItemPlacementPreview(SDL_Renderer* renderer, std::vector<Turret>& listTurrets, Level& level, Shop& shop, int x, int y, int w, int h);
+	ItemPlacementPreview(SDL_Renderer* renderer, Level& level, Shop& shop, int x, int y, int w, int h);
 	~ItemPlacementPreview();
 
 	void draw(SDL_Renderer* renderer, int TileSize) const;
 
 	void onMove(int x, int y) override;
+
+	bool isItemPlacementEnabled() const;
 };
 
