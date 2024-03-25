@@ -1,0 +1,38 @@
+#pragma once
+
+#include "SDL2/SDL.h"
+#include "../Listeners/OnMouseMotionListener.h"
+#include "../Utils.h"
+#include "../Vector2D.h"
+#include "../Level.h"
+#include <vector>
+
+class ItemPlacementPreview : public OnMouseMotionListener
+{
+private:
+	itemEnum* m_ItemSelected = nullptr;
+
+	SDL_Texture* m_WallPreviewTexture = nullptr;
+	SDL_Texture* m_TurretPreviewTexture = nullptr;
+
+	SDL_Rect m_PlayingZone;
+
+	Vector2D m_LastPreviewPos;
+	Vector2D* m_PreviewPos = nullptr;
+	Level* m_Level;
+	std::vector<Turret>* m_ListTurrets;
+
+private:
+
+	bool isOnPlayingZone(int mouseX, int mouseYl) const;
+	
+
+public:
+	ItemPlacementPreview(SDL_Renderer* renderer, std::vector<Turret>* listTurrets, Level* level, int x, int y, int w, int h);
+	~ItemPlacementPreview();
+
+	void draw(SDL_Renderer* renderer, int TileSize) const;
+
+	void onMove(int x, int y) override;
+};
+
