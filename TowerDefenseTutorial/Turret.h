@@ -29,9 +29,11 @@ private:
 	std::weak_ptr<Unit> targetUnit;
 	SDL_Texture
 		* textureMain = nullptr,
-		* textureShadow = nullptr;
+		* textureShadow = nullptr,
+		* textureRange = nullptr;
 
 	void drawTextureWithOffset(SDL_Renderer* renderer, SDL_Texture* textureSelected, int offset, int tileSize);
+	void drawTurretRange(SDL_Renderer* renderer, int tileSize);
 	std::weak_ptr<Unit> findEnemyUnit(std::vector<std::shared_ptr<Unit>>& listUnits);
 	bool updateAngle(float dT);
 	void shootProjectile(SDL_Renderer* renderer, std::vector<Projectile>& listProjectiles);

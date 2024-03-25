@@ -36,7 +36,9 @@ void InputManager::handleEvents(SDL_Renderer* renderer, bool& running)
             m_MouseDownStatus = 0;
             break;
 
-            
+        case SDL_MOUSEMOTION:
+            handleMouseMotion(m_Event.button.x, m_Event.button.y);
+            break;            
         }
     }
 }
@@ -63,7 +65,19 @@ void InputManager::handleMouseUnClick(int mouseButtonStatus, int mouseX, int mou
 {
 }
 
+void InputManager::handleMouseMotion(int mouseX, int mouseY) const
+{
+    m_OnMouseMoveCallback(mouseX, mouseY);
+}
+
 void InputManager::addItemSelectionZone(ItemSelectionZone* zone)
 {
     m_ItemSelectionZones.emplace_back(zone);
 }
+
+void InputManager::setMouseMovementCallback(std::function<void(int, int)> onMouseMoveCallback)
+{
+    m_OnMouseMoveCallback = onMouseMoveCallback;
+}
+
+

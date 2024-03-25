@@ -30,7 +30,9 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
 	if (renderer != nullptr)
 	{
 		m_WallTexture = TextureLoader::loadTexture(m_renderer, "TileWall2.bmp");
+		m_WallSelectedTexture = TextureLoader::loadTexture(m_renderer, "TileWallSelected.bmp");
 		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret2.bmp");
+		m_TurretSelectedTexture = TextureLoader::loadTexture(m_renderer, "TurretSelected.bmp");
 	}
 
 }
@@ -79,29 +81,38 @@ void UI::drawItems(SDL_Renderer* renderer) const
 		
 		// Draw the Wall texture
 		int w, h;
+		SDL_Texture* selectedWallTexture;
+		SDL_Texture* selectedTurretTexture;
 		if (m_SelectedItem == itemEnum::WallItem)
 		{
-			SDL_SetTextureColorMod(m_WallTexture, 255, 0, 0);
-			SDL_SetTextureColorMod(m_TurretTexture, 255, 255, 255);
+			selectedWallTexture = m_WallSelectedTexture;
+			selectedTurretTexture = m_TurretTexture;
+			SDL_SetTextureAlphaMod(selectedWallTexture, 128);
+			SDL_SetTextureAlphaMod(selectedTurretTexture, 255);
+			//SDL_SetTextureColorMod(m_WallTexture, 255, 0, 0);
+			//SDL_SetTextureColorMod(m_TurretTexture, 255, 255, 255);
 		}
 		else
 		{
-			SDL_SetTextureColorMod(m_TurretTexture, 255, 0, 0);
-			SDL_SetTextureColorMod(m_WallTexture, 255, 255, 255);
+			selectedWallTexture = m_WallTexture;
+			selectedTurretTexture = m_TurretSelectedTexture;
+			SDL_SetTextureAlphaMod(selectedWallTexture, 255);
+			SDL_SetTextureAlphaMod(selectedTurretTexture, 128);
 		}
 
-		SDL_QueryTexture(m_WallTexture, NULL, NULL, &w, &h);
+		SDL_QueryTexture(selectedWallTexture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
 			(int)(m_UIWidth / 8) - w ,
 			(int)(m_UIHeight + (m_UIHeight / 0.8) * 0.1) - h ,
 			w*2,
 			h*2
-		};
-		SDL_RenderCopy(renderer, m_WallTexture, NULL, &rect);
+		};		
+
+		SDL_RenderCopy(renderer, selectedWallTexture, NULL, &rect);
 
 		// Draw the Turret texture
-		SDL_QueryTexture(m_TurretTexture, NULL, NULL, &w, &h);
+		SDL_QueryTexture(selectedTurretTexture, NULL, NULL, &w, &h);
 
 
 		rect =
@@ -111,7 +122,7 @@ void UI::drawItems(SDL_Renderer* renderer) const
 			w*2,
 			h*2
 		};
-		SDL_RenderCopy(renderer, m_TurretTexture, NULL, &rect);
+		SDL_RenderCopy(renderer, selectedTurretTexture, NULL, &rect);
 	}
 }
 
@@ -154,18 +165,20 @@ void UI::drawCoins(SDL_Renderer* renderer) const
 	}
 
 	// Créer une texture à partir de la surface
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-	if (texture == nullptr) {
+	SDL_Texture * m_CoinTexture = SDL_CreateTextureFromSurface(renderer, surface);
+	if (m_CoinTexture == nullptr) {
 		SDL_Log("Erreur lors de la création de la texture : %s", SDL_GetError());
 		SDL_FreeSurface(surface);
 		return;
 	}
+	SDL_FreeSurface(surface);
 
 	int texW, texH;
-	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+	SDL_QueryTexture(m_CoinTexture, NULL, NULL, &texW, &texH);
 
 	SDL_Rect dstRect = { m_UIWidth * 2/3 + 50, m_UIHeight + 50, texW, texH };
-	SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+	SDL_RenderCopy(renderer, m_CoinTexture, NULL, &dstRect);
+	
 }
 
 
@@ -179,7 +192,6 @@ UI* UI::getInstance()
 
 UI::~UI()
 {
-	std::cout << "UI Destr\n";
 }
 
 
@@ -190,7 +202,7 @@ void UI::draw(SDL_Renderer* renderer) const
 {
 	drawBackground(renderer);
 	drawCoins(renderer);
-	drawHealth(renderer);
+	//drawHealth(renderer);
 	drawItems(renderer);
 }
 

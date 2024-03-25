@@ -2,13 +2,14 @@
 
 
 const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f);
-const float Turret::weaponRange = 5.0f;
+const float Turret::weaponRange = 2.0f;
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D setPos)
 	:pos(setPos), angle(0.0f), timerWeapon(0.5f)
 {
 	textureMain = TextureLoader::loadTexture(renderer, "Turret2.bmp");
 	textureShadow = TextureLoader::loadTexture(renderer, "TurretShadow2.bmp");
+	textureRange = TextureLoader::loadTexture(renderer, "TurretRange.bmp");
 }
 
 void Turret::update(SDL_Renderer* renderer, float dT, 
@@ -89,6 +90,7 @@ void Turret::draw(SDL_Renderer* renderer, int tileSize)
 {
 	drawTextureWithOffset(renderer, textureShadow, 5, tileSize);
 	drawTextureWithOffset(renderer, textureMain, 0, tileSize);
+	drawTurretRange(renderer, tileSize);
 }
 
 bool Turret::checkIfOnTile(int x, int y) const
@@ -110,8 +112,29 @@ void Turret::drawTextureWithOffset(SDL_Renderer* renderer, SDL_Texture* textureS
 			w,
 			h
 		};
+		
 		SDL_RenderCopyEx(renderer, textureSelected, NULL, &rect,
 			MathAddon::angleRadToDeg(angle), NULL, SDL_FLIP_NONE);
+	}
+}
+
+void Turret::drawTurretRange(SDL_Renderer* renderer, int tileSize)
+{
+	if (renderer != nullptr && textureRange != nullptr)
+	{
+		// Draw the image at the turret's position and angle
+		int w, h;
+		SDL_QueryTexture(textureRange, NULL, NULL, &w, &h);
+		SDL_Rect rect =
+		{
+			(int)(pos.x * tileSize) - weaponRange * tileSize,
+			(int)(pos.y * tileSize) - weaponRange * tileSize,
+			weaponRange * 2 * tileSize,
+			weaponRange * 2 * tileSize
+		};
+
+		SDL_SetTextureAlphaMod(textureRange, 30);
+		SDL_RenderCopy(renderer, textureRange, NULL, &rect);
 	}
 }
 

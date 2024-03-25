@@ -136,6 +136,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Listeners\OnMouseMotionListener.h" />
     <ClInclude Include="View\ItemPlacementPreview.h" />
     <ClInclude Include="ItemSelectionZone.h" />
     <ClInclude Include="Level.h" />

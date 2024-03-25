@@ -31,6 +31,7 @@ private:
 	UI* m_UI = nullptr;
 	InputManager* m_InputManager = nullptr;
 	Shop* m_Shop = nullptr;
+	ItemPlacementPreview* m_ItemPlacementPreview = nullptr;
 
 	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	void update(SDL_Renderer* renderer, float dT);

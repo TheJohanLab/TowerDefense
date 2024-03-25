@@ -30,7 +30,10 @@ private:
 	itemEnum m_SelectedItem;
 
 	SDL_Texture* m_WallTexture = nullptr;
+	SDL_Texture* m_WallSelectedTexture = nullptr;
 	SDL_Texture* m_TurretTexture = nullptr;
+	SDL_Texture* m_TurretSelectedTexture = nullptr;
+	SDL_Texture* m_CoinTexture = nullptr;
 
 	void drawBackground(SDL_Renderer* renderer) const;
 	void drawItems(SDL_Renderer* renderer) const;

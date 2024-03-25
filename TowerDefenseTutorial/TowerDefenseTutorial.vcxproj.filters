@@ -78,6 +78,9 @@
     <ClInclude Include="View\ItemPlacementPreview.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Listeners\OnMouseMotionListener.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Tile Arrow Down Left.bmp">

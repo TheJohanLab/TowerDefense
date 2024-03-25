@@ -30,6 +30,9 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 
         m_SelectedItem = m_UI->getSelectedItem();
 
+        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, &listTurrets, &level, 0, 0, windowWidth, windowHeight * 0.8);
+        m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
+
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
@@ -68,6 +71,7 @@ Game::~Game() {
     //Clean up.
     TextureLoader::deallocateTextures();
     delete m_InputManager;
+    delete m_ItemPlacementPreview;
 }
 
 
@@ -286,6 +290,7 @@ void Game::draw(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, textureOverlay, NULL, &rect);
     }*/
 
+    m_ItemPlacementPreview->draw(renderer, tileSize);
     m_UI->draw(renderer);
     //Send the image to the window.
     SDL_RenderPresent(renderer);
@@ -294,13 +299,13 @@ void Game::draw(SDL_Renderer* renderer) {
 
 
 void Game::addUnit(SDL_Renderer* renderer, Vector2D posMouse) {
-    listUnits.push_back(std::make_shared<Unit>(renderer, posMouse));
+    listUnits.emplace_back(std::make_shared<Unit>(renderer, posMouse));
 }
 
 void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 {
     Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5);
-    listTurrets.push_back(Turret(renderer, pos));
+    listTurrets.emplace_back(Turret(renderer, pos));
 }
 
 
