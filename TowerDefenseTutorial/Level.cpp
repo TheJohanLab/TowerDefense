@@ -1,17 +1,17 @@
 #include "Level.h"
 #include "Unit.h"
 
-Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target)
-    :
-    tileCountX(setTileCountX), tileCountY(setTileCountY),
-    targetX(target.x), targetY(target.y),
-    pathFinding(new Pathfinding(setTileCountX, setTileCountY, target))
+Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY)
+    : tileCountX(setTileCountX), tileCountY(setTileCountY),
+    m_GameMap(new GameMap(setTileCountX, setTileCountY))
 {
-    textureTileWall = TextureLoader::loadTexture(renderer, "TileWall2.bmp");
+    textureTileWall = TextureLoader::loadTexture(renderer, "Wall.bmp");
+    textureTileTurretBase = TextureLoader::loadTexture(renderer, "WallTurretBase.bmp");
+    textureTileTree = TextureLoader::loadTexture(renderer, "Tree.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
     textureTileEnemySpawner = TextureLoader::loadTexture(renderer, "Tile Enemy Spawner.bmp");
 
-    textureTileEmpty = TextureLoader::loadTexture(renderer, "Tile Empty.bmp");
+    textureTileEmpty = TextureLoader::loadTexture(renderer, "Path.bmp");
     textureTileArrowUp = TextureLoader::loadTexture(renderer, "Tile Arrow Up.bmp");
     textureTileArrowUpRight = TextureLoader::loadTexture(renderer, "Tile Arrow Up Right.bmp");
     textureTileArrowRight = TextureLoader::loadTexture(renderer, "Tile Arrow Right.bmp");
@@ -22,10 +22,15 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vecto
     textureTileArrowUpLeft = TextureLoader::loadTexture(renderer, "Tile Arrow Up Left.bmp");
 
     size_t listTilesSize = (size_t)tileCountX * tileCountY;
-    listTiles.assign(listTilesSize, Tile{});
-    setTileType(targetX, targetY, TileType::TARGET);
+    listTiles.reserve(listTilesSize);
+    //listTiles.assign(listTilesSize, Tile{});
+    //setTileType(targetX, targetY, TileType::TARGET);
 
-    initializeEnemySpawners();
+    //initializeEnemySpawners();
+
+    m_GameMap->loadMap(listTiles, "Data/Levels/Level1.map");
+    assignTargetPos();
+    m_PathFinding = new Pathfinding(setTileCountX, setTileCountY, Vector2D{(float)targetX, (float)targetY});
 
     //calculateFlowField();
     //pathFinding->calculateFlowField(listTiles);
@@ -34,7 +39,8 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vecto
 
 Level::~Level()
 {
-    delete pathFinding;
+    delete m_PathFinding;
+    delete m_GameMap;
 }
 
 
@@ -46,6 +52,7 @@ void Level::setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits)
 
 void Level::draw(SDL_Renderer* renderer, int tileSize) {
 
+    /*
     //Draw the tile's background color.
     for (int y = 0; y < tileCountY; y++)
     {
@@ -60,7 +67,8 @@ void Level::draw(SDL_Renderer* renderer, int tileSize) {
             SDL_RenderFillRect(renderer, &rect);
         }
     }
-
+    */
+    
    //Uncomment to draw the flow field.
    for (int count = 0; count < listTiles.size(); count++)
       drawTile(renderer, (count % tileCountX), (count / tileCountX), tileSize);
@@ -99,6 +107,29 @@ void Level::draw(SDL_Renderer* renderer, int tileSize) {
             }
         }
     }
+
+ 
+}
+
+void Level::drawTrees(SDL_Renderer* renderer, int tileSize)
+{
+    //draw forest tiles
+    for (int y = 0; y < tileCountY; y++) {
+        for (int x = 0; x < tileCountX; x++) {
+            if (isTileForest(x, y)) {
+                int w, h;
+                SDL_QueryTexture(textureTileTree, NULL, NULL, &w, &h);
+                SDL_Rect rect =
+                {
+                    x * tileSize - ((w - tileSize) / 2),
+                    y * tileSize - (h - tileSize),
+                    w,
+                    h
+                };
+                SDL_RenderCopy(renderer, textureTileTree, NULL, &rect);
+            }
+        }
+    }
 }
 
 Vector2D Level::getRandomEnemySpawnerLocation() const
@@ -124,6 +155,11 @@ Vector2D Level::getRandomEnemySpawnerLocation() const
     
 }
 
+bool Level::isTileForest(int x, int y) const
+{
+    return (getTileType(x, y) == TileType::FOREST);
+}
+
 bool Level::isTileTarget(int x, int y) const
 {
     return (x == targetX && y == targetY);
@@ -139,14 +175,14 @@ bool Level::isTileSpawner(int x, int y) const
 void Level::drawTile(SDL_Renderer* renderer, int x, int y, int tileSize) {
     //Set the default texture image to be empty.
     SDL_Texture* textureSelected = textureTileEmpty;
-
+    /*
     //Ensure that the input tile exists.
     int index = x + y * tileCountX;
     if (index > -1 && index < listTiles.size() &&
         x > -1 && x < tileCountX &&
         y > -1 && y < tileCountY) {
         Tile& tileSelected = listTiles[index];
-
+        
         //Select the correct tile texture based on the flow direction.
         if (tileSelected.flowDirectionX == 0 && tileSelected.flowDirectionY == -1)
             textureSelected = textureTileArrowUp;
@@ -166,7 +202,7 @@ void Level::drawTile(SDL_Renderer* renderer, int x, int y, int tileSize) {
             textureSelected = textureTileArrowUpLeft;
 
     }
-
+    */
     //Draw the tile.
     if (textureSelected != nullptr) {
         SDL_Rect rect = { x * tileSize, y * tileSize, tileSize, tileSize };
@@ -236,9 +272,24 @@ void Level::setTileType(int x, int y, TileType tileType)
     {
         listTiles[index].type = tileType;
         //calculateFlowField();
-        pathFinding->calculateFlowField(listTiles);
+        m_PathFinding->calculateFlowField(listTiles);
     }
     
+}
+
+void Level::assignTargetPos()
+{
+    for (int i = 0; i < listTiles.size() - 1; i++)
+    {
+        if (listTiles[i].type == TileType::TARGET )
+        {
+            targetX = i % tileCountX;
+            targetY = i / tileCountX;
+            return;
+        }
+    }
+
+    std::cout << "No Target tile was found\n";
 }
 
 void Level::initializeEnemySpawners()
@@ -258,7 +309,7 @@ Vector2D Level::getTargetPos() const{
     return Vector2D((float)targetX + 0.5, (float)targetY + 0.5);
 }
 
-
+/*
 void Level::calculateFlowField() {
     //Ensure the target is in bounds.
     int indexTarget = targetX + targetY * tileCountX;
@@ -326,7 +377,7 @@ void Level::calculateFlowDirections() {
     //The offset of the neighboring tiles to be checked.
     /*const int listNeighbors[][2] = {
         {-1, 0}, {-1, 1}, {0, 1}, {1, 1},
-        {1, 0}, {1, -1}, {0, -1}, {-1, -1} };*/
+        {1, 0}, {1, -1}, {0, -1}, {-1, -1} };
 
     const int listNeighbors[][2] = { { -1, 0}, { 1, 0 }, { 0, -1 }, { 0, 1 } };
 
@@ -360,7 +411,7 @@ void Level::calculateFlowDirections() {
         }
     }
 }
-
+*/
 
 
 Vector2D Level::getFlowNormal(int x, int y) {
@@ -375,7 +426,7 @@ Vector2D Level::getFlowNormal(int x, int y) {
 
 bool Level::isPathObstructed(int x, int y) const
 {
-   return pathFinding->isPathObstructed(listTiles, x, y);
+   return m_PathFinding->isPathObstructed(listTiles, x, y);
 }
 
 bool Level::isEnemyOnTile(int x, int y)

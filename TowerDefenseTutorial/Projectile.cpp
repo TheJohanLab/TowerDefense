@@ -32,8 +32,8 @@ void Projectile::draw(SDL_Renderer* renderer, int tileSize)
 		SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
-			(int)(pos.x * tileSize) - w / 2,
-			(int)(pos.y * tileSize) - h / 2,
+			(int)(pos.x * tileSize) - (tileSize / 2) + ((tileSize-w) / 2),
+			(int)(pos.y * tileSize) - (tileSize / 2) - (h * 0.7),
 			w,
 			h
 		};

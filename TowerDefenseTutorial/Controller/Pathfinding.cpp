@@ -79,8 +79,9 @@ void Pathfinding::calculateDistances(std::vector<Tile>& listTiles)
                 neighborX > -1 && neighborX < m_TileCountX &&
                 neighborY > -1 && neighborY < m_TileCountY &&
                 listTiles[indexNeighbor].type != TileType::WALL &&
-                listTiles[indexNeighbor].type != TileType::TURRET) {
-
+                listTiles[indexNeighbor].type != TileType::TURRET && 
+                listTiles[indexNeighbor].type != TileType::FOREST )
+            {
                 //Check if the tile has been assigned a distance yet or not.
                 if (listTiles[indexNeighbor].flowDistance == FLOW_DISTANCE_MAX) {
                     //If not the set it's distance and add it to the queue.

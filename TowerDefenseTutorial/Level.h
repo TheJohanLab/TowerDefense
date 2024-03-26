@@ -7,6 +7,7 @@
 #include "TextureLoader.h"
 #include "Utils.h"
 #include "Controller/Pathfinding.h"
+#include "Controller/GameMap.h"
 #include "Unit.h"
 /*
 struct Tile {
@@ -24,14 +25,16 @@ class Level
 
 public:	
 
-	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY, Vector2D target);
+	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY);
 	~Level();
 
 	void setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);
+	void drawTrees(SDL_Renderer* renderer, int tileSize);
 
 	Vector2D getRandomEnemySpawnerLocation() const;
 
+	bool isTileForest(int x, int y) const;
 	bool isTileTarget(int x, int y) const;
 	bool isTileSpawner(int x, int y) const;
 
@@ -51,27 +54,30 @@ public:
 
 private:
 	void drawTile(SDL_Renderer* renderer, int x, int y, int tileSize);
-	void calculateFlowField();
-	void calculateDistances();
-	void calculateFlowDirections();
+	//void calculateFlowField();
+	//void calculateDistances();
+	//void calculateFlowDirections();
 	TileType getTileType(int x, int y) const;
 	void setTileType(int x, int y, TileType tileType);
 
+	void assignTargetPos();
 	void initializeEnemySpawners();
 
-
-
-	Pathfinding* pathFinding;
+	GameMap* m_GameMap;
+	Pathfinding* m_PathFinding;
 
 	std::vector<Tile> listTiles;
 	std::vector<std::shared_ptr<Unit>>* m_ListUnits;
 	const int tileCountX, tileCountY;
 
-	const int targetX = 0, targetY = 0;
+	int targetX = 0, targetY = 0;
 
-	SDL_Texture* textureTileWall = nullptr,
+	SDL_Texture 
+		*textureTileWall = nullptr,
+		*textureTileTurretBase = nullptr,
 		*textureTileTarget = nullptr,
 		*textureTileEmpty = nullptr,
+		*textureTileTree = nullptr,
 		*textureTileEnemySpawner = nullptr,
 		*textureTileArrowUp = nullptr,
 		*textureTileArrowUpRight = nullptr,

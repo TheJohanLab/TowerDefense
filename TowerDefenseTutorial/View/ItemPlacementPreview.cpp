@@ -12,7 +12,7 @@ ItemPlacementPreview::ItemPlacementPreview(SDL_Renderer* renderer, Level& level,
 	UI* ui = UI::getInstance();
 	m_ItemSelected = ui->getSelectedItem();
 
-	m_WallPreviewTexture = TextureLoader::loadTexture(renderer, "TileWallPreview.bmp");
+	m_WallPreviewTexture = TextureLoader::loadTexture(renderer, "WallPreview.bmp");
 	m_TurretPreviewTexture = TextureLoader::loadTexture(renderer, "TurretPreview.bmp");
 	SDL_SetTextureAlphaMod(m_WallPreviewTexture, 128);
 	SDL_SetTextureAlphaMod(m_TurretPreviewTexture, 128);
@@ -30,14 +30,25 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 	{
 		Vector2D posMouse((float)m_PreviewPos->x / tileSize, (float)m_PreviewPos->y / tileSize);
 		int w, h;
-		SDL_Texture* currentTexture = *m_ItemSelected == itemEnum::WallItem ? m_WallPreviewTexture : m_TurretPreviewTexture;
+		SDL_Texture* currentTexture;
+		int offsetX = 0;
+		int offsetY = 0;
+		if (*m_ItemSelected == itemEnum::TurretItem)
+		{
+			currentTexture = m_TurretPreviewTexture;
+			offsetX = m_TurretPreviewOffsetX;
+			offsetY = m_TurretPreviewOffsetY;
+		}else
+			currentTexture = m_WallPreviewTexture;
+		
+
 		SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
 		m_Buildable ? SDL_SetTextureColorMod(currentTexture, 255, 255, 255) : SDL_SetTextureColorMod(currentTexture, 255, 0, 0);
 
 		SDL_Rect rect =
 		{
-			(int)posMouse.x * tileSize,
-			(int)posMouse.y * tileSize,
+			(int)posMouse.x * tileSize + offsetX,
+			(int)posMouse.y * tileSize + offsetY,
 			w,
 			h
 		};
@@ -48,6 +59,7 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 
 void ItemPlacementPreview::onMove(int x, int y)
 {
+	//std::cout << "x : " << x << ", y : " << y << "\n";
 
 	int tileX = x / TILE_SIZE;
 	int tileY = y / TILE_SIZE;
@@ -59,6 +71,7 @@ void ItemPlacementPreview::onMove(int x, int y)
 		!m_Level.isEnemyOnTile(tileX, tileY) &&
 		!m_Level.isTileTarget(tileX, tileY) &&
 		!m_Level.isTileSpawner(tileX, tileY) &&
+		!m_Level.isTileForest(tileX, tileY) &&
 		!m_Level.isPathObstructed(tileX, tileY)
 		)
 	{

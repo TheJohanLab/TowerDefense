@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Controller\GameMap.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Listeners\OnMouseMotionListener.h" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Controller\GameMap.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Controller\Pathfinding.cpp" />

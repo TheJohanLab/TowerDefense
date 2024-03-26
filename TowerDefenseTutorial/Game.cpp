@@ -4,7 +4,7 @@
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
     placementModeCurrent(PlacementMode::wall),
-    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize, Vector2D((windowWidth / (tileSize * 2)) , (windowHeight * 0.8) / (tileSize * 2))),
+    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize),
     spawnTimer(0.25f), roundTimer(5.0f),
     m_InputManager(new InputManager())
 {
@@ -276,15 +276,18 @@ void Game::draw(SDL_Renderer* renderer) {
         if (unitSelected != nullptr)
             unitSelected->draw(renderer, tileSize);
     
-    //Draw the turrets
-    for (auto& turretSelected : listTurrets)
-        turretSelected.draw(renderer, tileSize);
 
 
     //Draw the projectiles
     for (auto& projectileSelected : listProjectiles)
         projectileSelected.draw(renderer, tileSize);
 
+    //Draw the forest
+    level.drawTrees(renderer, tileSize);
+
+    //Draw the turrets
+    for (auto& turretSelected : listTurrets)
+        turretSelected.draw(renderer, tileSize);
     //Draw the overlay.
     /*if (textureOverlay != nullptr && overlayVisible) {
         int w = 0, h = 0;

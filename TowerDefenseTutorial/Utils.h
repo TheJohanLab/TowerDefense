@@ -15,15 +15,21 @@ enum itemEnum
 
 enum class TileType : char
 {
-	EMPTY,
-	WALL,
-	TURRET,
-	ENEMYSPAWNER,
-	TARGET
+	EMPTY,			//0
+	WALL,			//1
+	TURRET,			//2
+	ENEMYSPAWNER,	//3
+	TARGET,			//4
+	FOREST,			//5
 };
 
 struct Tile {
-	TileType type = TileType::EMPTY;
+	Tile()
+		:type(TileType::EMPTY) {}
+	Tile(TileType tileType)
+		:type(tileType) {}
+
+	TileType type;
 	int flowDirectionX = 0;
 	int flowDirectionY = 0;
 	unsigned char flowDistance = FLOW_DISTANCE_MAX;

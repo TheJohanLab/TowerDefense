@@ -25,6 +25,9 @@ private:
 
 	bool m_Buildable = false;
 
+	int m_TurretPreviewOffsetX = 8;
+	int m_TurretPreviewOffsetY = -10;
+
 
 private:
 

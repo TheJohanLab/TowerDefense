@@ -11,8 +11,7 @@ const float Unit::size = 0.24f;
 Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
 	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0})
 {
-	texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
-
+	texture = TextureLoader::loadTexture(renderer, "EnemyMushroom.bmp");
 }
 
 
@@ -90,18 +89,18 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 		//Check if it needs to move in the x direction.  If so then check if the new x position, plus an amount of spacing 
 		//(to keep from moving too close to the wall) is within a wall or not and update the position as required.
 		//const float spacing = 0.70f;
-		const float spacing = 0.35f;
-		int x = (int)(pos.x + posAdd.x + copysign(spacing, posAdd.x));
-		int y = (int)(pos.y);
+		//const float spacing = 0.1f;
+		//int x = (int)(pos.x + posAdd.x + copysign(spacing, posAdd.x));
+		//int y = (int)(pos.y);
 		//if (posAdd.x != 0.0f && level.isTileWall(x, y) == false)
 		pos.x += posAdd.x;
 
 
 		//Do the same for the y direction.
-		x = (int)(pos.x);
-		y = (int)(pos.y + posAdd.y + copysign(spacing, posAdd.y));
+		//x = (int)(pos.x);
+		//y = (int)(pos.y + posAdd.y + copysign(spacing, posAdd.y));
 		//if (posAdd.y != 0.0f && level.isTileWall(x, y) == false)
-			pos.y += posAdd.y;
+		pos.y += posAdd.y;
 	}
 }
 
