@@ -1,12 +1,12 @@
 #include "GameLoop.h"
 #include <chrono>
-#include "../Game.h"
+#include "Game.h"
 
 
 int CustomEventFilter(void* userdata, SDL_Event* event)
 {
     GameState gameState = *((GameState*)userdata);
-    if (gameState == GameState::WAITING || gameState == GameState::PAUSED && (event->type != SDL_KEYUP && event->key.keysym.sym != SDLK_ESCAPE) &&
+    if ((gameState == GameState::WAITING || gameState == GameState::PAUSED) && (event->type != SDL_KEYUP && event->key.keysym.sym != SDLK_ESCAPE) &&
         event->type != SDL_QUIT) {
         return 0;
     }
@@ -53,14 +53,23 @@ void GameLoop::start(SDL_Renderer* renderer)
                 m_GameManager.draw(renderer);
             }
         }
-        m_GameManager.handleEvents(renderer, m_GameStatus.getGameState());
-
+        
         if (m_GameStatus.getGameState() == GameState::WAITING)
         {
-            m_GameManager.clearLevel();
-            m_GameManager.loadNextLevel();
-
+            if (!m_GameManager.isGameFinished())
+            {
+                m_GameManager.clearLevel();
+                m_GameManager.loadNextLevel();
+                m_GameManager.clearLevel();
+            }
+            else
+            {
+                m_GameManager.drawVictoryScreen(renderer);
+            }
+            
         }
+
+        m_GameManager.handleEvents(renderer, m_GameStatus.getGameState());
     }
 
 }

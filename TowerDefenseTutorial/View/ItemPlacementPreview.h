@@ -3,9 +3,9 @@
 #include "SDL2/SDL.h"
 #include "../Listeners/OnMouseMotionListener.h"
 #include "../Utils/Utils.h"
-#include "../Vector2D.h"
-#include "../Level.h"
-#include "../Shop.h"
+#include "../Utils/Vector2D.h"
+#include "../Model/Level.h"
+#include "../Model/Shop.h"
 #include <vector>
 
 class ItemPlacementPreview : public OnMouseMotionListener

@@ -31,7 +31,7 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY)
     m_GameMap->loadMap(listTiles, "Data/Levels/Level1.map");
     assignTargetPos();
     m_PathFinding = new Pathfinding(setTileCountX, setTileCountY, Vector2D{(float)targetX, (float)targetY});
-
+    m_PathFinding->startPathfinding(listTiles);
     //calculateFlowField();
     //pathFinding->calculateFlowField(listTiles);
 }

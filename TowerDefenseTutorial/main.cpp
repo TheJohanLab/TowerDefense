@@ -17,7 +17,7 @@ int main(int argc, char* args[]) {
 	else {
 
 		TTF_Init();
-
+		Game* game = nullptr;
 		//Create the window.
 		SDL_Window* window = SDL_CreateWindow("Tower Base Defense", 
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 576, 0);
@@ -47,7 +47,7 @@ int main(int argc, char* args[]) {
 				SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
 				//Start the game.
-				Game game(window, renderer, windowWidth, windowHeight);
+				game = new Game(window, renderer, windowWidth, windowHeight);
 
 				//Clean up.
 				SDL_DestroyRenderer(renderer);
@@ -59,6 +59,7 @@ int main(int argc, char* args[]) {
 
 		//Clean up.
 		SDL_Quit();
+		delete game;
 	}
 	return 0;
 }

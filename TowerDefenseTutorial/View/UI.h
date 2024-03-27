@@ -1,16 +1,15 @@
 #pragma once
 
 #include <iostream>
-#include "SDL2/SDL.h"
 #include <map>
-#include "../Vector2D.h"
+#include "SDL2/SDL.h"
 #include "SDL_ttf.h"
-#include "../Shop.h"
-#include "../ItemSelectionZone.h"
+#include "../Utils/Vector2D.h"
 #include "../Utils/Utils.h"
-#include "../Shop.h"
+#include "../Model/Shop.h"
+#include "../Controller/ItemSelectionZone.h"
 
-
+class Game;
 class UI
 {
 
@@ -18,6 +17,7 @@ private:
 	static UI* instance;
 	UI() {};
 
+	Game* m_Game = nullptr;
 	Shop m_Shop;
 	std::map<itemEnum, ItemSelectionZone> m_mapItemSelectionZone;
 	SDL_Renderer* m_renderer = nullptr;
@@ -25,7 +25,7 @@ private:
 
 	size_t m_UIWidth;
 	size_t m_UIHeight;
-	int m_Health;
+	uint8_t* m_Health = nullptr;
 
 	itemEnum m_SelectedItem;
 
@@ -35,12 +35,7 @@ private:
 	SDL_Texture* m_TurretSelectedTexture = nullptr;
 	SDL_Texture* m_CoinTexture = nullptr;
 
-	void drawBackground(SDL_Renderer* renderer) const;
-	void drawItems(SDL_Renderer* renderer) const;
-	void drawHealth(SDL_Renderer* renderer) const;
-	void drawCoins(SDL_Renderer* renderer) const;
 
-	//void updateCoins(uint8_t coins);
 
 public:
 	
@@ -48,7 +43,7 @@ public:
 	~UI();
 
 	Shop* getShop();
-	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight);
+	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, Game* game);
 
 	void draw(SDL_Renderer* renderer) const;
 
@@ -68,6 +63,12 @@ public:
 	{itemEnum::TurretItem, 15}
 	};
 
+private:
+
+	void drawBackground(SDL_Renderer* renderer) const;
+	void drawItems(SDL_Renderer* renderer) const;
+	void drawHealth(SDL_Renderer* renderer) const;
+	void drawCoins(SDL_Renderer* renderer) const;
 	
 };
 

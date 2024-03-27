@@ -34,10 +34,10 @@ void HealthBar::draw(SDL_Renderer* renderer, float posX, float posY) const
 
 		//SDL_QueryTexture(texture, NULL, NULL, &w, &h);
 		SDL_Rect rect = {
-			(int)((posX)) + 12,
-			(int)((posY)) - 8,
+			(int)((posX)) + 3,
+			(int)((posY)) ,
 			25 * m_CurrentHealth/m_MaxHealth,
-			6 };
+			3 };
 		SDL_RenderFillRect(renderer, &rect);
 		//SDL_RenderCopy(renderer, texture, NULL, &rect);
 		//SDL_RenderPresent(renderer);

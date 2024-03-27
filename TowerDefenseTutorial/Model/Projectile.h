@@ -2,8 +2,8 @@
 
 #include <memory>
 #include "SDL2/SDL.h"
-#include "Vector2D.h"
-#include "TextureLoader.h"
+#include "../Utils/Vector2D.h"
+#include "../Controller/TextureLoader.h"
 #include "Unit.h"
 
 class Projectile

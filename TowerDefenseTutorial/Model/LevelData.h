@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include "../Unit.h"
+#include "Unit.h"
 
 struct UnitCounter
 {
@@ -15,6 +15,7 @@ struct LevelData
 	LevelData(uint8_t totalWaves, std::vector<UnitType> units, std::vector<std::vector<UnitCounter>> unitsNb, uint8_t timer)
 		:totalWavesNb(totalWaves), listUnits(units), unitsNbPerWave(unitsNb), timerBetweenWaves(timer)
 	{}
+
 
 	uint8_t	totalWavesNb;
 	std::vector<UnitType> listUnits;

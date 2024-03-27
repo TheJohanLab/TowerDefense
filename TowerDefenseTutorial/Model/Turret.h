@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include "TextureLoader.h"
-#include "Vector2D.h"
 #include "SDL2/SDL.h"
-#include "MathAddon.h"
+#include "../Controller/TextureLoader.h"
+#include "../Utils/Vector2D.h"
+#include "../Utils/MathAddon.h"
 #include "Unit.h"
 #include "Projectile.h"
 #include "Timer.h"

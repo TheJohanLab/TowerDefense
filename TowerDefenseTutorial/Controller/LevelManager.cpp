@@ -1,5 +1,5 @@
 #include "LevelManager.h"
-#include "../Unit.h"
+#include "../Model/Unit.h"
 
 LevelManager::LevelManager()
 {
@@ -12,7 +12,8 @@ LevelManager::~LevelManager()
 
 void LevelManager::loadLevelDataFromXML(const char* path)
 {
-	LevelData level1 = LevelData(2, { UnitType::MUSHROOM }, { {{10, UnitType::MUSHROOM}}, {{20, UnitType::MUSHROOM}} }, 10);
+	LevelData level1 = LevelData(2, { UnitType::MUSHROOM }, 
+		{ {{1, UnitType::MUSHROOM}}, {{0, UnitType::MUSHROOM}}, {{0, UnitType::MUSHROOM}} }, 15);
 	m_LevelDataList.emplace_back(level1);
 }
 

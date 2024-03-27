@@ -1,7 +1,8 @@
 #include "UI.h"
-#include "../TextureLoader.h"
+#include "../Controller/TextureLoader.h"
 #include <algorithm>
 #include <string>
+#include "../Controller/Game.h"
 
 UI* UI::instance = nullptr;
 
@@ -10,8 +11,11 @@ Shop* UI::getShop()
 	return &m_Shop;
 }
 
-void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
+void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, Game* game)
 {
+	m_Game = game;
+	m_Health = m_Game->getpHealth();
+
 	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
 	if (m_uiFont == nullptr) {
 		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
@@ -24,7 +28,6 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight)
 	m_UIWidth = windowsWidth;
 	m_UIHeight = windowsHeight * 0.8;
 
-	m_Health = 150;
 	m_SelectedItem = itemEnum::WallItem;
 
 	if (renderer != nullptr)
@@ -132,7 +135,7 @@ void UI::drawHealth(SDL_Renderer* renderer) const
 	{
 		SDL_Color color = { 50, 50, 50, 255 }; 
 
-		SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(m_Health).c_str(), color);
+		SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(*m_Health).c_str(), color);
 		if (surface == nullptr) {
 			SDL_Log("Erreur lors de la création de la surface de texte : %s", TTF_GetError());
 			return;
@@ -202,14 +205,8 @@ void UI::draw(SDL_Renderer* renderer) const
 {
 	drawBackground(renderer);
 	drawCoins(renderer);
-	//drawHealth(renderer);
+	drawHealth(renderer);
 	drawItems(renderer);
-}
-
-void UI::updateHealth(uint8_t damages)
-{
-	m_Health -= damages;
-	m_Health = std::max(0, (int)m_Health);
 }
 
 
@@ -219,10 +216,6 @@ void UI::selectItem(itemEnum selectedItem, int x, int y)
 	purchaseTurret();
 }
 
-uint8_t UI::getPlayersHealth() const
-{
-	return m_Health;
-}
 
 void UI::purchaseTurret()
 {

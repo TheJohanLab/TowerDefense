@@ -3,11 +3,11 @@
 #include <vector>
 #include <string>
 #include "SDL2/SDL.h"
-#include "Vector2D.h"
-#include "TextureLoader.h"
-#include "Utils/Utils.h"
-#include "Controller/Pathfinding.h"
-#include "Controller/GameMap.h"
+#include "../Utils/Vector2D.h"
+#include "../Controller/TextureLoader.h"
+#include "../Utils/Utils.h"
+#include "../Controller/Pathfinding.h"
+#include "../Controller/GameMap.h"
 #include "Unit.h"
 /*
 struct Tile {

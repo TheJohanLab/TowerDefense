@@ -18,7 +18,9 @@ public:
 	GameState& getGameState();
 	void setGameState(GameState gameState);
 
+	uint8_t* getpHealth();
 	static bool isGamePaused();
+
 
 };
 

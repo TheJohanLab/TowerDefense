@@ -1,6 +1,6 @@
 #include "Pathfinding.h"
 #include <queue>
-#include "../Level.h"
+#include "../Model/Level.h"
 
 Pathfinding::Pathfinding(int tileCountX, int tileCountY, Vector2D targetPos)
     :m_TileCountX(tileCountX), m_TileCountY(tileCountY), m_TargetPos(targetPos)
@@ -12,23 +12,33 @@ Pathfinding::~Pathfinding()
 
 }
 
+void Pathfinding::startPathfinding(std::vector<Tile>& listTiles)
+{
+    m_running = true;
+    calculateFlowField(listTiles);
+}
+
+void Pathfinding::stopPathfinding(std::vector<Tile>& listTiles)
+{
+    m_running = false;
+    resetFlowData(listTiles);
+}
+
 void Pathfinding::calculateFlowField(std::vector<Tile>& listTiles)
 {
-    int indexTarget = m_TargetPos.x + m_TargetPos.y * m_TileCountX;
-    if (indexTarget > -1 && indexTarget < listTiles.size() &&
-        m_TargetPos.x > -1 && m_TargetPos.x < m_TileCountX &&
-        m_TargetPos.y > -1 && m_TargetPos.y < m_TileCountY) {
+    if (m_running)
+    {
+        int indexTarget = m_TargetPos.x + m_TargetPos.y * m_TileCountX;
+        if (indexTarget > -1 && indexTarget < listTiles.size() &&
+            m_TargetPos.x > -1 && m_TargetPos.x < m_TileCountX &&
+            m_TargetPos.y > -1 && m_TargetPos.y < m_TileCountY) {
 
-        //Reset the tile flow data.
-        for (auto& tileSelected : listTiles) {
-            tileSelected.flowDirectionX = 0;
-            tileSelected.flowDirectionY = 0;
-            tileSelected.flowDistance = FLOW_DISTANCE_MAX;
+            resetFlowData(listTiles);
+
+            //Calculate the flow field.
+            calculateDistances(listTiles);
+            calculateFlowDirections(listTiles);
         }
-
-        //Calculate the flow field.
-        calculateDistances(listTiles);
-        calculateFlowDirections(listTiles);
     }
 }
 
@@ -126,5 +136,15 @@ void Pathfinding::calculateFlowDirections(std::vector<Tile>& listTiles)
                 }
             }
         }
+    }
+}
+
+void Pathfinding::resetFlowData(std::vector<Tile>& listTiles)
+{
+    //Reset the tile flow data.
+    for (auto& tileSelected : listTiles) {
+        tileSelected.flowDirectionX = 0;
+        tileSelected.flowDirectionY = 0;
+        tileSelected.flowDistance = FLOW_DISTANCE_MAX;
     }
 }

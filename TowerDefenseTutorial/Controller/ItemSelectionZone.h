@@ -1,10 +1,9 @@
 #pragma once
 
-#include "SDL2/SDL.h"
-#include "Listeners/OnClickListener.h"
-//#include "View/UI.h"
 #include <functional>
-#include "Utils/Utils.h"
+#include "SDL2/SDL.h"
+#include "../Listeners/OnClickListener.h"
+#include "../Utils/Utils.h"
 
 class ItemSelectionZone : public OnClickListener
 {

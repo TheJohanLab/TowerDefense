@@ -133,35 +133,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Controller\Game.h" />
     <ClInclude Include="Controller\GameMap.h" />
     <ClInclude Include="Controller\GameStatus.h" />
     <ClInclude Include="Controller\GameLoop.h" />
-    <ClInclude Include="HealthBar.h" />
-    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Model\HealthBar.h" />
+    <ClInclude Include="Controller\InputManager.h" />
     <ClInclude Include="Controller\LevelManager.h" />
     <ClInclude Include="Listeners\OnGameOverListener.h" />
     <ClInclude Include="Listeners\OnMouseMotionListener.h" />
     <ClInclude Include="Controller\Pathfinding.h" />
     <ClInclude Include="Model\LevelData.h" />
-    <ClInclude Include="Model\UnitFactory.h" />
+    <ClInclude Include="Model\Players.h" />
+    <ClInclude Include="Controller\UnitFactory.h" />
+    <ClInclude Include="Controller\PlayerManager.h" />
     <ClInclude Include="View\ItemPlacementPreview.h" />
-    <ClInclude Include="ItemSelectionZone.h" />
-    <ClInclude Include="Level.h" />
+    <ClInclude Include="Controller\ItemSelectionZone.h" />
+    <ClInclude Include="Model\Level.h" />
     <ClInclude Include="Listeners\Observer.h" />
     <ClInclude Include="Listeners\OnBaseReachedListener.h" />
     <ClInclude Include="Listeners\OnClickListener.h" />
     <ClInclude Include="Listeners\OnDestroyUnitListener.h" />
-    <ClInclude Include="MathAddon.h" />
-    <ClInclude Include="Projectile.h" />
-    <ClInclude Include="Shop.h" />
-    <ClInclude Include="TextureLoader.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Turret.h" />
+    <ClInclude Include="Utils\MathAddon.h" />
+    <ClInclude Include="Model\Projectile.h" />
+    <ClInclude Include="Model\Shop.h" />
+    <ClInclude Include="Controller\TextureLoader.h" />
+    <ClInclude Include="Model\Timer.h" />
+    <ClInclude Include="Model\Turret.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="View\UI.h" />
-    <ClInclude Include="Unit.h" />
-    <ClInclude Include="Vector2D.h" />
+    <ClInclude Include="Model\Unit.h" />
+    <ClInclude Include="Utils\Vector2D.h" />
     <ClInclude Include="View\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -183,28 +185,29 @@
     <Image Include="Data\Images\Unit.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Controller\Game.cpp" />
     <ClCompile Include="Controller\GameMap.cpp" />
     <ClCompile Include="Controller\GameStatus.cpp" />
     <ClCompile Include="Controller\GameLoop.cpp" />
-    <ClCompile Include="HealthBar.cpp" />
-    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Model\HealthBar.cpp" />
+    <ClCompile Include="Controller\InputManager.cpp" />
     <ClCompile Include="Controller\Pathfinding.cpp" />
     <ClCompile Include="Controller\LevelManager.cpp" />
-    <ClCompile Include="Model\UnitFactory.cpp" />
+    <ClCompile Include="Controller\UnitFactory.cpp" />
+    <ClCompile Include="Controller\PlayerManager.cpp" />
     <ClCompile Include="View\ItemPlacementPreview.cpp" />
-    <ClCompile Include="ItemSelectionZone.cpp" />
-    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="Controller\ItemSelectionZone.cpp" />
+    <ClCompile Include="Model\Level.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MathAddon.cpp" />
-    <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="Shop.cpp" />
-    <ClCompile Include="TextureLoader.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="Utils\MathAddon.cpp" />
+    <ClCompile Include="Model\Projectile.cpp" />
+    <ClCompile Include="Model\Shop.cpp" />
+    <ClCompile Include="Controller\TextureLoader.cpp" />
+    <ClCompile Include="Model\Timer.cpp" />
+    <ClCompile Include="Model\Turret.cpp" />
     <ClCompile Include="View\UI.cpp" />
-    <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Vector2D.cpp" />
+    <ClCompile Include="Model\Unit.cpp" />
+    <ClCompile Include="Utils\Vector2D.cpp" />
     <ClCompile Include="View\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

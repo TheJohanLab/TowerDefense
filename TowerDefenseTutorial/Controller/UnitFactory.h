@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <functional>
-#include "../Unit.h"
-#include "../Vector2D.h"
+#include "../Model/Unit.h"
+#include "../Utils/Vector2D.h"
 
 class UnitFactory
 {

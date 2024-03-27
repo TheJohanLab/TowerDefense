@@ -3,7 +3,7 @@
 #include <vector>
 #include "SDL2/SDL.h"
 #include "ItemSelectionZone.h"
-#include "View/ItemPlacementPreview.h"
+#include "../View/ItemPlacementPreview.h"
 
 class InputManager
 {

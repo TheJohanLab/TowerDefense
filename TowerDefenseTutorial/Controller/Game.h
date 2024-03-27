@@ -3,17 +3,20 @@
 #include <chrono>
 #include <memory>
 #include "SDL2/SDL.h"
-#include "Unit.h"
-#include "Level.h"
-#include "Timer.h"
-#include "Turret.h"
-#include "Projectile.h"
-#include "Listeners/OnDestroyUnitListener.h"
 #include "InputManager.h"
-#include "Utils/Utils.h"
-#include "Controller/GameLoop.h"
-#include "Controller/LevelManager.h"
-#include "Model/LevelData.h"
+#include "GameLoop.h"
+#include "LevelManager.h"
+#include "PlayerManager.h"
+#include "../Model/Unit.h"
+#include "../Model/Level.h"
+#include "../Model/Timer.h"
+#include "../Model/Turret.h"
+#include "../Model/Projectile.h"
+#include "../Listeners/OnDestroyUnitListener.h"
+#include "../Utils/Utils.h"
+#include "../Model/LevelData.h"
+
+#include "../Model/Shop.h"
 
 class Game
 {
@@ -25,6 +28,7 @@ private:
 	GameStatus* m_GameStatus = nullptr;
 	GameLoop* m_GameLoop = nullptr;
 	LevelManager* m_LevelManager = nullptr;
+	PlayerManager* m_PlayerManager = nullptr;
 
 	Level m_Level;
 	LevelData* m_LevelData = nullptr;
@@ -61,6 +65,11 @@ public:
 	void update(SDL_Renderer* renderer, float dT);
 	void draw(SDL_Renderer* renderer);
 
+	bool isGameFinished() const;
+	void drawVictoryScreen(SDL_Renderer* renderer) const;
+
+	uint8_t* getpHealth();
+
 private:
 	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	
@@ -76,6 +85,6 @@ private:
 
 	void handleWaves(SDL_Renderer* renderer, float dT);
 
-
+	
 
 };

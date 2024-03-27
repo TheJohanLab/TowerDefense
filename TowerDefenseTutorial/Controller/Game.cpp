@@ -1,7 +1,8 @@
 #include "Game.h"
-#include "View/UI.h"
-#include "Model/UnitFactory.h"
+#include "../View/UI.h"
+#include "UnitFactory.h"
 #include <cstdlib>
+
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
     m_Level(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE),
@@ -17,7 +18,7 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 
         m_Level.setListUnits(&m_ListUnits);
         m_UI = UI::getInstance();
-        m_UI->initUI(renderer, windowWidth, windowHeight);
+        m_UI->initUI(renderer, windowWidth, windowHeight, this);
         m_Shop = m_UI->getShop();
 
         ItemSelectionZone wallZone( 0, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
@@ -140,7 +141,6 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
         }
     }
 }
-
 
 
 void Game::update(SDL_Renderer* renderer, float dT) {
@@ -333,6 +333,33 @@ void Game::handleWaves(SDL_Renderer* renderer, float dT)
     else
     {
         if (m_ListUnits.empty())
-           m_GameStatus->setGameState(GameState::PAUSED);
+           m_GameStatus->setGameState(GameState::WAITING);
     }
+}
+
+bool Game::isGameFinished() const
+{
+    return m_LevelManager->isGameFinished();
+}
+
+void Game::drawVictoryScreen(SDL_Renderer* renderer) const
+{
+    SDL_RenderClear(renderer);
+
+    SDL_Texture* texture = TextureLoader::loadTexture(renderer, "Victory.bmp");
+    SDL_SetTextureAlphaMod(texture, 125);
+    int w, h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_Rect rect = {
+        0,
+        0,
+        w,
+        h };
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderPresent(renderer);
+}
+
+uint8_t* Game::getpHealth()
+{
+    return m_GameStatus->getpHealth();
 }

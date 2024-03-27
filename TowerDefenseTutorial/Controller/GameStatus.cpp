@@ -19,4 +19,9 @@ void GameStatus::setGameState(GameState gameState)
 	m_GameState = gameState;
 }
 
+uint8_t* GameStatus::getpHealth()
+{
+	return &m_LifePoints;
+}
+
 

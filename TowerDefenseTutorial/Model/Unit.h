@@ -2,14 +2,14 @@
 #include <vector>
 #include <memory>
 #include "SDL2/SDL.h"
-#include "Vector2D.h"
+#include "../Utils/Vector2D.h"
 
-#include "TextureLoader.h"
+#include "../Controller/TextureLoader.h"
 #include "Timer.h"
 #include "HealthBar.h"
 
-#include "Listeners/OnBaseReachedListener.h"
-#include "Listeners/OnDestroyUnitListener.h"
+#include "../Listeners/OnBaseReachedListener.h"
+#include "../Listeners/OnDestroyUnitListener.h"
 
 #define MAX_HEALTH (uint8_t)4
 class Game;
