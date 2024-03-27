@@ -3,16 +3,17 @@
 class Timer
 {
 private:
-	float timeSMax;
-	float timeSCurrent;
+	float m_TimeSMax;
+	float m_TimeSCurrent;
 
 public:
-	Timer(float setTimeSMax, float setTimeSCurrent = 0.0f);
+	Timer(float timeSMax, float timeSCurrent = 0.0f);
 
+	void setTimeMax(float timeSMax);
 	void countUp(float dT);
 	void countDown(float dT);
 	void resetToZero();
 	void resetToMax();
-	bool timeSIsZero();
-	bool timeSIsGreaterOrEqual(float timeSCheck);
+	bool timeSIsZero() const;
+	bool timeSIsGreaterOrEqual(float timeSCheck) const;
 };

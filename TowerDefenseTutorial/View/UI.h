@@ -7,7 +7,7 @@
 #include "SDL_ttf.h"
 #include "../Shop.h"
 #include "../ItemSelectionZone.h"
-#include "../Utils.h"
+#include "../Utils/Utils.h"
 #include "../Shop.h"
 
 

@@ -135,10 +135,16 @@
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Controller\GameMap.h" />
+    <ClInclude Include="Controller\GameStatus.h" />
+    <ClInclude Include="Controller\GameLoop.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Controller\LevelManager.h" />
+    <ClInclude Include="Listeners\OnGameOverListener.h" />
     <ClInclude Include="Listeners\OnMouseMotionListener.h" />
     <ClInclude Include="Controller\Pathfinding.h" />
+    <ClInclude Include="Model\LevelData.h" />
+    <ClInclude Include="Model\UnitFactory.h" />
     <ClInclude Include="View\ItemPlacementPreview.h" />
     <ClInclude Include="ItemSelectionZone.h" />
     <ClInclude Include="Level.h" />
@@ -152,7 +158,7 @@
     <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Turret.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="View\UI.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Vector2D.h" />
@@ -179,9 +185,13 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Controller\GameMap.cpp" />
+    <ClCompile Include="Controller\GameStatus.cpp" />
+    <ClCompile Include="Controller\GameLoop.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Controller\Pathfinding.cpp" />
+    <ClCompile Include="Controller\LevelManager.cpp" />
+    <ClCompile Include="Model\UnitFactory.cpp" />
     <ClCompile Include="View\ItemPlacementPreview.cpp" />
     <ClCompile Include="ItemSelectionZone.cpp" />
     <ClCompile Include="Level.cpp" />

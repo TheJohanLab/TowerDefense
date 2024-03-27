@@ -1,19 +1,21 @@
 #include "Game.h"
 #include "View/UI.h"
-
+#include "Model/UnitFactory.h"
+#include <cstdlib>
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
-    placementModeCurrent(PlacementMode::wall),
-    level(renderer, windowWidth / tileSize, (windowHeight * 0.8) / tileSize),
-    spawnTimer(0.25f), roundTimer(5.0f),
-    m_InputManager(new InputManager())
+    m_Level(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE),
+    m_InputManager(new InputManager()),
+    m_GameStatus(new GameStatus()),
+    m_GameLoop(new GameLoop(*this, *m_GameStatus)),
+    m_LevelManager(new LevelManager())
 {
 
-    //Run the game.
     if (window != nullptr && renderer != nullptr) {
         
-        level.setListUnits(&listUnits);
-        std::cout << windowWidth << ", " << windowHeight << "\n";
+        std::srand(std::time(nullptr));
+
+        m_Level.setListUnits(&m_ListUnits);
         m_UI = UI::getInstance();
         m_UI->initUI(renderer, windowWidth, windowHeight);
         m_Shop = m_UI->getShop();
@@ -31,102 +33,63 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
 
         m_SelectedItem = m_UI->getSelectedItem();
 
-        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
+        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
         m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
 
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
+        loadNextLevel();
+        startLevel();
 
-        //Store the current times for the clock.
-        auto time1 = std::chrono::system_clock::now();
-        auto time2 = std::chrono::system_clock::now();
+        m_GameLoop->start(renderer);
 
-        //The amount of time for each frame (60 fps).
-        const float dT = 1.0f / 60.0f;
-
-
-        //Start the game loop and run until it's time to stop.
-        bool running = true;
-        while (running) {
-            //Determine how much time has elapsed since the last frame.
-            time2 = std::chrono::system_clock::now();
-            std::chrono::duration<float> timeDelta = time2 - time1;
-            float timeDeltaFloat = timeDelta.count();
-
-            //If enough time has passed then do everything required to generate the next frame.
-            if (timeDeltaFloat >= dT) {
-                //Store the new time for the next frame.
-                time1 = time2;
-
-                //processEvents(renderer, running);
-                m_InputManager->handleEvents(renderer, running);
-                update(renderer, dT);
-                draw(renderer);
-            }
-        }
     }
 }
 
 
 Game::~Game() {
-    //Clean up.
+
     TextureLoader::deallocateTextures();
     delete m_InputManager;
     delete m_ItemPlacementPreview;
+    delete m_GameLoop;
+    delete m_LevelManager;
+}
+
+void Game::loadNextLevel()
+{
+    m_LevelData = m_LevelManager->loadNextLevel();
+
+
+    m_WaveTimer.setTimeMax(m_LevelData->timerBetweenWaves);
+    m_TotalWaves = m_LevelData->totalWavesNb;
+    m_WaveIndex = 0;
+    
+}
+
+void Game::clearLevel()
+{
+    m_ListUnits.clear();
+    m_WaveIndex = 0;
+}
+
+void Game::startLevel()
+{
+    m_WaveTimer.resetToZero();
+    m_WaveIndex = -1;
+    m_GameStatus->setGameState(GameState::RUNNING);
+}
+
+void Game::handleEvents(SDL_Renderer* renderer, GameState& gameState)
+{
+    m_InputManager->handleEvents(renderer, gameState);
 }
 
 
 
 void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY) {
-    bool mouseDownThisFrame = false;
+    //bool mouseDownThisFrame = false;
     
-    /*//Process events.
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            running = false;
-            break;
-
-        case SDL_MOUSEBUTTONDOWN:
-            mouseDownThisFrame = (mouseDownStatus == 0);
-            if (event.button.button == SDL_BUTTON_LEFT)
-                mouseDownStatus = SDL_BUTTON_LEFT;
-            else if (event.button.button == SDL_BUTTON_RIGHT)
-                mouseDownStatus = SDL_BUTTON_RIGHT;
-            break;
-        case SDL_MOUSEBUTTONUP:
-            mouseDownStatus = 0;
-            break;
-
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.scancode) {
-                //Quit the game.
-            case SDL_SCANCODE_ESCAPE:
-                running = false;
-                break;
-
-                //Set the current gamemode.
-            case SDL_SCANCODE_1:
-                placementModeCurrent = PlacementMode::wall;
-                break;
-            case SDL_SCANCODE_2:
-                placementModeCurrent = PlacementMode::turret;
-                break;
-
-                //Show/hide the overlay
-            case SDL_SCANCODE_H:
-                overlayVisible = !overlayVisible;
-                break;
-            }
-        }
-    }
-    */
-
-    //Process input from the mouse cursor.
-    //int mouseX = 0, mouseY = 0;
-    //SDL_GetMouseState(&mouseX, &mouseY);
-    //Convert from the window's coordinate system to the game's coordinate system.
     Vector2D posMouse((float)mouseX / tileSize, (float)mouseY / tileSize);
 
     if (m_Shop->isBuyable(*m_SelectedItem) && mouseButtonStatus > 0) {
@@ -138,16 +101,16 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
                 switch (*m_SelectedItem) {
                 case itemEnum::WallItem:
                     //Add wall at the mouse position.
-                    if (!level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                    if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
                     {
-                        level.setTileWall((int)posMouse.x, (int)posMouse.y);
+                        m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
                         m_Shop->purchaseItem(*m_SelectedItem);
                     }
                     break;
                 case itemEnum::TurretItem:
                     //Add the selected unit at the mouse position.
                     //if (mouseDownThisFrame)
-                    if (level.isTileWall((int)posMouse.x, (int)posMouse.y) && !level.isTurret((int)posMouse.x, (int)posMouse.y))
+                    if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y) && !m_Level.isTurret((int)posMouse.x, (int)posMouse.y))
                     {
                         addTurret(renderer, posMouse);
                         m_Shop->purchaseItem(*m_SelectedItem);
@@ -167,9 +130,9 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
                 break;
             }
 
-            if (level.isTileWall((int)posMouse.x, (int)posMouse.y))
+            if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
             {
-                level.removeWall((int)posMouse.x, (int)posMouse.y);
+                m_Level.removeWall((int)posMouse.x, (int)posMouse.y);
                 m_Shop->sellItem(itemEnum::WallItem);
             }
 
@@ -181,32 +144,32 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
 
 
 void Game::update(SDL_Renderer* renderer, float dT) {
-    //Update the units.
+    
+    handleWaves(renderer, dT);
+    handleSpawnUnits(renderer, dT);
+
     updateUnits(dT);
 
-    //Update the turrets
-    for (auto& turretSelected : listTurrets)
-        turretSelected.update(renderer, dT, listUnits, listProjectiles);
+    for (auto& turretSelected : m_ListTurrets)
+        turretSelected.update(renderer, dT, m_ListUnits, m_ListProjectiles);
 
-    //Update the projectiles
     updateProjectiles(dT);
-
-    updateSpawnUnitsIfRequired(renderer, dT);
+    
 }
 
 
 void Game::updateUnits(float dT) {
     //Loop through the list of units and update all of them.
-    auto it = listUnits.begin();
-    while (it != listUnits.end()) {
+    auto it = m_ListUnits.begin();
+    while (it != m_ListUnits.end()) {
         bool increment = true;
 
         if ((*it) != nullptr) {
-            (*it)->update(dT, level, listUnits);
+            (*it)->update(dT, m_Level, m_ListUnits);
 
             //Check if the unit is still alive.  If not then erase it and don't increment the iterator.
             if ((*it)->isAlive() == false) {
-                it = listUnits.erase(it);
+                it = m_ListUnits.erase(it);
                 increment = false;
             }
         }
@@ -218,41 +181,62 @@ void Game::updateUnits(float dT) {
 
 void Game::updateProjectiles(float dT)
 {
-    auto projIt = listProjectiles.begin();
-    while (projIt != listProjectiles.end())
+    auto projIt = m_ListProjectiles.begin();
+    while (projIt != m_ListProjectiles.end())
     {
-        projIt->update(dT, listUnits);
+        projIt->update(dT, m_ListUnits);
 
         //Check if the projectile has collided or not
         if (projIt->getCollisionOccured())
-            projIt = listProjectiles.erase(projIt);
+            projIt = m_ListProjectiles.erase(projIt);
         else
             projIt++;
     }
         
 }
 
-void Game::updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT)
+void Game::updateWaveTimer(SDL_Renderer* renderer, float dT)
 {
-    spawnTimer.countDown(dT);
 
-    //Check if the round needs to start.
-    if (listUnits.empty() && spawnUnitCount == 0)
+    m_WaveTimer.countDown(dT);
+    if (m_WaveTimer.timeSIsZero())
     {
-        roundTimer.countDown(dT);
-        if (roundTimer.timeSIsZero())
-        {
-            spawnUnitCount = 30;
-            roundTimer.resetToMax();
-        }
+        m_WaveIndex++;
+        for (int i = 0; i < m_LevelData->listUnits.size(); i++)
+            m_SpawnUnitCount += m_LevelData->unitsNbPerWave[m_WaveIndex][i].count;
+
+        m_WaveTimer.resetToMax();
+        m_SpawnTimer.resetToMax();
     }
 
-    //Add a unit it needed.
-    if (spawnUnitCount > 0 && spawnTimer.timeSIsZero())
+}
+
+void Game::handleSpawnUnits(SDL_Renderer* renderer, float dT)
+{
+    if (m_SpawnUnitCount > 0)
+        spawnUnits(renderer, m_LevelData->unitsNbPerWave[m_WaveIndex], dT);
+
+}
+
+void Game::spawnUnits(SDL_Renderer* renderer, std::vector<UnitCounter>& listEnemies, float dT)
+{
+    m_SpawnTimer.countDown(dT);
+
+    if (m_SpawnTimer.timeSIsZero())
     {
-        addUnit(renderer, level.getRandomEnemySpawnerLocation());
-        spawnUnitCount--;
-        spawnTimer.resetToMax();
+        uint8_t enemyIndex = std::rand() % listEnemies.size();
+
+        //Delete the enemies'type that are fully spawned
+        if (listEnemies[enemyIndex].count == 0)
+            listEnemies.erase(listEnemies.begin() + enemyIndex);
+        else
+        {
+            addUnit(renderer, m_Level.getRandomEnemySpawnerLocation(), listEnemies[enemyIndex].unitType);
+            listEnemies[enemyIndex].count--;
+            m_SpawnUnitCount--;
+            m_SpawnTimer.resetToMax();
+        }
+        
     }
 }
 
@@ -268,26 +252,26 @@ void Game::draw(SDL_Renderer* renderer) {
     
     
     //Draw everything here.
-    //Draw the level.
-    level.draw(renderer, tileSize);
+    //Draw the m_Level.
+    m_Level.draw(renderer, tileSize);
 
     //Draw the enemy units.
-    for (auto& unitSelected : listUnits)
+    for (auto& unitSelected : m_ListUnits)
         if (unitSelected != nullptr)
             unitSelected->draw(renderer, tileSize);
     
 
-
-    //Draw the projectiles
-    for (auto& projectileSelected : listProjectiles)
-        projectileSelected.draw(renderer, tileSize);
-
     //Draw the forest
-    level.drawTrees(renderer, tileSize);
+    m_Level.drawTrees(renderer, tileSize);
 
     //Draw the turrets
-    for (auto& turretSelected : listTurrets)
+    for (auto& turretSelected : m_ListTurrets)
         turretSelected.draw(renderer, tileSize);
+
+    //Draw the projectiles
+    for (auto& projectileSelected : m_ListProjectiles)
+        projectileSelected.draw(renderer, tileSize);
+
     //Draw the overlay.
     /*if (textureOverlay != nullptr && overlayVisible) {
         int w = 0, h = 0;
@@ -304,27 +288,32 @@ void Game::draw(SDL_Renderer* renderer) {
 
 
 
-void Game::addUnit(SDL_Renderer* renderer, Vector2D posMouse) {
-    listUnits.emplace_back(std::make_shared<Unit>(renderer, posMouse));
+void Game::addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type) {
+
+    std::shared_ptr<Unit> pUnit = UnitFactory::createUnit(renderer, pos, type);
+    if (pUnit != nullptr)
+        m_ListUnits.emplace_back(std::make_shared<Unit>(renderer, pos));
+    else
+        std::cout << "Erreur lors de la creation de l'unit de type " << (char)type << "\n";
 }
 
 void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 {
     Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5);
-    listTurrets.emplace_back(Turret(renderer, pos));
-    level.setTurret((int)posMouse.x, (int)posMouse.y);
+    m_ListTurrets.emplace_back(Turret(renderer, pos));
+    m_Level.setTurret((int)posMouse.x, (int)posMouse.y);
 }
 
 
 
 bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
 {
-    for (auto it = listTurrets.begin(); it != listTurrets.end();)
+    for (auto it = m_ListTurrets.begin(); it != m_ListTurrets.end();)
     {
         if (it->checkIfOnTile((int)posMouse.x, (int)posMouse.y))
         {
-            level.removeTurret((int)posMouse.x, (int)posMouse.y);
-            it = listTurrets.erase(it);
+            m_Level.removeTurret((int)posMouse.x, (int)posMouse.y);
+            it = m_ListTurrets.erase(it);
             return true;
         }
         else
@@ -333,4 +322,17 @@ bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
 
     return false;
        
+}
+
+void Game::handleWaves(SDL_Renderer* renderer, float dT)
+{
+    if (m_WaveIndex != m_TotalWaves-1)
+    {
+        updateWaveTimer(renderer, dT);
+    }
+    else
+    {
+        if (m_ListUnits.empty())
+           m_GameStatus->setGameState(GameState::PAUSED);
+    }
 }

@@ -2,7 +2,7 @@
 
 #include "SDL2/SDL.h"
 #include "../Listeners/OnMouseMotionListener.h"
-#include "../Utils.h"
+#include "../Utils/Utils.h"
 #include "../Vector2D.h"
 #include "../Level.h"
 #include "../Shop.h"

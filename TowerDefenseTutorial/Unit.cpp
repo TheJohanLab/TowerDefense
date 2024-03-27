@@ -3,7 +3,7 @@
 #include "Level.h"
 #include <cmath>
 
-const float Unit::speed = 1.6f;
+const float Unit::speed = 1.0f;
 //const float Unit::size = 0.48f;
 const float Unit::size = 0.24f;
 

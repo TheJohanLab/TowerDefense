@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "../Vector2D.h"
-#include "../Utils.h"
+#include "../Utils/Utils.h"
 
 class Pathfinding
 {
@@ -22,5 +22,6 @@ public:
 	void calculateFlowField(std::vector<Tile>& listTiles);
 
 	bool isPathObstructed(std::vector<Tile> listTiles, int x, int y);
+
 };
 

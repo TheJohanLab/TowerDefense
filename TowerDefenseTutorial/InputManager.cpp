@@ -8,17 +8,23 @@ InputManager::~InputManager()
 {
 }
 
-void InputManager::handleEvents(SDL_Renderer* renderer, bool& running)
+
+void InputManager::handleEvents(SDL_Renderer* renderer, GameState& gameState)
 {
     bool mouseDownThisFrame = false;
 
+    
     //Process events.
     while (SDL_PollEvent(&m_Event)) {
-        switch (m_Event.type) {
-        case SDL_QUIT:
-            running = false;
-            break;
 
+        switch (m_Event.type) {
+        case SDL_KEYDOWN:
+            if (m_Event.key.keysym.sym == SDLK_ESCAPE) 
+                gameState = gameState == GameState::RUNNING ? GameState::PAUSED : GameState::RUNNING;
+            break;
+        case SDL_QUIT:
+            gameState = GameState::STOPPED;
+            break;
         case SDL_MOUSEBUTTONDOWN:
             mouseDownThisFrame = (m_MouseDownStatus == 0);
             if (m_Event.button.button == SDL_BUTTON_LEFT)
@@ -40,6 +46,9 @@ void InputManager::handleEvents(SDL_Renderer* renderer, bool& running)
             handleMouseMotion(m_Event.button.x, m_Event.button.y);
             break;            
         }
+        
+        
+        
     }
 }
 

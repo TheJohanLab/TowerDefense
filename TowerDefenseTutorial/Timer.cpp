@@ -1,46 +1,48 @@
 #include "Timer.h"
+#include <algorithm>
 
-Timer::Timer(float setTimeSMax, float setTimeSCurrent) :
-	timeSMax(setTimeSMax), timeSCurrent(setTimeSCurrent) {
+Timer::Timer(float timeSMax, float timeSCurrent) :
+	m_TimeSMax(timeSMax), m_TimeSCurrent(timeSCurrent) {
 
 }
 
 
+void Timer::setTimeMax(float timeSMax)
+{
+	m_TimeSMax = timeSMax;
+}
+
 void Timer::countUp(float dT) {
-	if (timeSCurrent < timeSMax) {
-		timeSCurrent += dT;
-		if (timeSCurrent > timeSMax)
-			timeSCurrent = timeSMax;
+	if (m_TimeSCurrent < m_TimeSMax) {
+		m_TimeSCurrent += dT;
+		m_TimeSCurrent = std::min(m_TimeSCurrent, m_TimeSMax);
 	}
 }
 
 
 void Timer::countDown(float dT) {
-	if (timeSCurrent > 0.0f) {
-		timeSCurrent -= dT;
-		if (timeSCurrent < 0.0f)
-			timeSCurrent = 0.0f;
+	if (m_TimeSCurrent > 0.0f) {
+		m_TimeSCurrent -= dT;
+		m_TimeSCurrent = std::max(0.0f, m_TimeSCurrent);
 	}
 }
 
-
-
 void Timer::resetToZero() {
-	timeSCurrent = 0.0f;
+	m_TimeSCurrent = 0.0f;
 }
 
 
 void Timer::resetToMax() {
-	timeSCurrent = timeSMax;
+	m_TimeSCurrent = m_TimeSMax;
 }
 
 
 
-bool Timer::timeSIsZero() {
-	return (timeSCurrent <= 0.0f);
+bool Timer::timeSIsZero() const {
+	return (m_TimeSCurrent <= 0.0f);
 }
 
 
-bool Timer::timeSIsGreaterOrEqual(float timeSCheck) {
-	return (timeSCurrent >= timeSCheck);
+bool Timer::timeSIsGreaterOrEqual(float timeSCheck) const {
+	return (m_TimeSCurrent >= timeSCheck);
 }

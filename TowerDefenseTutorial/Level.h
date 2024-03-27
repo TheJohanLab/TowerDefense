@@ -5,7 +5,7 @@
 #include "SDL2/SDL.h"
 #include "Vector2D.h"
 #include "TextureLoader.h"
-#include "Utils.h"
+#include "Utils/Utils.h"
 #include "Controller/Pathfinding.h"
 #include "Controller/GameMap.h"
 #include "Unit.h"
@@ -21,7 +21,31 @@ struct Tile {
 
 class Level
 {
+private:
+	GameMap* m_GameMap;
+	Pathfinding* m_PathFinding;
 
+	std::vector<Tile> listTiles;
+	std::vector<std::shared_ptr<Unit>>* m_ListUnits;
+	const int tileCountX, tileCountY;
+
+	int targetX = 0, targetY = 0;
+
+	SDL_Texture
+		* textureTileWall = nullptr,
+		* textureTileTurretBase = nullptr,
+		* textureTileTarget = nullptr,
+		* textureTileEmpty = nullptr,
+		* textureTileTree = nullptr,
+		* textureTileEnemySpawner = nullptr,
+		* textureTileArrowUp = nullptr,
+		* textureTileArrowUpRight = nullptr,
+		* textureTileArrowRight = nullptr,
+		* textureTileArrowDownRight = nullptr,
+		* textureTileArrowDown = nullptr,
+		* textureTileArrowDownLeft = nullptr,
+		* textureTileArrowLeft = nullptr,
+		* textureTileArrowUpLeft = nullptr;
 
 public:	
 
@@ -63,29 +87,6 @@ private:
 	void assignTargetPos();
 	void initializeEnemySpawners();
 
-	GameMap* m_GameMap;
-	Pathfinding* m_PathFinding;
 
-	std::vector<Tile> listTiles;
-	std::vector<std::shared_ptr<Unit>>* m_ListUnits;
-	const int tileCountX, tileCountY;
-
-	int targetX = 0, targetY = 0;
-
-	SDL_Texture 
-		*textureTileWall = nullptr,
-		*textureTileTurretBase = nullptr,
-		*textureTileTarget = nullptr,
-		*textureTileEmpty = nullptr,
-		*textureTileTree = nullptr,
-		*textureTileEnemySpawner = nullptr,
-		*textureTileArrowUp = nullptr,
-		*textureTileArrowUpRight = nullptr,
-		*textureTileArrowRight = nullptr,
-		*textureTileArrowDownRight = nullptr,
-		*textureTileArrowDown = nullptr,
-		*textureTileArrowDownLeft = nullptr,
-		*textureTileArrowLeft = nullptr,
-		*textureTileArrowUpLeft = nullptr;
 		
 };

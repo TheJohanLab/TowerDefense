@@ -18,7 +18,7 @@ public:
 	InputManager();
 	~InputManager();
 
-	void handleEvents(SDL_Renderer* renderer, bool& running);
+	void handleEvents(SDL_Renderer* renderer, GameState& gameState);
 	void handleLeftMouseClick(int mouseButtonStatus, int mouseX, int mouseY) const;
 	void handleRightMouseClick(int mouseButtonStatus, int mouseX, int mouseY) const;
 	void handleMouseUnClick(int mouseButtonStatus, int mouseX, int mouseY) const;

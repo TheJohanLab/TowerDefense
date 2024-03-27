@@ -1,8 +1,11 @@
 #pragma once
 
+#define MAX_LIFE_POINTS 10
 #define INITIAL_MONEY_AMOUNT 200
 #define TILE_SIZE 32
 #define FLOW_DISTANCE_MAX 255
+
+#define SPAWN_TIMER_MS 200 
 
 enum itemEnum
 {
@@ -33,4 +36,12 @@ struct Tile {
 	int flowDirectionX = 0;
 	int flowDirectionY = 0;
 	unsigned char flowDistance = FLOW_DISTANCE_MAX;
+};
+
+enum class GameState : char
+{
+	PAUSED,
+	RUNNING,
+	STOPPED,
+	WAITING
 };
