@@ -12,14 +12,15 @@ struct UnitCounter
 
 struct LevelData
 {
-	LevelData(uint8_t totalWaves, std::vector<UnitType> units, std::vector<std::vector<UnitCounter>> unitsNb, uint8_t timer)
-		:totalWavesNb(totalWaves), listUnits(units), unitsNbPerWave(unitsNb), timerBetweenWaves(timer)
+	LevelData(){}
+	LevelData(uint8_t totalWaves, std::vector<UnitType> units, std::vector<std::vector<UnitCounter>> unitsNb, std::vector<uint8_t> timerBeforeNextWave)
+		:totalWavesNb(totalWaves), listUnits(units), unitsNbPerWave(unitsNb), timerBeforeNextWave(timerBeforeNextWave)
 	{}
 
 
 	uint8_t	totalWavesNb;
 	std::vector<UnitType> listUnits;
 	std::vector<std::vector<UnitCounter>> unitsNbPerWave;
-	uint8_t timerBetweenWaves;
+	std::vector<uint8_t> timerBeforeNextWave;
 
 };

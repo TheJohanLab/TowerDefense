@@ -43,6 +43,11 @@ Level::~Level()
     delete m_GameMap;
 }
 
+void Level::setOnTargetReachedCallback(std::function<void(int)> callback)
+{
+    onTargetReached = callback;
+}
+
 
 
 void Level::setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits)

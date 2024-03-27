@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_TFF\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_image-2.0.1\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2\include;$(SolutionDir)TowerDefenseTutorial\Dependencies\rapidxml;$(SolutionDir)TowerDefenseTutorial\Dependencies\SDL2_TFF\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +139,7 @@
     <ClInclude Include="Controller\GameLoop.h" />
     <ClInclude Include="Model\HealthBar.h" />
     <ClInclude Include="Controller\InputManager.h" />
-    <ClInclude Include="Controller\LevelManager.h" />
+    <ClInclude Include="Controller\LevelLoaderManager.h" />
     <ClInclude Include="Listeners\OnGameOverListener.h" />
     <ClInclude Include="Listeners\OnMouseMotionListener.h" />
     <ClInclude Include="Controller\Pathfinding.h" />
@@ -192,7 +192,7 @@
     <ClCompile Include="Model\HealthBar.cpp" />
     <ClCompile Include="Controller\InputManager.cpp" />
     <ClCompile Include="Controller\Pathfinding.cpp" />
-    <ClCompile Include="Controller\LevelManager.cpp" />
+    <ClCompile Include="Controller\LevelLoaderManager.cpp" />
     <ClCompile Include="Controller\UnitFactory.cpp" />
     <ClCompile Include="Controller\PlayerManager.cpp" />
     <ClCompile Include="View\ItemPlacementPreview.cpp" />

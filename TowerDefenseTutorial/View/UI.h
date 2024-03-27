@@ -9,7 +9,6 @@
 #include "../Model/Shop.h"
 #include "../Controller/ItemSelectionZone.h"
 
-class Game;
 class UI
 {
 
@@ -17,7 +16,6 @@ private:
 	static UI* instance;
 	UI() {};
 
-	Game* m_Game = nullptr;
 	Shop m_Shop;
 	std::map<itemEnum, ItemSelectionZone> m_mapItemSelectionZone;
 	SDL_Renderer* m_renderer = nullptr;
@@ -25,7 +23,7 @@ private:
 
 	size_t m_UIWidth;
 	size_t m_UIHeight;
-	uint8_t* m_Health = nullptr;
+	const uint8_t *m_Health;
 
 	itemEnum m_SelectedItem;
 
@@ -43,14 +41,12 @@ public:
 	~UI();
 
 	Shop* getShop();
-	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, Game* game);
+	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, const uint8_t* playerLifePoints);
 
 	void draw(SDL_Renderer* renderer) const;
 
 	void selectItem(itemEnum selectedItem, int x, int y);
 
-	void updateHealth(uint8_t health);
-	uint8_t getPlayersHealth() const;
 	void purchaseTurret();
 
 	void setItemSelectionZone(const itemEnum& itemEnum, const ItemSelectionZone& zone);

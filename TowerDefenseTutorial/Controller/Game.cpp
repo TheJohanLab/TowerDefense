@@ -9,7 +9,8 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
     m_InputManager(new InputManager()),
     m_GameStatus(new GameStatus()),
     m_GameLoop(new GameLoop(*this, *m_GameStatus)),
-    m_LevelManager(new LevelManager())
+    m_LevelManager(new LevelLoaderManager("Data/Levels/Levels.xml")),
+    m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS))
 {
 
     if (window != nullptr && renderer != nullptr) {
@@ -17,8 +18,10 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
         std::srand(std::time(nullptr));
 
         m_Level.setListUnits(&m_ListUnits);
+        m_Level.setOnTargetReachedCallback([this](int damages) { m_PlayerManager->takeDamages(damages); });
+
         m_UI = UI::getInstance();
-        m_UI->initUI(renderer, windowWidth, windowHeight, this);
+        m_UI->initUI(renderer, windowWidth, windowHeight, m_PlayerManager->getpPlayerLifePoints());
         m_Shop = m_UI->getShop();
 
         ItemSelectionZone wallZone( 0, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
@@ -37,8 +40,11 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
         m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
         m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
 
+        m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
+
         //Load the overlay texture.
         textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
+
         loadNextLevel();
         startLevel();
 
@@ -55,6 +61,7 @@ Game::~Game() {
     delete m_ItemPlacementPreview;
     delete m_GameLoop;
     delete m_LevelManager;
+    delete m_PlayerManager;
 }
 
 void Game::loadNextLevel()
@@ -62,7 +69,7 @@ void Game::loadNextLevel()
     m_LevelData = m_LevelManager->loadNextLevel();
 
 
-    m_WaveTimer.setTimeMax(m_LevelData->timerBetweenWaves);
+    m_WaveTimer.setTimeMax(m_LevelData->timerBeforeNextWave[0]);
     m_TotalWaves = m_LevelData->totalWavesNb;
     m_WaveIndex = 0;
     
@@ -205,6 +212,7 @@ void Game::updateWaveTimer(SDL_Renderer* renderer, float dT)
         for (int i = 0; i < m_LevelData->listUnits.size(); i++)
             m_SpawnUnitCount += m_LevelData->unitsNbPerWave[m_WaveIndex][i].count;
 
+        m_WaveTimer.setTimeMax(m_LevelData->timerBeforeNextWave[m_WaveIndex]);
         m_WaveTimer.resetToMax();
         m_SpawnTimer.resetToMax();
     }
@@ -224,6 +232,9 @@ void Game::spawnUnits(SDL_Renderer* renderer, std::vector<UnitCounter>& listEnem
 
     if (m_SpawnTimer.timeSIsZero())
     {
+        if (listEnemies.size() == 0)
+            return;
+
         uint8_t enemyIndex = std::rand() % listEnemies.size();
 
         //Delete the enemies'type that are fully spawned
@@ -344,6 +355,7 @@ bool Game::isGameFinished() const
 
 void Game::drawVictoryScreen(SDL_Renderer* renderer) const
 {
+    m_GameStatus->setGameState(GameState::VICTORY);
     SDL_RenderClear(renderer);
 
     SDL_Texture* texture = TextureLoader::loadTexture(renderer, "Victory.bmp");
@@ -359,7 +371,20 @@ void Game::drawVictoryScreen(SDL_Renderer* renderer) const
     SDL_RenderPresent(renderer);
 }
 
-uint8_t* Game::getpHealth()
+void Game::gameOver(SDL_Renderer* renderer) const
 {
-    return m_GameStatus->getpHealth();
+    m_GameStatus->setGameState(GameState::GAMEOVER);
+    SDL_RenderClear(renderer);
+
+    SDL_Texture* texture = TextureLoader::loadTexture(renderer, "GameOver.bmp");
+    SDL_SetTextureAlphaMod(texture, 125);
+    int w, h;
+    SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+    SDL_Rect rect = {
+        0,
+        0,
+        w,
+        h };
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderPresent(renderer);
 }

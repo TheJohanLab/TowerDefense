@@ -61,13 +61,15 @@ void GameLoop::start(SDL_Renderer* renderer)
                 m_GameManager.clearLevel();
                 m_GameManager.loadNextLevel();
                 m_GameManager.clearLevel();
-            }
-            else
-            {
-                m_GameManager.drawVictoryScreen(renderer);
-            }
-            
+            }           
         }
+
+        if (m_GameStatus.getGameState() == GameState::VICTORY)
+            m_GameManager.drawVictoryScreen(renderer);
+        
+        if (m_GameStatus.getGameState() == GameState::GAMEOVER)
+            m_GameManager.gameOver(renderer);
+
 
         m_GameManager.handleEvents(renderer, m_GameStatus.getGameState());
     }

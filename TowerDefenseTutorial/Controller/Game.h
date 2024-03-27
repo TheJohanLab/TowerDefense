@@ -5,18 +5,18 @@
 #include "SDL2/SDL.h"
 #include "InputManager.h"
 #include "GameLoop.h"
-#include "LevelManager.h"
+#include "LevelLoaderManager.h"
 #include "PlayerManager.h"
 #include "../Model/Unit.h"
 #include "../Model/Level.h"
 #include "../Model/Timer.h"
 #include "../Model/Turret.h"
 #include "../Model/Projectile.h"
+#include "../Model/LevelData.h"
+#include "../Model/Shop.h"
+
 #include "../Listeners/OnDestroyUnitListener.h"
 #include "../Utils/Utils.h"
-#include "../Model/LevelData.h"
-
-#include "../Model/Shop.h"
 
 class Game
 {
@@ -27,7 +27,7 @@ private:
 	ItemPlacementPreview* m_ItemPlacementPreview = nullptr;
 	GameStatus* m_GameStatus = nullptr;
 	GameLoop* m_GameLoop = nullptr;
-	LevelManager* m_LevelManager = nullptr;
+	LevelLoaderManager* m_LevelManager = nullptr;
 	PlayerManager* m_PlayerManager = nullptr;
 
 	Level m_Level;
@@ -67,8 +67,7 @@ public:
 
 	bool isGameFinished() const;
 	void drawVictoryScreen(SDL_Renderer* renderer) const;
-
-	uint8_t* getpHealth();
+	void gameOver(SDL_Renderer* renderer) const;
 
 private:
 	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);

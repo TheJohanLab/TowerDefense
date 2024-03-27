@@ -2,6 +2,7 @@
 #include <queue>
 #include <vector>
 #include <string>
+#include <functional>
 #include "SDL2/SDL.h"
 #include "../Utils/Vector2D.h"
 #include "../Controller/TextureLoader.h"
@@ -47,10 +48,14 @@ private:
 		* textureTileArrowLeft = nullptr,
 		* textureTileArrowUpLeft = nullptr;
 
+
 public:	
 
+	std::function<void(int)> onTargetReached;
 	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY);
 	~Level();
+
+	void setOnTargetReachedCallback(std::function<void(int)> callback);
 
 	void setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);

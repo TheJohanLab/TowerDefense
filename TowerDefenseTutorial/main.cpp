@@ -1,6 +1,6 @@
 #include <iostream>
 #include "SDL2/SDL.h"
-#include "Game.h"
+#include "Controller/Game.h"
 #include "SDL_ttf.h"
 
 

@@ -96,7 +96,7 @@
     <ClInclude Include="Controller\GameLoop.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Controller\LevelManager.h">
+    <ClInclude Include="Controller\LevelLoaderManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Model\LevelData.h">
@@ -226,7 +226,7 @@
     <ClCompile Include="Controller\GameLoop.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="Controller\LevelManager.cpp">
+    <ClCompile Include="Controller\LevelLoaderManager.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Controller\UnitFactory.cpp">

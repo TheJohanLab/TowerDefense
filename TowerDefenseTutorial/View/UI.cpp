@@ -2,7 +2,7 @@
 #include "../Controller/TextureLoader.h"
 #include <algorithm>
 #include <string>
-#include "../Controller/Game.h"
+
 
 UI* UI::instance = nullptr;
 
@@ -11,10 +11,9 @@ Shop* UI::getShop()
 	return &m_Shop;
 }
 
-void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, Game* game)
+void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, const uint8_t* playerLifePoints)
 {
-	m_Game = game;
-	m_Health = m_Game->getpHealth();
+	m_Health = playerLifePoints;
 
 	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
 	if (m_uiFont == nullptr) {

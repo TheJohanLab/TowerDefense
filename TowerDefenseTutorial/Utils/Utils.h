@@ -43,5 +43,7 @@ enum class GameState : char
 	PAUSED,
 	RUNNING,
 	STOPPED,
-	WAITING
+	WAITING,
+	VICTORY,
+	GAMEOVER
 };
