@@ -71,7 +71,7 @@ void ItemPlacementPreview::onMove(int x, int y)
 		!m_Level.isEnemyOnTile(tileX, tileY) &&
 		!m_Level.isTileTarget(tileX, tileY) &&
 		!m_Level.isTileSpawner(tileX, tileY) &&
-		!m_Level.isTileForest(tileX, tileY) &&
+		!m_Level.isTileObstruct(tileX, tileY) &&
 		!m_Level.isPathObstructed(tileX, tileY)
 		)
 	{

@@ -1,6 +1,6 @@
 #include "Unit.h"
 #include "../Controller/Game.h"
-#include "Level.h"
+#include "../Controller/Level.h"
 #include <cmath>
 
 const float Unit::speed = 1.0f;
@@ -22,12 +22,6 @@ void Unit::update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& li
 	//Determine the distance to the target from the unit's current position.
 	float distanceToTarget = (level.getTargetPos() - pos).magnitude();
 
-	/*if (distanceToTarget < 0.5f)
-	{
-		//Todo Add this notification on a new UI thread (post)
-		//onBaseReachedObserver.notify(1);
-		currentHealth = 0;
-	}*/
 
 	//Determine the distance to move this frame.
 	float distanceMove = speed * dT;

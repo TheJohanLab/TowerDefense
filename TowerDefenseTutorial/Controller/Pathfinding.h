@@ -14,6 +14,8 @@ private:
 	bool m_running = false;
 
 public:
+
+	Pathfinding(int tileCountX, int tileCountY);
 	Pathfinding(int tileCountX, int tileCountY, Vector2D targetPos);
 	~Pathfinding();
 
@@ -23,6 +25,8 @@ public:
 	void calculateFlowField(std::vector<Tile>& listTiles);
 
 	bool isPathObstructed(std::vector<Tile> listTiles, int x, int y);
+
+	void setTargetPos(Vector2D targetPos);
 
 private:
 	void calculateDistances(std::vector<Tile>& listTiles);

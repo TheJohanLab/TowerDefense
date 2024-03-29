@@ -6,14 +6,16 @@
 #include "InputManager.h"
 #include "GameLoop.h"
 #include "LevelLoaderManager.h"
+#include "Level.h"
 #include "PlayerManager.h"
 #include "../Model/Unit.h"
-#include "../Model/Level.h"
 #include "../Model/Timer.h"
 #include "../Model/Turret.h"
 #include "../Model/Projectile.h"
 #include "../Model/LevelData.h"
 #include "../Model/Shop.h"
+
+#include "../View/LevelView.h"
 
 #include "../Listeners/OnDestroyUnitListener.h"
 #include "../Utils/Utils.h"
@@ -29,6 +31,7 @@ private:
 	GameLoop* m_GameLoop = nullptr;
 	LevelLoaderManager* m_LevelManager = nullptr;
 	PlayerManager* m_PlayerManager = nullptr;
+	LevelView* m_LevelView = nullptr;
 
 	Level m_Level;
 	LevelData* m_LevelData = nullptr;
@@ -70,6 +73,8 @@ public:
 	void gameOver(SDL_Renderer* renderer) const;
 
 private:
+
+	void initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight);
 	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	
 	void updateUnits(float dT);

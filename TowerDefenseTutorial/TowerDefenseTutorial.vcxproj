@@ -134,9 +134,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Controller\Game.h" />
-    <ClInclude Include="Controller\GameMap.h" />
+    <ClInclude Include="Controller\GameMapLoader.h" />
     <ClInclude Include="Controller\GameStatus.h" />
     <ClInclude Include="Controller\GameLoop.h" />
+    <ClInclude Include="View\LevelView.h" />
     <ClInclude Include="Model\HealthBar.h" />
     <ClInclude Include="Controller\InputManager.h" />
     <ClInclude Include="Controller\LevelLoaderManager.h" />
@@ -149,7 +150,7 @@
     <ClInclude Include="Controller\PlayerManager.h" />
     <ClInclude Include="View\ItemPlacementPreview.h" />
     <ClInclude Include="Controller\ItemSelectionZone.h" />
-    <ClInclude Include="Model\Level.h" />
+    <ClInclude Include="Controller\Level.h" />
     <ClInclude Include="Listeners\Observer.h" />
     <ClInclude Include="Listeners\OnBaseReachedListener.h" />
     <ClInclude Include="Listeners\OnClickListener.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Model\Unit.h" />
     <ClInclude Include="Utils\Vector2D.h" />
     <ClInclude Include="View\Window.h" />
+    <ClInclude Include="Model\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Overlay.bmp" />
@@ -186,9 +188,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Controller\Game.cpp" />
-    <ClCompile Include="Controller\GameMap.cpp" />
+    <ClCompile Include="Controller\GameMapLoader.cpp" />
     <ClCompile Include="Controller\GameStatus.cpp" />
     <ClCompile Include="Controller\GameLoop.cpp" />
+    <ClCompile Include="View\LevelView.cpp" />
     <ClCompile Include="Model\HealthBar.cpp" />
     <ClCompile Include="Controller\InputManager.cpp" />
     <ClCompile Include="Controller\Pathfinding.cpp" />
@@ -197,7 +200,7 @@
     <ClCompile Include="Controller\PlayerManager.cpp" />
     <ClCompile Include="View\ItemPlacementPreview.cpp" />
     <ClCompile Include="Controller\ItemSelectionZone.cpp" />
-    <ClCompile Include="Model\Level.cpp" />
+    <ClCompile Include="Controller\Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils\MathAddon.cpp" />
     <ClCompile Include="Model\Projectile.cpp" />
@@ -209,6 +212,7 @@
     <ClCompile Include="Model\Unit.cpp" />
     <ClCompile Include="Utils\Vector2D.cpp" />
     <ClCompile Include="View\Window.cpp" />
+    <ClCompile Include="Model\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Sounds\Spawn Unit.ogg" />

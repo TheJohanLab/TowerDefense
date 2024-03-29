@@ -4,12 +4,14 @@
 #include <string>
 #include <functional>
 #include "SDL2/SDL.h"
-#include "../Utils/Vector2D.h"
-#include "../Controller/TextureLoader.h"
+
+#include "TextureLoader.h"
+#include "Pathfinding.h"
+#include "GameMapLoader.h"
+
+#include "../Model/Unit.h"
 #include "../Utils/Utils.h"
-#include "../Controller/Pathfinding.h"
-#include "../Controller/GameMap.h"
-#include "Unit.h"
+#include "../Utils/Vector2D.h"
 /*
 struct Tile {
 	TileType type = TileType::EMPTY;
@@ -23,47 +25,36 @@ struct Tile {
 class Level
 {
 private:
-	GameMap* m_GameMap;
+	GameMapLoader* m_GameMapLoader;
 	Pathfinding* m_PathFinding;
 
-	std::vector<Tile> listTiles;
+	std::vector<Tile> m_ListTiles;
 	std::vector<std::shared_ptr<Unit>>* m_ListUnits;
 	const int tileCountX, tileCountY;
 
-	int targetX = 0, targetY = 0;
+	int m_TargetPosX = 0, m_TargetPosY = 0;
 
-	SDL_Texture
-		* textureTileWall = nullptr,
-		* textureTileTurretBase = nullptr,
-		* textureTileTarget = nullptr,
-		* textureTileEmpty = nullptr,
-		* textureTileTree = nullptr,
-		* textureTileEnemySpawner = nullptr,
-		* textureTileArrowUp = nullptr,
-		* textureTileArrowUpRight = nullptr,
-		* textureTileArrowRight = nullptr,
-		* textureTileArrowDownRight = nullptr,
-		* textureTileArrowDown = nullptr,
-		* textureTileArrowDownLeft = nullptr,
-		* textureTileArrowLeft = nullptr,
-		* textureTileArrowUpLeft = nullptr;
+	SDL_Texture* textureTileWall = nullptr;
+
 
 
 public:	
 
-	std::function<void(int)> onTargetReached;
-	Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY);
+	Level(SDL_Renderer* renderer, int tileCountX, int tileCountY);
 	~Level();
+
+	std::function<void(int)> onTargetReached;
 
 	void setOnTargetReachedCallback(std::function<void(int)> callback);
 
+	const std::vector<std::vector<Tile>>& loadLevelMap(const char* path);
+
 	void setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits);
-	void draw(SDL_Renderer* renderer, int tileSize);
-	void drawTrees(SDL_Renderer* renderer, int tileSize);
+	void drawWalls(SDL_Renderer* renderer, int tileSize);
 
 	Vector2D getRandomEnemySpawnerLocation() const;
 
-	bool isTileForest(int x, int y) const;
+	bool isTileObstruct(int x, int y) const;
 	bool isTileTarget(int x, int y) const;
 	bool isTileSpawner(int x, int y) const;
 
@@ -82,14 +73,11 @@ public:
 	bool isEnemyOnTile(int x, int y);
 
 private:
-	void drawTile(SDL_Renderer* renderer, int x, int y, int tileSize);
-	//void calculateFlowField();
-	//void calculateDistances();
-	//void calculateFlowDirections();
+
 	TileType getTileType(int x, int y) const;
 	void setTileType(int x, int y, TileType tileType);
 
-	void assignTargetPos();
+	void assignTargetPos(std::vector <Tile> targetLayerTiles);
 	void initializeEnemySpawners();
 
 

@@ -10,47 +10,16 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
     m_GameStatus(new GameStatus()),
     m_GameLoop(new GameLoop(*this, *m_GameStatus)),
     m_LevelManager(new LevelLoaderManager("Data/Levels/Levels.xml")),
-    m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS))
+    m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS)),
+    m_LevelView(new LevelView(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE))
 {
 
     if (window != nullptr && renderer != nullptr) {
-        
-        std::srand(std::time(nullptr));
 
-        m_Level.setListUnits(&m_ListUnits);
-        m_Level.setOnTargetReachedCallback([this](int damages) { m_PlayerManager->takeDamages(damages); });
-
-        m_UI = UI::getInstance();
-        m_UI->initUI(renderer, windowWidth, windowHeight, m_PlayerManager->getpPlayerLifePoints());
-        m_Shop = m_UI->getShop();
-
-        ItemSelectionZone wallZone( 0, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
-        ItemSelectionZone TurretZone( windowWidth/4, windowHeight*0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::TurretItem);
-        ItemSelectionZone PlayingZone( 0, 0, windowWidth, windowHeight * 0.8);
-        wallZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y) ; });
-        TurretZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item,  x, y); });
-        PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processEvents(renderer, mouseButtonStatus, x, y); });
-
-        m_InputManager->addItemSelectionZone(&wallZone);
-        m_InputManager->addItemSelectionZone(&TurretZone);
-        m_InputManager->addItemSelectionZone(&PlayingZone);
-
-        m_SelectedItem = m_UI->getSelectedItem();
-
-        m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
-        m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
-
-        m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
-
-        //Load the overlay texture.
-        textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
-
-        loadNextLevel();
-        startLevel();
-
-        m_GameLoop->start(renderer);
-
+        initGame(renderer, windowWidth, windowHeight);
     }
+    else
+        std::cerr << "Failed to initialise window or renderer\n";
 }
 
 
@@ -62,6 +31,47 @@ Game::~Game() {
     delete m_GameLoop;
     delete m_LevelManager;
     delete m_PlayerManager;
+    delete m_LevelView;
+}
+
+void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
+{
+    std::srand(std::time(nullptr));
+
+    m_Level.setListUnits(&m_ListUnits);
+    m_Level.setOnTargetReachedCallback([this](int damages) { m_PlayerManager->takeDamages(damages); });
+
+    m_LevelView->loadStaticTiles(m_Level.loadLevelMap("Data/Levels/Level2.map"));
+
+    m_UI = UI::getInstance();
+    m_UI->initUI(renderer, windowWidth, windowHeight, m_PlayerManager->getpPlayerLifePoints());
+    m_Shop = m_UI->getShop();
+
+    ItemSelectionZone wallZone(0, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
+    ItemSelectionZone TurretZone(windowWidth / 4, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::TurretItem);
+    ItemSelectionZone PlayingZone(0, 0, windowWidth, windowHeight * 0.8);
+    wallZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
+    TurretZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
+    PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processEvents(renderer, mouseButtonStatus, x, y); });
+
+    m_InputManager->addItemSelectionZone(&wallZone);
+    m_InputManager->addItemSelectionZone(&TurretZone);
+    m_InputManager->addItemSelectionZone(&PlayingZone);
+
+    m_SelectedItem = m_UI->getSelectedItem();
+
+    m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
+    m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
+
+    m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
+
+    //Load the overlay texture.
+    textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
+
+    loadNextLevel();
+    startLevel();
+
+    m_GameLoop->start(renderer);
 }
 
 void Game::loadNextLevel()
@@ -92,6 +102,8 @@ void Game::handleEvents(SDL_Renderer* renderer, GameState& gameState)
 {
     m_InputManager->handleEvents(renderer, gameState);
 }
+
+
 
 
 
@@ -262,18 +274,16 @@ void Game::draw(SDL_Renderer* renderer) {
 
     
     
-    //Draw everything here.
-    //Draw the m_Level.
-    m_Level.draw(renderer, tileSize);
+    
+    m_LevelView->draw(renderer);
+    m_Level.drawWalls(renderer, tileSize);
 
     //Draw the enemy units.
     for (auto& unitSelected : m_ListUnits)
         if (unitSelected != nullptr)
             unitSelected->draw(renderer, tileSize);
-    
 
-    //Draw the forest
-    m_Level.drawTrees(renderer, tileSize);
+    m_LevelView->drawObstructTiles(renderer);
 
     //Draw the turrets
     for (auto& turretSelected : m_ListTurrets)
@@ -292,7 +302,7 @@ void Game::draw(SDL_Renderer* renderer) {
     }*/
 
     m_ItemPlacementPreview->draw(renderer, tileSize);
-    m_UI->draw(renderer);
+    //m_UI->draw(renderer);
     //Send the image to the window.
     SDL_RenderPresent(renderer);
 }

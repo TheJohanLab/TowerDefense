@@ -1,10 +1,10 @@
 #pragma once
 
 #include "SDL2/SDL.h"
+#include "../Controller/Level.h"
 #include "../Listeners/OnMouseMotionListener.h"
 #include "../Utils/Utils.h"
 #include "../Utils/Vector2D.h"
-#include "../Model/Level.h"
 #include "../Model/Shop.h"
 #include <vector>
 

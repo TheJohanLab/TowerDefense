@@ -1,6 +1,11 @@
 #include "Pathfinding.h"
 #include <queue>
-#include "../Model/Level.h"
+#include "Level.h"
+
+Pathfinding::Pathfinding(int tileCountX, int tileCountY)
+    :m_TileCountX(tileCountX), m_TileCountY(tileCountY), m_TargetPos(Vector2D{0.0f, 0.0f})
+{
+}
 
 Pathfinding::Pathfinding(int tileCountX, int tileCountY, Vector2D targetPos)
     :m_TileCountX(tileCountX), m_TileCountY(tileCountY), m_TargetPos(targetPos)
@@ -54,10 +59,15 @@ bool Pathfinding::isPathObstructed(std::vector<Tile> listTilesCpy, int x, int y)
 
     for (Tile tile : listTilesCpy)
     {
-        if (tile.flowDistance == FLOW_DISTANCE_MAX && tile.type == TileType::EMPTY)
+        if (tile.flowDistance == FLOW_DISTANCE_MAX && tile.type == TileType::BUILDABLE)
             return true;
     }
     return false;
+}
+
+void Pathfinding::setTargetPos(Vector2D targetPos)
+{
+    m_TargetPos = targetPos;
 }
 
 void Pathfinding::calculateDistances(std::vector<Tile>& listTiles)
@@ -90,7 +100,7 @@ void Pathfinding::calculateDistances(std::vector<Tile>& listTiles)
                 neighborY > -1 && neighborY < m_TileCountY &&
                 listTiles[indexNeighbor].type != TileType::WALL &&
                 listTiles[indexNeighbor].type != TileType::TURRET && 
-                listTiles[indexNeighbor].type != TileType::FOREST )
+                listTiles[indexNeighbor].type != TileType::OBSTRUCT )
             {
                 //Check if the tile has been assigned a distance yet or not.
                 if (listTiles[indexNeighbor].flowDistance == FLOW_DISTANCE_MAX) {
