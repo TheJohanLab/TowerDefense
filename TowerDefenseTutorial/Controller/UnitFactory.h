@@ -9,14 +9,19 @@ class UnitFactory
 {
 private:
 
-	static std::map<UnitType, std::function<std::shared_ptr<Unit>(SDL_Renderer* ,Vector2D )>> m_UnitMap;
+	static std::map<UnitType, std::function<std::shared_ptr<Unit>(SDL_Renderer* ,Vector2D, std::function<void(uint8_t)>)>> m_UnitMap;
 
-	static std::shared_ptr<Unit> createMushroom(SDL_Renderer*, Vector2D);
 
 public:
 	UnitFactory();
 	~UnitFactory();
 
-	static std::shared_ptr<Unit> createUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type);
+	static std::shared_ptr<Unit> createUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type, std::function<void(uint8_t)> callback);
+
+private:
+	static std::shared_ptr<Unit> createMushroom(SDL_Renderer* renderer, Vector2D pos, std::function<void(uint8_t)> callback);
+	static std::shared_ptr<Unit> createBat(SDL_Renderer* renderer, Vector2D pos, std::function<void(uint8_t)> callback);
+
+
 };
 

@@ -4,21 +4,23 @@
 #include <cstdlib>
 
 
-Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
-    m_Level(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE),
+Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight) 
+    :
+    m_Level(renderer, playingAreaWidth / TILE_SIZE, playingAreaHeight / TILE_SIZE),
     m_InputManager(new InputManager()),
     m_KeyBoardManager(new KeyboardManager()),
     m_GameStatus(new GameStatus(GameState::INIT)),
     m_GameLoop(new GameLoop(*this, *m_GameStatus)),
     m_LevelManager(new LevelLoaderManager("Data/Levels/Levels.xml")),
     m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS)),
-    m_LevelView(new LevelView(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE)),
-    m_GameStateDisplay(new GameStateDisplay(renderer, &m_GameStatus->getGameState(), windowWidth, windowHeight))
+    m_LevelView(new LevelView(renderer, playingAreaWidth / TILE_SIZE, playingAreaHeight / TILE_SIZE)),
+    m_GameStateDisplay(new GameStateDisplay(renderer, &m_GameStatus->getGameState(), windowWidth, windowHeight)),
+    m_Shop(new Shop())
 {
 
     if (window != nullptr && renderer != nullptr) {
 
-        initGame(renderer, windowWidth, windowHeight);
+        initGame(renderer, windowWidth, windowHeight, playingAreaWidth, playingAreaHeight);
     }
     else
         std::cerr << "Failed to initialise window or renderer\n";
@@ -37,7 +39,7 @@ Game::~Game() {
     delete m_GameStateDisplay;
 }
 
-void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
+void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight)
 {
     std::srand(std::time(nullptr));
 
@@ -47,8 +49,8 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
     m_LevelView->loadStaticTiles(m_Level.loadLevelMap("Data/Levels/Level2.map"));
 
     m_UI = UI::getInstance();
-    m_UI->initUI(renderer, windowWidth, windowHeight, m_PlayerManager->getpPlayerLifePoints());
-    m_Shop = m_UI->getShop();
+    m_UI->initUI(renderer, windowWidth, windowHeight, windowWidth - playingAreaWidth, windowHeight - playingAreaHeight, 
+        m_PlayerManager->getpPlayerLifePoints(), m_Shop);
 
     ItemSelectionZone wallZone(0, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
     ItemSelectionZone TurretZone(windowWidth / 4, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::TurretItem);
@@ -344,7 +346,7 @@ void Game::draw(SDL_Renderer* renderer) {
         projectileSelected.draw(renderer, tileSize);
 
     m_ItemPlacementPreview->draw(renderer, tileSize);
-    //m_UI->draw(renderer);
+    m_UI->draw(renderer);
 
     m_GameStateDisplay->draw(renderer);
 
@@ -355,9 +357,10 @@ void Game::draw(SDL_Renderer* renderer) {
 
 void Game::addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type) {
 
-    std::shared_ptr<Unit> pUnit = UnitFactory::createUnit(renderer, pos, type);
+    std::shared_ptr<Unit> pUnit = UnitFactory::createUnit(renderer, pos, type, [this](uint8_t gems) { m_Shop->addMoney(gems); });
     if (pUnit != nullptr)
-        m_ListUnits.emplace_back(std::make_shared<Unit>(renderer, pos));
+        //m_ListUnits.emplace_back(std::make_shared<Unit>(renderer, pos));
+        m_ListUnits.emplace_back(pUnit);
     else
         std::cerr << "Erreur lors de la creation de l'unit de type " << (char)type << "\n";
 }

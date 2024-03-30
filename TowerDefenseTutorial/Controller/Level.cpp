@@ -31,9 +31,14 @@ void Level::startPathfinding()
     m_PathFinding->startPathfinding(m_ListTiles);
 }
 
-void Level::setOnTargetReachedCallback(std::function<void(int)> callback)
+void Level::setOnTargetReachedCallback(std::function<void(uint8_t)> callback)
 {
     onTargetReached = callback;
+}
+
+void Level::setOnUnitDestroyedCallback(std::function<void(uint8_t)> callback)
+{
+    onUnitDestroyed = callback;
 }
 
 

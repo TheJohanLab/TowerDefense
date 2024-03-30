@@ -12,6 +12,7 @@ enum itemEnum
 {
 	WallItem,
 	TurretItem,
+	ExplosionItem,
 	None
 };
 

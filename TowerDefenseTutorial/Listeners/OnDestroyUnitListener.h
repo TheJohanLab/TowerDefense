@@ -9,6 +9,6 @@ public:
 	void observe(int amount) override
 	{
 		UI* UI = UI::getInstance();
-		UI->getShop()->addMoney(amount);
+		//UI->getShop()->addMoney(amount);
 	}
 };

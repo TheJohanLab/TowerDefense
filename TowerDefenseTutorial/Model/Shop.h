@@ -9,11 +9,12 @@ class Shop
 {
 
 private:
-	uint16_t m_Money = 200;
-	std::map<itemEnum, uint16_t> m_ItemPrices =
+	uint8_t m_Money = 10;
+	std::map<itemEnum, uint8_t> m_ItemPrices =
 	{
-		{itemEnum::WallItem , 10},
-		{itemEnum::TurretItem , 15},
+		{itemEnum::WallItem , 1},
+		{itemEnum::TurretItem , 2},
+		{itemEnum::ExplosionItem , 3},
 	};
 
 public:
@@ -22,7 +23,8 @@ public:
 
 	void purchaseItem(itemEnum item);
 	void sellItem(itemEnum item);
-	void addMoney(uint16_t amount);
+	void addMoney(uint8_t amount);
 	bool isBuyable(itemEnum item) const;
 	uint16_t getMoneyAmount() const;
+	uint8_t getItemPrice(itemEnum itemEnum) const;
 };

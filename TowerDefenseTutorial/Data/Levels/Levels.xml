@@ -1,46 +1,99 @@
 <levels>
 	<level1>
 		<wave1>
-			<totalAssaultsNb>1</totalAssaultsNb>
+			<totalAssaultsNb>3</totalAssaultsNb>
 			<units>
 				<unit>MUSHROOM</unit>
 				<!-- Autres types d'unités -->
 			</units>
 			<assaults>
-				<assault1>
+				<assault>
 					<unitCounters>
 						<unitCounter>
 							<type>MUSHROOM</type>
-							<count>1</count>
+							<count>3</count>
 						</unitCounter>
 					</unitCounters>
-				</assault1>
-				
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>8</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>15</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
 				<!-- Autres vagues -->
 			</assaults>
 			<timerBetweenassaults>
-				<assault1>1</assault1>
+				<assault1>4</assault1>
+				<assault1>6</assault1>
+				<assault1>8</assault1>
 			</timerBetweenassaults>
 		</wave1>
 		<wave2>
-			<totalAssaultsNb>1</totalAssaultsNb>
+			<totalAssaultsNb>5</totalAssaultsNb>
 			<units>
 				<unit>MUSHROOM</unit>
 				<!-- Autres types d'unités -->
 			</units>
 			<assaults>
-				<assault1>
+				<assault>
 					<unitCounters>
 						<unitCounter>
 							<type>MUSHROOM</type>
-							<count>1</count>
+							<count>25</count>
 						</unitCounter>
 					</unitCounters>
-				</assault1>
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>40</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>50</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>80</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
+				<assault>
+					<unitCounters>
+						<unitCounter>
+							<type>MUSHROOM</type>
+							<count>100</count>
+						</unitCounter>
+					</unitCounters>
+				</assault>
 				<!-- Autres vagues -->
 			</assaults>
 			<timerBetweenassaults>
-				<assault1>1</assault1>
+				<assault1>10</assault1>
+				<assault1>20</assault1>
+				<assault1>30</assault1>
+				<assault1>40</assault1>
+				<assault1>50</assault1>
 			</timerBetweenassaults>
 		</wave2>
 	</level1>

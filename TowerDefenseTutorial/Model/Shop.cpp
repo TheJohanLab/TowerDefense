@@ -15,12 +15,12 @@ void Shop::purchaseItem(itemEnum item)
 
 void Shop::sellItem(itemEnum item)
 {
-	m_Money = std::min(999, m_Money + m_ItemPrices.at(item) / 2);
+	m_Money = std::min(10, m_Money + m_ItemPrices.at(item));
 }
 
-void Shop::addMoney(uint16_t amount)
+void Shop::addMoney(uint8_t amount)
 {
-	m_Money = std::min(999, m_Money + amount);
+	m_Money = std::min(10, m_Money + amount);
 }
 
 bool Shop::isBuyable(itemEnum item) const
@@ -31,4 +31,9 @@ bool Shop::isBuyable(itemEnum item) const
 uint16_t Shop::getMoneyAmount() const
 {
 	return m_Money;
+}
+
+uint8_t Shop::getItemPrice(itemEnum itemEnum) const
+{
+	return m_ItemPrices.at(itemEnum);
 }

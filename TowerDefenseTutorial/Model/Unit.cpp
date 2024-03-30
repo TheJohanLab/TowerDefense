@@ -8,8 +8,8 @@ const float Unit::speed = 1.0f;
 const float Unit::size = 0.24f;
 
 
-Unit::Unit(SDL_Renderer* renderer, Vector2D setPos) :
-	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0})
+Unit::Unit(SDL_Renderer* renderer, Vector2D setPos, std::function<void(uint8_t)> onDestroyedCallback) :
+	pos(setPos), hitTimer(0.25f), m_HealthBar(MAX_HEALTH), m_CurrDirection({0.0, 0.0}), m_onUnitDestroyedCallback(onDestroyedCallback)
 {
 	texture = TextureLoader::loadTexture(renderer, "EnemyMushroom.bmp");
 }
@@ -141,6 +141,8 @@ Vector2D Unit::getPos() const
 	return pos;
 }
 
+
+
 void Unit::removeHealth(int damage)
 {
 	if (hitTimer.timeSIsZero() && damage > 0)
@@ -148,7 +150,8 @@ void Unit::removeHealth(int damage)
 		currentHealth -= damage;
 		if (currentHealth <= 0)
 		{
-			onDestroyUnitObserver.observe(10);
+			//onDestroyUnitObserver.observe(1);
+			m_onUnitDestroyedCallback(1);
 			currentHealth = 0;
 		}
 

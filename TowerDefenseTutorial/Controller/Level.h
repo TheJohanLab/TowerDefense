@@ -46,9 +46,11 @@ public:
 	void pausePathfinding();
 	void startPathfinding();
 
-	std::function<void(int)> onTargetReached;
+	std::function<void(uint8_t)> onTargetReached;
+	std::function<void(uint8_t)> onUnitDestroyed;
 
-	void setOnTargetReachedCallback(std::function<void(int)> callback);
+	void setOnTargetReachedCallback(std::function<void(uint8_t)> callback);
+	void setOnUnitDestroyedCallback(std::function<void(uint8_t)> callback);
 
 	void resetMapTiles();
 	const std::vector<std::vector<Tile>>& loadLevelMap(const char* path);

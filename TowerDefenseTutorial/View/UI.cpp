@@ -6,182 +6,7 @@
 
 UI* UI::instance = nullptr;
 
-Shop* UI::getShop()
-{
-	return &m_Shop;
-}
 
-void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, const uint8_t* playerLifePoints)
-{
-	m_Health = playerLifePoints;
-
-	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
-	if (m_uiFont == nullptr) {
-		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
-		TTF_Quit();
-		return;
-	}
-
-
-	m_renderer = renderer;
-	m_UIWidth = windowsWidth;
-	m_UIHeight = windowsHeight * 0.8;
-
-	m_SelectedItem = itemEnum::WallItem;
-
-	if (renderer != nullptr)
-	{
-		m_WallTexture = TextureLoader::loadTexture(m_renderer, "Wall.bmp");
-		m_WallSelectedTexture = TextureLoader::loadTexture(m_renderer, "TileWallSelected.bmp");
-		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret.bmp");
-		m_TurretSelectedTexture = TextureLoader::loadTexture(m_renderer, "TurretSelected.bmp");
-	}
-
-}
-
-void UI::drawBackground(SDL_Renderer* renderer) const
-{
-	if (renderer != nullptr)
-	{
-
-		// Draw Gray UI background
-		SDL_SetRenderDrawColor(renderer, 184, 184, 184, 255);
-
-		SDL_Rect rect = {
-			0,
-			(int)m_UIHeight-10,
-			(int)m_UIWidth,
-			(int)(m_UIHeight / 0.8) * 0.25
-		};
-		SDL_RenderFillRect(renderer, &rect);
-
-		// Draw Background seperators
-		SDL_SetRenderDrawColor(renderer, 84, 84, 84, 150);
-
-		rect = {0,(int)m_UIHeight - 10, (int)m_UIWidth,10};
-		SDL_RenderFillRect(renderer, &rect);
-		rect = { 0, (int)(m_UIHeight / 0.8 - 10), (int)m_UIWidth, 10 };
-		SDL_RenderFillRect(renderer, &rect);
-		rect = { 0, (int)m_UIHeight ,10 ,(int)(m_UIHeight / 0.8) };
-		SDL_RenderFillRect(renderer, &rect);
-		rect = { (int)m_UIWidth - 10, (int)m_UIHeight, 10, (int)(m_UIHeight / 0.8) };
-		SDL_RenderFillRect(renderer, &rect);
-		rect = { (int)(m_UIWidth / 4), (int)m_UIHeight, 10, (int)(m_UIHeight / 0.8) };
-		SDL_RenderFillRect(renderer, &rect);
-		rect = { (int)(m_UIWidth / 2), (int)m_UIHeight, 10, (int)(m_UIHeight / 0.8) };
-		SDL_RenderFillRect(renderer, &rect);
-
-
-
-	}
-}
-
-void UI::drawItems(SDL_Renderer* renderer) const
-{
-	if (renderer != nullptr)
-	{
-		
-		// Draw the Wall texture
-		int w, h;
-		SDL_Texture* selectedWallTexture;
-		SDL_Texture* selectedTurretTexture;
-		if (m_SelectedItem == itemEnum::WallItem)
-		{
-			selectedWallTexture = m_WallSelectedTexture;
-			selectedTurretTexture = m_TurretTexture;
-			SDL_SetTextureAlphaMod(selectedWallTexture, 128);
-			SDL_SetTextureAlphaMod(selectedTurretTexture, 255);
-			//SDL_SetTextureColorMod(m_WallTexture, 255, 0, 0);
-			//SDL_SetTextureColorMod(m_TurretTexture, 255, 255, 255);
-		}
-		else
-		{
-			selectedWallTexture = m_WallTexture;
-			selectedTurretTexture = m_TurretSelectedTexture;
-			SDL_SetTextureAlphaMod(selectedWallTexture, 255);
-			SDL_SetTextureAlphaMod(selectedTurretTexture, 128);
-		}
-
-		SDL_QueryTexture(selectedWallTexture, NULL, NULL, &w, &h);
-		SDL_Rect rect =
-		{
-			(int)(m_UIWidth / 8) - w ,
-			(int)(m_UIHeight + (m_UIHeight / 0.8) * 0.1) - h ,
-			w*2,
-			h*2
-		};		
-
-		SDL_RenderCopy(renderer, selectedWallTexture, NULL, &rect);
-
-		// Draw the Turret texture
-		SDL_QueryTexture(selectedTurretTexture, NULL, NULL, &w, &h);
-
-
-		rect =
-		{
-			(int)(m_UIWidth * 3 / 8) - w ,
-			(int)(m_UIHeight +(m_UIHeight / 0.8) * 0.1) - h ,
-			w*2,
-			h*2
-		};
-		SDL_RenderCopy(renderer, selectedTurretTexture, NULL, &rect);
-	}
-}
-
-void UI::drawHealth(SDL_Renderer* renderer) const
-{
-	if (renderer != nullptr && m_uiFont != nullptr)
-	{
-		SDL_Color color = { 50, 50, 50, 255 }; 
-
-		SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(*m_Health).c_str(), color);
-		if (surface == nullptr) {
-			SDL_Log("Erreur lors de la création de la surface de texte : %s", TTF_GetError());
-			return;
-		}
-
-		// Créer une texture à partir de la surface
-		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-		if (texture == nullptr) {
-			SDL_Log("Erreur lors de la création de la texture : %s", SDL_GetError());
-			SDL_FreeSurface(surface);
-			return;
-		}
-
-		int texW, texH;
-		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-
-		SDL_Rect dstRect = { m_UIWidth / 2 + 50, m_UIHeight + 50, texW, texH };
-		SDL_RenderCopy(renderer, texture, NULL, &dstRect);
-	}
-}
-
-void UI::drawCoins(SDL_Renderer* renderer) const
-{
-	SDL_Color color = { 50, 50, 50, 255 };
-
-	SDL_Surface* surface = TTF_RenderText_Solid(m_uiFont, std::to_string(m_Shop.getMoneyAmount()).c_str(), color);
-	if (surface == nullptr) {
-		SDL_Log("Erreur lors de la création de la surface de texte : %s", TTF_GetError());
-		return;
-	}
-
-	// Créer une texture à partir de la surface
-	SDL_Texture * m_CoinTexture = SDL_CreateTextureFromSurface(renderer, surface);
-	if (m_CoinTexture == nullptr) {
-		SDL_Log("Erreur lors de la création de la texture : %s", SDL_GetError());
-		SDL_FreeSurface(surface);
-		return;
-	}
-	SDL_FreeSurface(surface);
-
-	int texW, texH;
-	SDL_QueryTexture(m_CoinTexture, NULL, NULL, &texW, &texH);
-
-	SDL_Rect dstRect = { m_UIWidth * 2/3 + 50, m_UIHeight + 50, texW, texH };
-	SDL_RenderCopy(renderer, m_CoinTexture, NULL, &dstRect);
-	
-}
 
 
 UI* UI::getInstance()
@@ -203,25 +28,203 @@ UI::~UI()
 void UI::draw(SDL_Renderer* renderer) const
 {
 	drawBackground(renderer);
-	drawCoins(renderer);
-	drawHealth(renderer);
+	drawGems(renderer);
+	drawHearts(renderer);
 	drawItems(renderer);
+}
+
+
+void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int UIWidth, int UIHeight, 
+	const uint8_t* playerLifePoints, const Shop* shop)
+{
+	m_Health = playerLifePoints;
+	m_Shop = shop;
+
+	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
+	if (m_uiFont == nullptr) {
+		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
+		TTF_Quit();
+		return;
+	}
+
+
+	m_renderer = renderer;
+	m_WindowWidh = windowsWidth;
+	m_WindowHeight = windowsHeight;
+	m_UIWidth = UIWidth;
+	m_UIHeight = UIHeight;
+
+	m_SelectedItem = itemEnum::WallItem;
+
+	if (renderer != nullptr)
+	{
+		m_BackgroundTexture = TextureLoader::loadTexture(m_renderer, "UI.bmp");
+		m_WallTexture = TextureLoader::loadTexture(m_renderer, "WallUI.bmp");
+		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "TurretUI.bmp");
+		m_EmptyHeartTexture = TextureLoader::loadTexture(m_renderer, "EmptyHeart.bmp");
+		m_HalfHeartTexture = TextureLoader::loadTexture(m_renderer, "HalfHeart.bmp");
+		m_FullHeartTexture = TextureLoader::loadTexture(m_renderer, "FullHeart.bmp");
+		m_GemTexture = TextureLoader::loadTexture(m_renderer, "Gem.bmp");
+		m_EmptyGemTexture = TextureLoader::loadTexture(m_renderer, "EmptyGem.bmp");
+
+		m_UIItems.push_back({ m_WallTexture, m_Shop->getItemPrice(itemEnum::WallItem) });
+		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::TurretItem) });
+		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::ExplosionItem) });
+	}
+
+}
+
+void UI::drawBackground(SDL_Renderer* renderer) const
+{
+	if (renderer != nullptr)
+	{
+
+		int w, h;
+		SDL_QueryTexture(m_BackgroundTexture, NULL, NULL, &w, &h);
+		SDL_Rect rect =
+		{
+			0 ,
+			m_WindowHeight - m_UIHeight,
+			w,
+			h
+		};
+
+		SDL_RenderCopy(renderer, m_BackgroundTexture, NULL, &rect);
+
+		//Draw hearts containers
+		SDL_QueryTexture(m_EmptyHeartTexture, NULL, NULL, &w, &h);
+		for (int i = 0; i < 5; i++)
+		{
+			SDL_Rect rect =
+			{
+				(int)(m_WindowWidh / 2 + w + (i * 80)),
+				(int)((m_WindowHeight - m_UIHeight) + h / 2),
+				w,
+				h
+			};
+
+			SDL_RenderCopy(renderer, m_EmptyHeartTexture, NULL, &rect);
+		}
+
+		SDL_QueryTexture(m_EmptyGemTexture, NULL, NULL, &w, &h);
+		//Draw gem containers
+		for (int i = 0; i < 10; i++)
+		{
+			SDL_Rect rect =
+			{
+				(int)(m_WindowWidh / 2 + w * 1.1 + (i * 42)),
+				(int)((m_WindowHeight - m_UIHeight) + h * 1.7),
+				w,
+				h
+			};
+
+			SDL_RenderCopy(renderer, m_EmptyGemTexture, NULL, &rect);
+		}
+	}
+}
+
+void UI::drawItems(SDL_Renderer* renderer) const
+{
+	if (renderer != nullptr)
+	{
+
+		int height = (int)(m_WindowHeight - (m_UIHeight / 2));
+		int width = (int)(((m_WindowWidh / 2) / 3));
+		int i = 0;
+		for (const auto& item : m_UIItems)
+		{
+			int w, h;
+			SDL_QueryTexture(item.texture, NULL, NULL, &w, &h);
+			SDL_Rect rect =
+			{
+				(int)width - (w * 3) + i * 150,
+				(int)height - h ,
+				w * 2,
+				h * 2
+			};
+			SDL_RenderCopy(renderer, item.texture, NULL, &rect);
+
+			drawItemPrice(renderer, item, rect);
+			i++;
+		}
+
+	}
+}
+
+void UI::drawItemPrice(SDL_Renderer* renderer, UIItem item, SDL_Rect itemPos) const
+{
+	int w, h;
+	SDL_QueryTexture(m_GemTexture, NULL, NULL, &w, &h);
+
+	for (int i = 0; i < item.price; i++)
+	{
+
+		int w, h;
+		SDL_QueryTexture(item.texture, NULL, NULL, &w, &h);
+		SDL_Rect rect =
+		{
+			itemPos.x - itemPos.w/2 + ((i+1.0f)/(item.price+1.0f))*(itemPos.w*1.75),
+			itemPos.y - (w * 1 / 3),
+			w/2 ,
+			h/2
+		};
+		SDL_RenderCopy(renderer, m_GemTexture, NULL, &rect);
+
+	}
+}
+
+void UI::drawHearts(SDL_Renderer* renderer) const
+{
+	if (renderer != nullptr)
+	{
+		int w, h;
+		SDL_QueryTexture(m_EmptyHeartTexture, NULL, NULL, &w, &h);
+		for (int i = 0; i < *m_Health; i++)
+		{
+
+			SDL_Rect rect =
+			{
+				(int)(m_WindowWidh / 2 + w) + (int)(i / 2) * 80,
+				(int)((m_WindowHeight - m_UIHeight) + h / 2),
+				w,
+				h
+			};
+			SDL_RenderCopy(renderer, i % 2 == 0 ? m_HalfHeartTexture : m_FullHeartTexture, NULL, &rect);
+		}
+
+	}
+}
+
+void UI::drawGems(SDL_Renderer* renderer) const
+{
+	if (renderer != nullptr)
+	{
+		int w, h;
+		SDL_QueryTexture(m_GemTexture, NULL, NULL, &w, &h);
+
+		for (int i = 0; i < m_Shop->getMoneyAmount(); i++)
+		{
+			SDL_Rect rect =
+			{
+				(int)(m_WindowWidh / 2 + w * 1.1 + (i * 42)),
+				(int)((m_WindowHeight - m_UIHeight) + h * 1.7),
+				w,
+				h
+			};
+
+			SDL_RenderCopy(renderer, m_GemTexture, NULL, &rect);
+		}
+	}
+
 }
 
 
 void UI::selectItem(itemEnum selectedItem, int x, int y)
 {
 	m_SelectedItem = selectedItem;
-	purchaseTurret();
 }
 
 
-void UI::purchaseTurret()
-{
-	
-	//m_Coins -= itemPrice[m_SelectedItem];
-	//m_Coins = std::max((int)m_Coins, 0);
-}
 
 void UI::setItemSelectionZone(const itemEnum& itemEnum, const ItemSelectionZone& zone)
 {

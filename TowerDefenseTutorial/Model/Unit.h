@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <functional>
 #include "SDL2/SDL.h"
 #include "../Utils/Vector2D.h"
 
@@ -17,13 +18,14 @@ class Level;
 
 enum class UnitType
 {
-	MUSHROOM
+	MUSHROOM,
+	BAT
 };
 
 class Unit
 {
 public:
-	Unit(SDL_Renderer* renderer, Vector2D setPos);
+	Unit(SDL_Renderer* renderer, Vector2D setPos, std::function<void(uint8_t)> onDestroyedCallback);
 	void update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool checkOverlap(Vector2D posOther, float sizeOther);
@@ -47,6 +49,7 @@ private:
 
 	int currentHealth = maxHealth;
 
+	std::function<void(uint8_t)> m_onUnitDestroyedCallback;
 	OnBaseReachedListener onBaseReachedObserver;
 	OnDestroyUnitListener onDestroyUnitObserver;
 

@@ -29,7 +29,6 @@ private:
 	UI* m_UI = nullptr;
 	InputManager* m_InputManager = nullptr;
 	KeyboardManager* m_KeyBoardManager = nullptr;
-	Shop* m_Shop = nullptr;
 	ItemPlacementPreview* m_ItemPlacementPreview = nullptr;
 	GameStatus* m_GameStatus = nullptr;
 	GameLoop* m_GameLoop = nullptr;
@@ -37,6 +36,7 @@ private:
 	PlayerManager* m_PlayerManager = nullptr;
 	LevelView* m_LevelView = nullptr;
 	GameStateDisplay* m_GameStateDisplay = nullptr;
+	Shop* m_Shop = nullptr;
 
 	Level m_Level;
 	WaveData m_WaveData;
@@ -62,7 +62,7 @@ private:
 	size_t m_SpawnUnitCount = 0;
 
 public:
-	Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight);
+	Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight);
 	~Game();
 
 	void startLevel();
@@ -81,7 +81,7 @@ public:
 
 private:
 
-	void initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight);
+	void initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight);
 	void processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
 	void processKeyboardEvents(int key);
 	
