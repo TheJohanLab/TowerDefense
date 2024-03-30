@@ -13,8 +13,9 @@ private:
 		{"MUSHROOM", UnitType::MUSHROOM }
 	};
 
-	std::vector<LevelData> m_LevelDataList;
-	uint16_t m_LevelIndex;
+	std::vector<std::vector<WaveData>> m_LevelDataList;
+	uint8_t m_WaveIndex;
+	uint8_t m_CurrentLevel;
 	bool m_GameFinished;
 	const char* filePath;
 
@@ -24,9 +25,11 @@ public:
 	
 	void loadLevelDataFromXML(const char* filePath);
 
-	LevelData* loadNextLevel();
+	WaveData loadLevel(uint8_t LevelNumber);
 
-	bool isGameFinished() const;
+	WaveData loadNextWave();
+
+	bool isLevelFinished() const;
 
 };
 

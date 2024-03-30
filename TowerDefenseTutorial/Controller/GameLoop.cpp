@@ -6,8 +6,10 @@
 int CustomEventFilter(void* userdata, SDL_Event* event)
 {
     GameState gameState = *((GameState*)userdata);
-    if ((gameState == GameState::WAITING || gameState == GameState::PAUSED) && (event->type != SDL_KEYUP && event->key.keysym.sym != SDLK_ESCAPE) &&
-        event->type != SDL_QUIT) {
+    if ((gameState == GameState::PAUSED || gameState == GameState::INIT || gameState == GameState::VICTORY || gameState == GameState::GAMEOVER) &&
+        (event->type != SDL_KEYDOWN && (event->key.keysym.sym != SDLK_ESCAPE || event->key.keysym.sym != SDLK_KP_ENTER)) &&
+        event->type != SDL_QUIT) 
+    {
         return 0;
     }
     return 1; 
@@ -33,12 +35,12 @@ void GameLoop::start(SDL_Renderer* renderer)
     const float dT = 1.0f / 60.0f;
 
     //Start the game loop and run until it's time to stop.
-    m_GameStatus.setGameState(GameState::RUNNING);
+    //m_GameStatus.setGameState(GameState::RUNNING);
     SDL_SetEventFilter(CustomEventFilter, &m_GameStatus.getGameState());
 
     while (m_GameStatus.getGameState() != GameState::STOPPED) {
         //Determine how much time has elapsed since the last frame.
-        if (m_GameStatus.getGameState() == GameState::RUNNING)
+        if (m_GameStatus.getGameState() == GameState::RUNNING || m_GameStatus.getGameState() == GameState::WAITING)
         {
             time2 = std::chrono::system_clock::now();
             std::chrono::duration<float> timeDelta = time2 - time1;
@@ -53,24 +55,12 @@ void GameLoop::start(SDL_Renderer* renderer)
                 m_GameManager.draw(renderer);
             }
         }
-        
-        if (m_GameStatus.getGameState() == GameState::WAITING)
+        else
         {
-            if (!m_GameManager.isGameFinished())
-            {
-                m_GameManager.clearLevel();
-                m_GameManager.loadNextLevel();
-                m_GameManager.clearLevel();
-            }           
+            m_GameManager.draw(renderer);
         }
 
-        if (m_GameStatus.getGameState() == GameState::VICTORY)
-            m_GameManager.drawVictoryScreen(renderer);
         
-        if (m_GameStatus.getGameState() == GameState::GAMEOVER)
-            m_GameManager.gameOver(renderer);
-
-
         m_GameManager.handleEvents(renderer, m_GameStatus.getGameState());
     }
 

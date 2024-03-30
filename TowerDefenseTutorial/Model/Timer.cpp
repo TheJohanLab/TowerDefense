@@ -46,3 +46,8 @@ bool Timer::timeSIsZero() const {
 bool Timer::timeSIsGreaterOrEqual(float timeSCheck) const {
 	return (m_TimeSCurrent >= timeSCheck);
 }
+
+float Timer::getCurrentTime() const
+{
+	return m_TimeSCurrent;
+}

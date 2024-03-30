@@ -11,7 +11,7 @@ private:
 	GameState m_GameState;
 
 public:
-	GameStatus();
+	GameStatus(GameState gameState);
 	~GameStatus();
 
 

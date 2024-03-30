@@ -21,11 +21,26 @@ Level::~Level()
     delete m_GameMapLoader;
 }
 
+void Level::pausePathfinding()
+{
+    m_PathFinding->stopPathfinding(m_ListTiles);
+}
+
+void Level::startPathfinding()
+{
+    m_PathFinding->startPathfinding(m_ListTiles);
+}
+
 void Level::setOnTargetReachedCallback(std::function<void(int)> callback)
 {
     onTargetReached = callback;
 }
 
+
+void Level::resetMapTiles()
+{
+    m_GameMapLoader->reloadLevelMap(m_ListTiles);
+}
 
 const std::vector<std::vector<Tile>>& Level::loadLevelMap(const char* path)
 {

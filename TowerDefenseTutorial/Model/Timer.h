@@ -16,4 +16,5 @@ public:
 	void resetToMax();
 	bool timeSIsZero() const;
 	bool timeSIsGreaterOrEqual(float timeSCheck) const;
+	float getCurrentTime() const;
 };

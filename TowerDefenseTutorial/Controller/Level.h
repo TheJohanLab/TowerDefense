@@ -43,10 +43,14 @@ public:
 	Level(SDL_Renderer* renderer, int tileCountX, int tileCountY);
 	~Level();
 
+	void pausePathfinding();
+	void startPathfinding();
+
 	std::function<void(int)> onTargetReached;
 
 	void setOnTargetReachedCallback(std::function<void(int)> callback);
 
+	void resetMapTiles();
 	const std::vector<std::vector<Tile>>& loadLevelMap(const char* path);
 
 	void setListUnits(std::vector<std::shared_ptr<Unit>>* listUnits);

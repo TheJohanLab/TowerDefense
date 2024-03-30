@@ -20,11 +20,13 @@ private:
 
 	int m_TileCountX, m_TileCountY;
 	std::vector<std::vector<Tile>> m_LevelLayersTiles;
+	std::vector<Tile> m_levelMapCopy;
 
 public:
 	GameMapLoader(int tileCountX, int tileCountY);
 	~GameMapLoader();
 
+	void reloadLevelMap(std::vector<Tile>& levelTiles);
 	const std::vector<std::vector<Tile>>& loadMap(std::vector<Tile>& levelTiles, const char* path);
 
 private:

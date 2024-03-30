@@ -8,6 +8,8 @@
 #include "LevelLoaderManager.h"
 #include "Level.h"
 #include "PlayerManager.h"
+#include "KeyboardManager.h"
+
 #include "../Model/Unit.h"
 #include "../Model/Timer.h"
 #include "../Model/Turret.h"
@@ -16,6 +18,7 @@
 #include "../Model/Shop.h"
 
 #include "../View/LevelView.h"
+#include "../View/GameStateDisplay.h"
 
 #include "../Listeners/OnDestroyUnitListener.h"
 #include "../Utils/Utils.h"
@@ -25,6 +28,7 @@ class Game
 private:
 	UI* m_UI = nullptr;
 	InputManager* m_InputManager = nullptr;
+	KeyboardManager* m_KeyBoardManager = nullptr;
 	Shop* m_Shop = nullptr;
 	ItemPlacementPreview* m_ItemPlacementPreview = nullptr;
 	GameStatus* m_GameStatus = nullptr;
@@ -32,9 +36,10 @@ private:
 	LevelLoaderManager* m_LevelManager = nullptr;
 	PlayerManager* m_PlayerManager = nullptr;
 	LevelView* m_LevelView = nullptr;
+	GameStateDisplay* m_GameStateDisplay = nullptr;
 
 	Level m_Level;
-	LevelData* m_LevelData = nullptr;
+	WaveData m_WaveData;
 
 	int mouseDownStatus = 0;
 
@@ -49,20 +54,22 @@ private:
 	SDL_Texture* textureOverlay = nullptr;
 	bool overlayVisible = true;
 
-	Timer m_WaveTimer { 0.0f };
+	Timer m_AssaultTimer{ 0.0f };
 	Timer m_SpawnTimer { SPAWN_TIMER_MS / 1000.0f };
 
-	uint8_t m_WaveIndex = 0;
-	uint8_t m_TotalWaves = 0;
+	int m_AssaultIndex = 0;
+	int m_TotalAssaults = 0;
 	size_t m_SpawnUnitCount = 0;
 
 public:
 	Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight);
 	~Game();
 
-	void loadNextLevel();
-	void clearLevel();
 	void startLevel();
+	void startWave();
+	void loadNextWave();
+	void clearLevel();
+	void waitForNextWave();
 
 	void handleEvents(SDL_Renderer *renderer, GameState& gameState);
 	void update(SDL_Renderer* renderer, float dT);
@@ -75,11 +82,14 @@ public:
 private:
 
 	void initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight);
-	void processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
+	void processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY);
+	void processKeyboardEvents(int key);
 	
 	void updateUnits(float dT);
 	void updateProjectiles(float dT);
-	void updateWaveTimer(SDL_Renderer* renderer, float dT);
+	void updateAssaultTimer(SDL_Renderer* renderer, float dT);
+	void updateGameStateDisplay(float dT);
+
 	void handleSpawnUnits(SDL_Renderer* renderer, float dT);
 	void spawnUnits(SDL_Renderer* renderer, std::vector<UnitCounter>& listEnemies, float dT);
 	
@@ -87,7 +97,7 @@ private:
 	void addTurret(SDL_Renderer* renderer, Vector2D posMouse);
 	bool removeTurretsAtMousePosition(Vector2D posMouse);
 
-	void handleWaves(SDL_Renderer* renderer, float dT);
+	void handleWave(SDL_Renderer* renderer, float dT);
 
 	
 

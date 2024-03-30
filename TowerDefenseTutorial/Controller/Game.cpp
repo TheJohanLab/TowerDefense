@@ -7,11 +7,13 @@
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight) :
     m_Level(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE),
     m_InputManager(new InputManager()),
-    m_GameStatus(new GameStatus()),
+    m_KeyBoardManager(new KeyboardManager()),
+    m_GameStatus(new GameStatus(GameState::INIT)),
     m_GameLoop(new GameLoop(*this, *m_GameStatus)),
     m_LevelManager(new LevelLoaderManager("Data/Levels/Levels.xml")),
     m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS)),
-    m_LevelView(new LevelView(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE))
+    m_LevelView(new LevelView(renderer, windowWidth / TILE_SIZE, (windowHeight * 0.8) / TILE_SIZE)),
+    m_GameStateDisplay(new GameStateDisplay(renderer, &m_GameStatus->getGameState(), windowWidth, windowHeight))
 {
 
     if (window != nullptr && renderer != nullptr) {
@@ -32,6 +34,7 @@ Game::~Game() {
     delete m_LevelManager;
     delete m_PlayerManager;
     delete m_LevelView;
+    delete m_GameStateDisplay;
 }
 
 void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
@@ -52,7 +55,7 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
     ItemSelectionZone PlayingZone(0, 0, windowWidth, windowHeight * 0.8);
     wallZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
     TurretZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
-    PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processEvents(renderer, mouseButtonStatus, x, y); });
+    PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processMouseEvents(renderer, mouseButtonStatus, x, y); });
 
     m_InputManager->addItemSelectionZone(&wallZone);
     m_InputManager->addItemSelectionZone(&TurretZone);
@@ -62,41 +65,63 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight)
 
     m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
     m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
+    m_InputManager->setKeyPressedCallback([this](int key) { processKeyboardEvents(key); });
 
     m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
 
     //Load the overlay texture.
     textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
-    loadNextLevel();
-    startLevel();
-
     m_GameLoop->start(renderer);
 }
 
-void Game::loadNextLevel()
+
+void Game::loadNextWave()
 {
-    m_LevelData = m_LevelManager->loadNextLevel();
+    m_WaveData = m_LevelManager->loadNextWave();
 
-
-    m_WaveTimer.setTimeMax(m_LevelData->timerBeforeNextWave[0]);
-    m_TotalWaves = m_LevelData->totalWavesNb;
-    m_WaveIndex = 0;
+    m_AssaultTimer.setTimeMax(m_WaveData.timerBeforeNextAssault[0]);
+    m_AssaultTimer.resetToZero();
+    m_SpawnTimer.resetToZero();
+    m_TotalAssaults = m_WaveData.totalAssaultsNb;
+    m_AssaultIndex = -1;
     
 }
 
 void Game::clearLevel()
 {
     m_ListUnits.clear();
-    m_WaveIndex = 0;
+    m_ListTurrets.clear();
+    m_Level.resetMapTiles();
+    //m_ListWalls.clear();
 }
 
 void Game::startLevel()
 {
-    m_WaveTimer.resetToZero();
-    m_WaveIndex = -1;
+    clearLevel();
+    m_WaveData = m_LevelManager->loadLevel(0);
+    m_TotalAssaults = m_WaveData.totalAssaultsNb;
+    m_AssaultTimer.resetToZero();
+    m_SpawnTimer.resetToZero();
+    m_AssaultIndex = -1;
+    m_Level.startPathfinding();
     m_GameStatus->setGameState(GameState::RUNNING);
 }
+
+void Game::startWave()
+{
+    loadNextWave();
+    //m_Level.startPathfinding();
+    m_GameStatus->setGameState(GameState::RUNNING);
+}
+
+void Game::waitForNextWave()
+{
+    m_GameStatus->setGameState(GameState::WAITING);
+    m_GameStateDisplay->resetTimer();
+    //m_Level.pausePathfinding();
+}
+
 
 void Game::handleEvents(SDL_Renderer* renderer, GameState& gameState)
 {
@@ -107,7 +132,7 @@ void Game::handleEvents(SDL_Renderer* renderer, GameState& gameState)
 
 
 
-void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY) {
+void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mouseX, int mouseY) {
     //bool mouseDownThisFrame = false;
     
     Vector2D posMouse((float)mouseX / tileSize, (float)mouseY / tileSize);
@@ -161,10 +186,29 @@ void Game::processEvents(SDL_Renderer* renderer, int mouseButtonStatus, int mous
     }
 }
 
+void Game::processKeyboardEvents(int key)
+{
+    switch (key)
+    {
+    case SDLK_RETURN:
+        if (m_GameStatus->getGameState() == GameState::INIT)
+            startLevel();
+        else if (m_GameStatus->getGameState() == GameState::WAITING)
+            startWave();
+        else if (m_GameStatus->getGameState() == GameState::VICTORY || m_GameStatus->getGameState() == GameState::GAMEOVER)
+            startLevel();
+        break;
+    case SDLK_ESCAPE:
+        if (m_GameStatus->getGameState() == GameState::VICTORY || m_GameStatus->getGameState() == GameState::GAMEOVER)
+            m_GameStatus->setGameState(GameState::STOPPED);
+        break;
+    }
+}
+
 
 void Game::update(SDL_Renderer* renderer, float dT) {
     
-    handleWaves(renderer, dT);
+    handleWave(renderer, dT);
     handleSpawnUnits(renderer, dT);
 
     updateUnits(dT);
@@ -173,6 +217,7 @@ void Game::update(SDL_Renderer* renderer, float dT) {
         turretSelected.update(renderer, dT, m_ListUnits, m_ListProjectiles);
 
     updateProjectiles(dT);
+    updateGameStateDisplay(dT);
     
 }
 
@@ -214,27 +259,34 @@ void Game::updateProjectiles(float dT)
         
 }
 
-void Game::updateWaveTimer(SDL_Renderer* renderer, float dT)
+void Game::updateAssaultTimer(SDL_Renderer* renderer, float dT)
 {
 
-    m_WaveTimer.countDown(dT);
-    if (m_WaveTimer.timeSIsZero())
+    m_AssaultTimer.countDown(dT);
+    if (m_AssaultTimer.timeSIsZero())
     {
-        m_WaveIndex++;
-        for (int i = 0; i < m_LevelData->listUnits.size(); i++)
-            m_SpawnUnitCount += m_LevelData->unitsNbPerWave[m_WaveIndex][i].count;
+        m_AssaultIndex++;
+        for (int i = 0; i < m_WaveData.listUnits.size(); i++)
+            m_SpawnUnitCount += m_WaveData.unitsNbPerAssault[m_AssaultIndex][i].count;
 
-        m_WaveTimer.setTimeMax(m_LevelData->timerBeforeNextWave[m_WaveIndex]);
-        m_WaveTimer.resetToMax();
-        m_SpawnTimer.resetToMax();
+        m_AssaultTimer.setTimeMax(m_WaveData.timerBeforeNextAssault[m_AssaultIndex]);
+        m_AssaultTimer.resetToMax();
+        //m_SpawnTimer.resetToMax();
+        
     }
+
+}
+
+void Game::updateGameStateDisplay(float dT)
+{
+    m_GameStateDisplay->countDownTimer(dT);
 
 }
 
 void Game::handleSpawnUnits(SDL_Renderer* renderer, float dT)
 {
     if (m_SpawnUnitCount > 0)
-        spawnUnits(renderer, m_LevelData->unitsNbPerWave[m_WaveIndex], dT);
+        spawnUnits(renderer, m_WaveData.unitsNbPerAssault[m_AssaultIndex], dT);
 
 }
 
@@ -273,8 +325,6 @@ void Game::draw(SDL_Renderer* renderer) {
     SDL_RenderClear(renderer);
 
     
-    
-    
     m_LevelView->draw(renderer);
     m_Level.drawWalls(renderer, tileSize);
 
@@ -293,17 +343,11 @@ void Game::draw(SDL_Renderer* renderer) {
     for (auto& projectileSelected : m_ListProjectiles)
         projectileSelected.draw(renderer, tileSize);
 
-    //Draw the overlay.
-    /*if (textureOverlay != nullptr && overlayVisible) {
-        int w = 0, h = 0;
-        SDL_QueryTexture(textureOverlay, NULL, NULL, &w, &h);
-        SDL_Rect rect = { 40, 40, w, h };
-        SDL_RenderCopy(renderer, textureOverlay, NULL, &rect);
-    }*/
-
     m_ItemPlacementPreview->draw(renderer, tileSize);
     //m_UI->draw(renderer);
-    //Send the image to the window.
+
+    m_GameStateDisplay->draw(renderer);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -315,7 +359,7 @@ void Game::addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type) {
     if (pUnit != nullptr)
         m_ListUnits.emplace_back(std::make_shared<Unit>(renderer, pos));
     else
-        std::cout << "Erreur lors de la creation de l'unit de type " << (char)type << "\n";
+        std::cerr << "Erreur lors de la creation de l'unit de type " << (char)type << "\n";
 }
 
 void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
@@ -345,27 +389,37 @@ bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
        
 }
 
-void Game::handleWaves(SDL_Renderer* renderer, float dT)
+void Game::handleWave(SDL_Renderer* renderer, float dT)
 {
-    if (m_WaveIndex != m_TotalWaves-1)
+    if (m_GameStatus->getGameState() == GameState::RUNNING)
     {
-        updateWaveTimer(renderer, dT);
-    }
-    else
-    {
-        if (m_ListUnits.empty())
-           m_GameStatus->setGameState(GameState::WAITING);
+        if (m_AssaultIndex < m_TotalAssaults-1)
+        {
+            updateAssaultTimer(renderer, dT);
+        }
+        else
+        {
+            if (m_ListUnits.empty())
+            {
+                if (isGameFinished())
+                    m_GameStatus->setGameState(GameState::VICTORY);
+                else
+                {
+                    waitForNextWave();
+                }
+            }
+        }   
     }
 }
 
 bool Game::isGameFinished() const
 {
-    return m_LevelManager->isGameFinished();
+    return m_LevelManager->isLevelFinished();
 }
 
 void Game::drawVictoryScreen(SDL_Renderer* renderer) const
 {
-    m_GameStatus->setGameState(GameState::VICTORY);
+    
     SDL_RenderClear(renderer);
 
     SDL_Texture* texture = TextureLoader::loadTexture(renderer, "Victory.bmp");
@@ -384,7 +438,7 @@ void Game::drawVictoryScreen(SDL_Renderer* renderer) const
 void Game::gameOver(SDL_Renderer* renderer) const
 {
     m_GameStatus->setGameState(GameState::GAMEOVER);
-    SDL_RenderClear(renderer);
+    /*SDL_RenderClear(renderer);
 
     SDL_Texture* texture = TextureLoader::loadTexture(renderer, "GameOver.bmp");
     SDL_SetTextureAlphaMod(texture, 125);
@@ -396,5 +450,5 @@ void Game::gameOver(SDL_Renderer* renderer) const
         w,
         h };
     SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(renderer);*/
 }

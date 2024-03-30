@@ -10,17 +10,17 @@ struct UnitCounter
 	UnitType unitType;
 };
 
-struct LevelData
+struct WaveData
 {
-	LevelData(){}
-	LevelData(uint8_t totalWaves, std::vector<UnitType> units, std::vector<std::vector<UnitCounter>> unitsNb, std::vector<uint8_t> timerBeforeNextWave)
-		:totalWavesNb(totalWaves), listUnits(units), unitsNbPerWave(unitsNb), timerBeforeNextWave(timerBeforeNextWave)
+	WaveData(){}
+	WaveData(uint8_t totalAssaults, std::vector<UnitType> units, std::vector<std::vector<UnitCounter>> unitsNb, std::vector<uint8_t> timerBeforeNextAssault)
+		:totalAssaultsNb(totalAssaults), listUnits(units), unitsNbPerAssault(unitsNb), timerBeforeNextAssault(timerBeforeNextAssault)
 	{}
 
 
-	uint8_t	totalWavesNb;
+	uint8_t	totalAssaultsNb;
 	std::vector<UnitType> listUnits;
-	std::vector<std::vector<UnitCounter>> unitsNbPerWave;
-	std::vector<uint8_t> timerBeforeNextWave;
+	std::vector<std::vector<UnitCounter>> unitsNbPerAssault;
+	std::vector<uint8_t> timerBeforeNextAssault;
 
 };

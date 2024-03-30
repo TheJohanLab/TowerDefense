@@ -117,6 +117,15 @@
     <ClInclude Include="Model\Wall.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Listeners\OnKeyPressedListener.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\KeyboardManager.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="View\GameStateDisplay.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Tile Arrow Down Left.bmp">
@@ -245,6 +254,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Model\Wall.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\KeyboardManager.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="View\GameStateDisplay.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

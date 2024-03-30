@@ -137,6 +137,9 @@
     <ClInclude Include="Controller\GameMapLoader.h" />
     <ClInclude Include="Controller\GameStatus.h" />
     <ClInclude Include="Controller\GameLoop.h" />
+    <ClInclude Include="Controller\KeyboardManager.h" />
+    <ClInclude Include="View\GameStateDisplay.h" />
+    <ClInclude Include="Listeners\OnKeyPressedListener.h" />
     <ClInclude Include="View\LevelView.h" />
     <ClInclude Include="Model\HealthBar.h" />
     <ClInclude Include="Controller\InputManager.h" />
@@ -191,6 +194,8 @@
     <ClCompile Include="Controller\GameMapLoader.cpp" />
     <ClCompile Include="Controller\GameStatus.cpp" />
     <ClCompile Include="Controller\GameLoop.cpp" />
+    <ClCompile Include="Controller\KeyboardManager.cpp" />
+    <ClCompile Include="View\GameStateDisplay.cpp" />
     <ClCompile Include="View\LevelView.cpp" />
     <ClCompile Include="Model\HealthBar.cpp" />
     <ClCompile Include="Controller\InputManager.cpp" />

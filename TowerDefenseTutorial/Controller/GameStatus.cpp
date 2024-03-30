@@ -1,7 +1,7 @@
 #include "GameStatus.h"
 
-GameStatus::GameStatus()
-	:m_LifePoints(m_MaxLifePoints), m_GameState(GameState::STOPPED)
+GameStatus::GameStatus(GameState gameState)
+	:m_LifePoints(m_MaxLifePoints), m_GameState(gameState)
 {
 }
 

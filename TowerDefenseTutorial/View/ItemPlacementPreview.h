@@ -15,6 +15,7 @@ private:
 
 	SDL_Texture* m_WallPreviewTexture = nullptr;
 	SDL_Texture* m_TurretPreviewTexture = nullptr;
+	SDL_Texture* m_RangePreviewTexture = nullptr;
 
 	SDL_Rect m_PlayingZone;
 

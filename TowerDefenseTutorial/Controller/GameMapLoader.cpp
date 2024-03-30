@@ -10,6 +10,11 @@ GameMapLoader::~GameMapLoader()
 {
 }
 
+void GameMapLoader::reloadLevelMap(std::vector<Tile>& levelTiles)
+{
+	levelTiles = m_levelMapCopy;
+}
+
 const std::vector<std::vector<Tile>>& GameMapLoader::loadMap(std::vector<Tile>& listTiles, const char* path)
 {
 	
@@ -54,6 +59,7 @@ const std::vector<std::vector<Tile>>& GameMapLoader::loadMap(std::vector<Tile>& 
 	
 	mapFile.close();
 
+	m_levelMapCopy = listTiles;
 	return m_LevelLayersTiles;
 }
 

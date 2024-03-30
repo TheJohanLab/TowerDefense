@@ -46,6 +46,7 @@ struct Tile {
 
 enum class GameState : char
 {
+	INIT,
 	PAUSED,
 	RUNNING,
 	STOPPED,

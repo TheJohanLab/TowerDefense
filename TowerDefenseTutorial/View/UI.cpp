@@ -31,9 +31,9 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, con
 
 	if (renderer != nullptr)
 	{
-		m_WallTexture = TextureLoader::loadTexture(m_renderer, "TileWall2.bmp");
+		m_WallTexture = TextureLoader::loadTexture(m_renderer, "Wall.bmp");
 		m_WallSelectedTexture = TextureLoader::loadTexture(m_renderer, "TileWallSelected.bmp");
-		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret2.bmp");
+		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "Turret.bmp");
 		m_TurretSelectedTexture = TextureLoader::loadTexture(m_renderer, "TurretSelected.bmp");
 	}
 

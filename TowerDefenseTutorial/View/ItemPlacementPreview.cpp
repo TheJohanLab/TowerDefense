@@ -14,6 +14,7 @@ ItemPlacementPreview::ItemPlacementPreview(SDL_Renderer* renderer, Level& level,
 
 	m_WallPreviewTexture = TextureLoader::loadTexture(renderer, "WallPreview.bmp");
 	m_TurretPreviewTexture = TextureLoader::loadTexture(renderer, "TurretPreview.bmp");
+	m_RangePreviewTexture = TextureLoader::loadTexture(renderer, "TurretRange.bmp");
 	SDL_SetTextureAlphaMod(m_WallPreviewTexture, 128);
 	SDL_SetTextureAlphaMod(m_TurretPreviewTexture, 128);
 }
