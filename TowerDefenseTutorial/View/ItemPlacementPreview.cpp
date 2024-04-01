@@ -12,10 +12,11 @@ ItemPlacementPreview::ItemPlacementPreview(SDL_Renderer* renderer, Level& level,
 	UI* ui = UI::getInstance();
 	m_ItemSelected = ui->getSelectedItem();
 
-	m_WallPreviewTexture = TextureLoader::loadTexture(renderer, "WallPreview.bmp");
+	m_TowerPreviewTexture = TextureLoader::loadTexture(renderer, "WallPreview.bmp");
 	m_TurretPreviewTexture = TextureLoader::loadTexture(renderer, "TurretPreview.bmp");
+	m_BombPreviewTexture = TextureLoader::loadTexture(renderer, "BombPreview.bmp");
 	m_RangePreviewTexture = TextureLoader::loadTexture(renderer, "TurretRange.bmp");
-	SDL_SetTextureAlphaMod(m_WallPreviewTexture, 128);
+	SDL_SetTextureAlphaMod(m_TowerPreviewTexture, 128);
 	SDL_SetTextureAlphaMod(m_TurretPreviewTexture, 128);
 }
 
@@ -34,14 +35,25 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 		SDL_Texture* currentTexture;
 		int offsetX = 0;
 		int offsetY = 0;
-		if (*m_ItemSelected == itemEnum::TurretItem)
+		switch (*m_ItemSelected)
 		{
+		case itemEnum::TurretItem:
 			currentTexture = m_TurretPreviewTexture;
 			offsetX = m_TurretPreviewOffsetX;
 			offsetY = m_TurretPreviewOffsetY;
-		}else
-			currentTexture = m_WallPreviewTexture;
-		
+			break;
+		case itemEnum::TowerItem:
+			currentTexture = m_TowerPreviewTexture;
+			break;
+		case itemEnum::ExplosionItem:
+			currentTexture = m_BombPreviewTexture;
+			break;
+		default:
+			currentTexture = m_TowerPreviewTexture;
+			break;
+
+		}
+
 
 		SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
 		m_Buildable ? SDL_SetTextureColorMod(currentTexture, 255, 255, 255) : SDL_SetTextureColorMod(currentTexture, 255, 0, 0);
@@ -67,8 +79,9 @@ void ItemPlacementPreview::onMove(int x, int y)
 
 	if (m_Shop.isBuyable(*m_ItemSelected) &&
 		*m_ItemSelected != itemEnum::None && isOnPlayingZone(x, y) &&
-		(*m_ItemSelected == itemEnum::WallItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY) ||
-			(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY))) &&
+		(*m_ItemSelected == itemEnum::TowerItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
+		(*m_ItemSelected == itemEnum::ExplosionItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
+		(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) &&
 		!m_Level.isEnemyOnTile(tileX, tileY) &&
 		!m_Level.isTileTarget(tileX, tileY) &&
 		!m_Level.isTileSpawner(tileX, tileY) &&

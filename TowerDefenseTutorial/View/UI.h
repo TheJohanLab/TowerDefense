@@ -6,7 +6,6 @@
 #include "SDL2/SDL.h"
 #include "SDL_ttf.h"
 #include "../Utils/Vector2D.h"
-#include "../Utils/Utils.h"
 #include "../Model/Shop.h"
 #include "../Controller/ItemSelectionZone.h"
 
@@ -27,7 +26,6 @@ private:
 	
 	std::map<itemEnum, ItemSelectionZone> m_mapItemSelectionZone;
 	SDL_Renderer* m_renderer = nullptr;
-	TTF_Font* m_uiFont = nullptr;
 
 	size_t m_UIWidth;
 	size_t m_UIHeight;
@@ -67,12 +65,6 @@ public:
 	const ItemSelectionZone& getItemSelectionZone(itemEnum itemSelectionZone);
 	itemEnum* getSelectedItem();
 	
-
-	std::map<itemEnum, uint8_t> itemPrice = {
-	{itemEnum::WallItem, 10},
-	{itemEnum::TurretItem, 15}
-	};
-
 private:
 
 	void drawBackground(SDL_Renderer* renderer) const;

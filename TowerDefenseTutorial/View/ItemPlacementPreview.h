@@ -13,8 +13,9 @@ class ItemPlacementPreview : public OnMouseMotionListener
 private:
 	itemEnum* m_ItemSelected = nullptr;
 
-	SDL_Texture* m_WallPreviewTexture = nullptr;
+	SDL_Texture* m_TowerPreviewTexture = nullptr;
 	SDL_Texture* m_TurretPreviewTexture = nullptr;
+	SDL_Texture* m_BombPreviewTexture = nullptr;
 	SDL_Texture* m_RangePreviewTexture = nullptr;
 
 	SDL_Rect m_PlayingZone;

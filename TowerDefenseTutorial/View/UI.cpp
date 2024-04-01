@@ -40,21 +40,13 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int
 	m_Health = playerLifePoints;
 	m_Shop = shop;
 
-	m_uiFont = TTF_OpenFont("C:/_Projets/Cpp/TowerDefenseTutorial/TowerDefenseTutorial/Dependencies/Fonts/sunny_spells_basic/Sunny Spells Basic.ttf", 24);
-	if (m_uiFont == nullptr) {
-		SDL_Log("Erreur lors du chargement de la police de caractères : %s", TTF_GetError());
-		TTF_Quit();
-		return;
-	}
-
-
 	m_renderer = renderer;
 	m_WindowWidh = windowsWidth;
 	m_WindowHeight = windowsHeight;
 	m_UIWidth = UIWidth;
 	m_UIHeight = UIHeight;
 
-	m_SelectedItem = itemEnum::WallItem;
+	m_SelectedItem = itemEnum::TowerItem;
 
 	if (renderer != nullptr)
 	{
@@ -67,7 +59,7 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int
 		m_GemTexture = TextureLoader::loadTexture(m_renderer, "Gem.bmp");
 		m_EmptyGemTexture = TextureLoader::loadTexture(m_renderer, "EmptyGem.bmp");
 
-		m_UIItems.push_back({ m_WallTexture, m_Shop->getItemPrice(itemEnum::WallItem) });
+		m_UIItems.push_back({ m_WallTexture, m_Shop->getItemPrice(itemEnum::TowerItem) });
 		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::TurretItem) });
 		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::ExplosionItem) });
 	}
