@@ -10,7 +10,9 @@ private:
 
 	std::map<std::string, UnitType> m_UnitTypeMap =
 	{
-		{"MUSHROOM", UnitType::MUSHROOM }
+		{"MUSHROOM", UnitType::MUSHROOM },
+		{"BAT", UnitType::BAT },
+		{"SKELETTON", UnitType::SKELETTON },
 	};
 
 	std::vector<std::vector<WaveData>> m_LevelDataList;

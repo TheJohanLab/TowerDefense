@@ -138,6 +138,14 @@
     <ClInclude Include="Controller\GameStatus.h" />
     <ClInclude Include="Controller\GameLoop.h" />
     <ClInclude Include="Controller\KeyboardManager.h" />
+    <ClInclude Include="Controller\DefenseFactory.h" />
+    <ClInclude Include="Model\DefenseExplosion.h" />
+    <ClInclude Include="Model\Defense.h" />
+    <ClInclude Include="Model\Items.h" />
+    <ClInclude Include="Model\UnitSkeleton.h" />
+    <ClInclude Include="Model\UnitBat.h" />
+    <ClInclude Include="Model\UnitMushroom.h" />
+    <ClInclude Include="Model\SpriteAnimation.h" />
     <ClInclude Include="View\GameStateDisplay.h" />
     <ClInclude Include="Listeners\OnKeyPressedListener.h" />
     <ClInclude Include="View\LevelView.h" />
@@ -163,13 +171,13 @@
     <ClInclude Include="Model\Shop.h" />
     <ClInclude Include="Controller\TextureLoader.h" />
     <ClInclude Include="Model\Timer.h" />
-    <ClInclude Include="Model\Turret.h" />
+    <ClInclude Include="Model\DefenseTurret.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="View\UI.h" />
     <ClInclude Include="Model\Unit.h" />
     <ClInclude Include="Utils\Vector2D.h" />
     <ClInclude Include="View\Window.h" />
-    <ClInclude Include="Model\Wall.h" />
+    <ClInclude Include="Model\DefenseTower.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Overlay.bmp" />
@@ -195,6 +203,9 @@
     <ClCompile Include="Controller\GameStatus.cpp" />
     <ClCompile Include="Controller\GameLoop.cpp" />
     <ClCompile Include="Controller\KeyboardManager.cpp" />
+    <ClCompile Include="Controller\DefenseFactory.cpp" />
+    <ClCompile Include="Model\DefenseExplosion.cpp" />
+    <ClCompile Include="Model\Defense.cpp" />
     <ClCompile Include="View\GameStateDisplay.cpp" />
     <ClCompile Include="View\LevelView.cpp" />
     <ClCompile Include="Model\HealthBar.cpp" />
@@ -212,12 +223,12 @@
     <ClCompile Include="Model\Shop.cpp" />
     <ClCompile Include="Controller\TextureLoader.cpp" />
     <ClCompile Include="Model\Timer.cpp" />
-    <ClCompile Include="Model\Turret.cpp" />
+    <ClCompile Include="Model\DefenseTurret.cpp" />
     <ClCompile Include="View\UI.cpp" />
     <ClCompile Include="Model\Unit.cpp" />
     <ClCompile Include="Utils\Vector2D.cpp" />
     <ClCompile Include="View\Window.cpp" />
-    <ClCompile Include="Model\Wall.cpp" />
+    <ClCompile Include="Model\DefenseTower.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Sounds\Spawn Unit.ogg" />

@@ -9,19 +9,20 @@
 class Projectile
 {
 public:
-	Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDirectionNormal);
+	Projectile(SDL_Renderer* renderer, Vector2D setPos, Vector2D setDirectionNormal, int offsetX, int offsetY, SDL_Texture* projectileTexture);
 	void update(float dT, std::vector<std::shared_ptr<Unit>>& listUnits);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool getCollisionOccured() const;
 
 private:
-	Vector2D pos, directionNormal;
+	Vector2D m_Pos, m_DirectionNormal;
 	static const float speed, size, distanceTraveledMax;
-	float distanceTraveled = 0.0f;
+	float m_DistanceTraveled = 0.0f;
+	int m_OffsetX, m_OffsetY;
 
-	SDL_Texture* texture = nullptr;
+	SDL_Texture* m_Texture = nullptr;
 
-	bool collisionOccured = false;
+	bool m_CollisionOccured = false;
 
 	void checkCollisions(std::vector<std::shared_ptr<Unit>>& listUnits);
 };

@@ -12,7 +12,7 @@
 
 #include "../Model/Unit.h"
 #include "../Model/Timer.h"
-#include "../Model/Turret.h"
+#include "../Model/Defense.h"
 #include "../Model/Projectile.h"
 #include "../Model/LevelData.h"
 #include "../Model/Shop.h"
@@ -48,7 +48,8 @@ private:
 
 	itemEnum* m_SelectedItem = nullptr;
 	std::vector<std::shared_ptr<Unit>> m_ListUnits;
-	std::vector<Turret> m_ListTurrets;
+	std::vector<std::unique_ptr<Defense>> m_ListDefenses;
+	//std::vector<Turret> m_ListDefenses;
 	std::vector<Projectile> m_ListProjectiles;
 
 	SDL_Texture* textureOverlay = nullptr;
@@ -86,6 +87,7 @@ private:
 	void processKeyboardEvents(int key);
 	
 	void updateUnits(float dT);
+	void updateDefenses(SDL_Renderer* renderer, float dT);
 	void updateProjectiles(float dT);
 	void updateAssaultTimer(SDL_Renderer* renderer, float dT);
 	void updateGameStateDisplay(float dT);
@@ -94,6 +96,8 @@ private:
 	void spawnUnits(SDL_Renderer* renderer, std::vector<UnitCounter>& listEnemies, float dT);
 	
 	void addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type);
+	template<typename T>
+	void addDefense(SDL_Renderer* renderer, Vector2D posMouse);
 	void addTurret(SDL_Renderer* renderer, Vector2D posMouse);
 	bool removeTurretsAtMousePosition(Vector2D posMouse);
 

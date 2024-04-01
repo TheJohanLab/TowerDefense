@@ -1,7 +1,12 @@
 #include "Game.h"
+#include <cstdlib>
 #include "../View/UI.h"
 #include "UnitFactory.h"
-#include <cstdlib>
+#include "DefenseFactory.h"
+#include "../Model/Defense.h"
+#include "../Model/DefenseTower.h"
+#include "../Model/DefenseTurret.h"
+#include "../Model/DefenseExplosion.h"
 
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight) 
@@ -52,15 +57,19 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, i
     m_UI->initUI(renderer, windowWidth, windowHeight, windowWidth - playingAreaWidth, windowHeight - playingAreaHeight, 
         m_PlayerManager->getpPlayerLifePoints(), m_Shop);
 
-    ItemSelectionZone wallZone(0, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::WallItem);
-    ItemSelectionZone TurretZone(windowWidth / 4, windowHeight * 0.8, windowWidth / 4, windowHeight * 0.2, itemEnum::TurretItem);
+    ItemSelectionZone TowerZone(30, playingAreaHeight+30, 120, 100, itemEnum::TowerItem);
+    ItemSelectionZone TurretZone(185, playingAreaHeight + 30, 120, 100, itemEnum::TurretItem);
+    ItemSelectionZone BombZone(335, playingAreaHeight + 30, 120, 100, itemEnum::ExplosionItem);
     ItemSelectionZone PlayingZone(0, 0, windowWidth, windowHeight * 0.8);
-    wallZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
+    TowerZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
     TurretZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
+    BombZone.setOnClickListener([this](itemEnum item, int mouseButtonStatus, int x, int y) { if (mouseButtonStatus == 1) m_UI->selectItem(item, x, y); });
     PlayingZone.setOnClickListener([this, renderer](itemEnum item, int mouseButtonStatus, int x, int y) { processMouseEvents(renderer, mouseButtonStatus, x, y); });
-
-    m_InputManager->addItemSelectionZone(&wallZone);
+    //UI
+    m_InputManager->addItemSelectionZone(&TowerZone);
     m_InputManager->addItemSelectionZone(&TurretZone);
+    m_InputManager->addItemSelectionZone(&BombZone);
+    //Game
     m_InputManager->addItemSelectionZone(&PlayingZone);
 
     m_SelectedItem = m_UI->getSelectedItem();
@@ -70,9 +79,6 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, i
     m_InputManager->setKeyPressedCallback([this](int key) { processKeyboardEvents(key); });
 
     m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
-
-    //Load the overlay texture.
-    textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
     m_GameLoop->start(renderer);
 }
@@ -93,7 +99,7 @@ void Game::loadNextWave()
 void Game::clearLevel()
 {
     m_ListUnits.clear();
-    m_ListTurrets.clear();
+    m_ListDefenses.clear();
     m_Level.resetMapTiles();
     //m_ListWalls.clear();
 }
@@ -146,20 +152,32 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
             if (m_ItemPlacementPreview->isItemPlacementEnabled())
             {
                 switch (*m_SelectedItem) {
-                case itemEnum::WallItem:
+                case itemEnum::TowerItem:
                     //Add wall at the mouse position.
                     if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
                     {
+                        addDefense<Tower>(renderer, posMouse);
                         m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
                         m_Shop->purchaseItem(*m_SelectedItem);
                     }
                     break;
                 case itemEnum::TurretItem:
                     //Add the selected unit at the mouse position.
-                    //if (mouseDownThisFrame)
+
                     if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y) && !m_Level.isTurret((int)posMouse.x, (int)posMouse.y))
                     {
-                        addTurret(renderer, posMouse);
+                        addDefense<Turret>(renderer, posMouse);
+                        m_Level.setTurret((int)posMouse.x, (int)posMouse.y);
+                        //addTurret(renderer, posMouse);
+                        m_Shop->purchaseItem(*m_SelectedItem);
+                    }
+                    break;
+                case itemEnum::ExplosionItem:
+                    //Add wall at the mouse position.
+                    if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                    {
+                        addDefense<Explosion>(renderer, posMouse);
+                        //m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
                         m_Shop->purchaseItem(*m_SelectedItem);
                     }
                     break;
@@ -180,7 +198,7 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
             if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
             {
                 m_Level.removeWall((int)posMouse.x, (int)posMouse.y);
-                m_Shop->sellItem(itemEnum::WallItem);
+                m_Shop->sellItem(itemEnum::TowerItem);
             }
 
             break;
@@ -214,9 +232,7 @@ void Game::update(SDL_Renderer* renderer, float dT) {
     handleSpawnUnits(renderer, dT);
 
     updateUnits(dT);
-
-    for (auto& turretSelected : m_ListTurrets)
-        turretSelected.update(renderer, dT, m_ListUnits, m_ListProjectiles);
+    updateDefenses(renderer, dT);
 
     updateProjectiles(dT);
     updateGameStateDisplay(dT);
@@ -227,7 +243,8 @@ void Game::update(SDL_Renderer* renderer, float dT) {
 void Game::updateUnits(float dT) {
     //Loop through the list of units and update all of them.
     auto it = m_ListUnits.begin();
-    while (it != m_ListUnits.end()) {
+    while (it != m_ListUnits.end()) 
+    {
         bool increment = true;
 
         if ((*it) != nullptr) {
@@ -244,6 +261,31 @@ void Game::updateUnits(float dT) {
             it++;
     }
 }
+
+void Game::updateDefenses(SDL_Renderer* renderer, float dT)
+{
+    auto it = m_ListDefenses.begin();
+    while (it != m_ListDefenses.end())
+    {
+        bool increment = true;
+
+        if ((*it) != nullptr) {
+            (*it)->update(renderer, dT, m_ListUnits, m_ListProjectiles);
+
+            //Check if the defense is still alive.  If not then erase it and don't increment the iterator.
+            if ((*it)->isAlive() == false) {
+                it = m_ListDefenses.erase(it);
+                increment = false;
+            }
+        }
+
+        if (increment)
+            it++;
+    }
+   
+
+}
+
 
 void Game::updateProjectiles(float dT)
 {
@@ -284,6 +326,8 @@ void Game::updateGameStateDisplay(float dT)
     m_GameStateDisplay->countDownTimer(dT);
 
 }
+
+
 
 void Game::handleSpawnUnits(SDL_Renderer* renderer, float dT)
 {
@@ -328,7 +372,7 @@ void Game::draw(SDL_Renderer* renderer) {
 
     
     m_LevelView->draw(renderer);
-    m_Level.drawWalls(renderer, tileSize);
+    //m_Level.drawWalls(renderer, tileSize);
 
     //Draw the enemy units.
     for (auto& unitSelected : m_ListUnits)
@@ -338,8 +382,8 @@ void Game::draw(SDL_Renderer* renderer) {
     m_LevelView->drawObstructTiles(renderer);
 
     //Draw the turrets
-    for (auto& turretSelected : m_ListTurrets)
-        turretSelected.draw(renderer, tileSize);
+    for (auto& defenseSelected : m_ListDefenses)
+        defenseSelected->draw(renderer, tileSize);
 
     //Draw the projectiles
     for (auto& projectileSelected : m_ListProjectiles)
@@ -365,10 +409,19 @@ void Game::addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type) {
         std::cerr << "Erreur lors de la creation de l'unit de type " << (char)type << "\n";
 }
 
+template<typename T>
+void Game::addDefense(SDL_Renderer* renderer, Vector2D posMouse)
+{
+    Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5);
+    
+    m_ListDefenses.emplace_back(DefenseFactory::createDefense<T>(renderer, posMouse));
+    //m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
+}
+
 void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 {
     Vector2D pos((int)posMouse.x + 0.5f, (int)posMouse.y + 0.5);
-    m_ListTurrets.emplace_back(Turret(renderer, pos));
+    m_ListDefenses.emplace_back(std::make_unique<Tower>(renderer, pos));
     m_Level.setTurret((int)posMouse.x, (int)posMouse.y);
 }
 
@@ -376,12 +429,12 @@ void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 
 bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
 {
-    for (auto it = m_ListTurrets.begin(); it != m_ListTurrets.end();)
+    for (auto it = m_ListDefenses.begin(); it != m_ListDefenses.end();)
     {
-        if (it->checkIfOnTile((int)posMouse.x, (int)posMouse.y))
+        if ((*it)->checkIfOnTile((int)posMouse.x, (int)posMouse.y))
         {
             m_Level.removeTurret((int)posMouse.x, (int)posMouse.y);
-            it = m_ListTurrets.erase(it);
+            it = m_ListDefenses.erase(it);
             return true;
         }
         else

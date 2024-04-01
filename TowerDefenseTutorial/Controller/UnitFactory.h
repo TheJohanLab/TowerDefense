@@ -21,6 +21,7 @@ public:
 private:
 	static std::shared_ptr<Unit> createMushroom(SDL_Renderer* renderer, Vector2D pos, std::function<void(uint8_t)> callback);
 	static std::shared_ptr<Unit> createBat(SDL_Renderer* renderer, Vector2D pos, std::function<void(uint8_t)> callback);
+	static std::shared_ptr<Unit> createSkeletton(SDL_Renderer* renderer, Vector2D pos, std::function<void(uint8_t)> callback);
 
 
 };

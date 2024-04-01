@@ -8,14 +8,14 @@
 
 #define NUMBER_OF_LAYER 4
 
+
 enum itemEnum
 {
-	WallItem,
+	TowerItem,
 	TurretItem,
 	ExplosionItem,
 	None
 };
-
 
 
 enum class TileType : char

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include "../Utils/Utils.h"
 #include <map>
+#include "../Utils/Utils.h"
+#include "../Model/Items.h"
 
 
 class Shop
@@ -12,7 +13,7 @@ private:
 	uint8_t m_Money = 10;
 	std::map<itemEnum, uint8_t> m_ItemPrices =
 	{
-		{itemEnum::WallItem , 1},
+		{itemEnum::TowerItem , 1},
 		{itemEnum::TurretItem , 2},
 		{itemEnum::ExplosionItem , 3},
 	};

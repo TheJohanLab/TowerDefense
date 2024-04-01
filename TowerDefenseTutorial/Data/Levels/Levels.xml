@@ -4,6 +4,8 @@
 			<totalAssaultsNb>3</totalAssaultsNb>
 			<units>
 				<unit>MUSHROOM</unit>
+				<unit>BAT</unit>
+				<unit>SKELETTON</unit>
 				<!-- Autres types d'unités -->
 			</units>
 			<assaults>
@@ -13,6 +15,14 @@
 							<type>MUSHROOM</type>
 							<count>3</count>
 						</unitCounter>
+						<unitCounter>
+							<type>BAT</type>
+							<count>1</count>
+						</unitCounter>
+						<unitCounter>
+							<type>SKELETTON</type>
+							<count>0</count>
+						</unitCounter>
 					</unitCounters>
 				</assault>
 				<assault>
@@ -20,6 +30,14 @@
 						<unitCounter>
 							<type>MUSHROOM</type>
 							<count>8</count>
+						</unitCounter>
+						<unitCounter>
+							<type>BAT</type>
+							<count>3</count>
+						</unitCounter>
+						<unitCounter>
+							<type>SKELETTON</type>
+							<count>1</count>
 						</unitCounter>
 					</unitCounters>
 				</assault>
@@ -29,14 +47,22 @@
 							<type>MUSHROOM</type>
 							<count>15</count>
 						</unitCounter>
+						<unitCounter>
+							<type>BAT</type>
+							<count>4</count>
+						</unitCounter>
+						<unitCounter>
+							<type>SKELETTON</type>
+							<count>3</count>
+						</unitCounter>
 					</unitCounters>
 				</assault>
 				<!-- Autres vagues -->
 			</assaults>
 			<timerBetweenassaults>
-				<assault1>4</assault1>
-				<assault1>6</assault1>
 				<assault1>8</assault1>
+				<assault1>15</assault1>
+				<assault1>20</assault1>
 			</timerBetweenassaults>
 		</wave1>
 		<wave2>

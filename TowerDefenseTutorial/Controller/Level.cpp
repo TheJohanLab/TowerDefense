@@ -1,6 +1,5 @@
 #include "Level.h"
 #include "../Model/Unit.h"
-#include "../Model/Wall.h"
 
 Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY)
     : tileCountX(setTileCountX), tileCountY(setTileCountY),
@@ -11,7 +10,6 @@ Level::Level(SDL_Renderer* renderer, int setTileCountX, int setTileCountY)
 
     size_t listTilesSize = (size_t)tileCountX * tileCountY;
     m_ListTiles.reserve(listTilesSize);
-
 }
 
 
