@@ -18,10 +18,10 @@ Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int wind
     m_GameStatus(new GameStatus(GameState::INIT)),
     m_GameLoop(new GameLoop(*this, *m_GameStatus)),
     m_LevelManager(new LevelLoaderManager("Data/Levels/Levels.xml")),
-    m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS)),
+    m_PlayerManager(new PlayerManager(MAX_LIFE_POINTS, MAX_GEMS)),
     m_LevelView(new LevelView(renderer, playingAreaWidth / TILE_SIZE, playingAreaHeight / TILE_SIZE)),
     m_GameStateDisplay(new GameStateDisplay(renderer, &m_GameStatus->getGameState(), windowWidth, windowHeight)),
-    m_Shop(new Shop())
+    m_Shop(new Shop(m_PlayerManager))
 {
 
     if (window != nullptr && renderer != nullptr) {
@@ -59,7 +59,7 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, i
 
     m_UI = UI::getInstance();
     m_UI->initUI(renderer, windowWidth, windowHeight, windowWidth - playingAreaWidth, windowHeight - playingAreaHeight, 
-        m_PlayerManager->getpPlayerLifePoints(), m_Shop);
+        m_PlayerManager->getPlayer(), m_Shop);
 
     ItemSelectionZone TowerZone(30, playingAreaHeight+30, 120, 100, itemEnum::TowerItem);
     ItemSelectionZone TurretZone(185, playingAreaHeight + 30, 120, 100, itemEnum::TurretItem);
@@ -224,14 +224,14 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
             //Remove turret is on tile
             if (removeTurretsAtMousePosition(posMouse))
             {
-                m_Shop->sellItem(itemEnum::TurretItem);
+                //m_Shop->sellItem(itemEnum::TurretItem);
                 break;
             }
 
             if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
             {
                 m_Level.removeWall((int)posMouse.x, (int)posMouse.y);
-                m_Shop->sellItem(itemEnum::TowerItem);
+                //m_Shop->sellItem(itemEnum::TowerItem);
             }
 
             break;
@@ -270,6 +270,7 @@ void Game::update(SDL_Renderer* renderer, float dT) {
     updateProjectiles(dT);
     updateGameStateDisplay(dT);
 
+    m_PlayerManager->update(dT);
     m_UI->update(dT);
     
 }
@@ -438,7 +439,10 @@ void Game::draw(SDL_Renderer* renderer) {
 
 void Game::addUnit(SDL_Renderer* renderer, Vector2D pos, UnitType type) {
 
-    std::shared_ptr<Unit> pUnit = UnitFactory::createUnit(renderer, pos, type, [this](uint8_t gems) { m_Shop->addMoney(gems); });
+    std::shared_ptr<Unit> pUnit = UnitFactory::createUnit(renderer, pos, type, [this](uint8_t gems) {
+        //m_Shop->addMoney(gems); 
+      });
+
     if (pUnit != nullptr)
         //m_ListUnits.emplace_back(std::make_shared<Unit>(renderer, pos));
         m_ListUnits.emplace_back(pUnit);

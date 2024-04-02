@@ -9,6 +9,7 @@
 #include "../Model/Shop.h"
 #include "../Controller/ItemSelectionZone.h"
 #include "../Model/Defense.h"
+#include "../Controller/PlayerManager.h"
 
 class UI
 {
@@ -33,7 +34,7 @@ private:
 	size_t m_WindowWidh;
 	size_t m_WindowHeight;
 
-	const uint8_t *m_Health;
+	const Player* m_Player;
 	const Shop *m_Shop;
 
 	itemEnum m_SelectedItem;
@@ -58,7 +59,7 @@ public:
 	~UI();
 
 	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int UIWidth, int UIHeight, 
-		const uint8_t* playerLifePoints, const Shop* shop);
+		const Player* player, const Shop* shop);
 
 	void update(float dT);
 	void draw(SDL_Renderer* renderer) const;

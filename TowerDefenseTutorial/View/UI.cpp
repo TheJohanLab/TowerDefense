@@ -42,9 +42,9 @@ void UI::draw(SDL_Renderer* renderer) const
 
 
 void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int UIWidth, int UIHeight, 
-	const uint8_t* playerLifePoints, const Shop* shop)
+	const Player* player, const Shop* shop)
 {
-	m_Health = playerLifePoints;
+	m_Player = player;
 	m_Shop = shop;
 
 	m_renderer = renderer;
@@ -191,7 +191,7 @@ void UI::drawHearts(SDL_Renderer* renderer) const
 	{
 		int w, h;
 		SDL_QueryTexture(m_EmptyHeartTexture, NULL, NULL, &w, &h);
-		for (int i = 0; i < *m_Health; i++)
+		for (int i = 0; i < m_Player->getLifePoints(); i++)
 		{
 
 			SDL_Rect rect =
@@ -214,7 +214,7 @@ void UI::drawGems(SDL_Renderer* renderer) const
 		int w, h;
 		SDL_QueryTexture(m_GemTexture, NULL, NULL, &w, &h);
 
-		for (int i = 0; i < m_Shop->getMoneyAmount(); i++)
+		for (int i = 0; i < m_Player->getGems(); i++)
 		{
 			SDL_Rect rect =
 			{

@@ -1,6 +1,7 @@
 #pragma once
 
 #define MAX_LIFE_POINTS 10
+#define MAX_GEMS 10
 #define INITIAL_MONEY_AMOUNT 200
 #define TILE_SIZE 32
 #define FLOW_DISTANCE_MAX 255
