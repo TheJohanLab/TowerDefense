@@ -2,12 +2,14 @@
 #include "Unit.h"
 #include "Projectile.h"
 
-Defense::Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular)
+Defense::Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, 
+	Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular, uint8_t itemPrice, float placementCooldown)
 	:m_Texture(texture), m_TexturePreview(texturePreview), m_Pos(pos), m_TimerWeapon(Timer(timerWeapon)), m_Damages(damages),
 	m_WeaponRange(weaponRange), m_SpeedAngular(speedAngular),
-	m_WeaponAngle(0.0f)
+	m_WeaponAngle(0.0f), m_ItemPrice(itemPrice), m_PlacementCooldown(placementCooldown), m_Cooldown(placementCooldown)
 {
 	m_WeaponRangeTexture = TextureLoader::loadTexture(renderer, "Range.bmp");
+	m_PlacementCooldown.resetToZero();
 }
 
 void Defense::drawWeaponRange(SDL_Renderer* renderer, int tileSize, int posX, int posY) const
@@ -45,6 +47,36 @@ SDL_Texture* Defense::getTexture() const
 SDL_Texture* Defense::getPreviewTexture() const
 {
 	return m_TexturePreview;
+}
+
+bool Defense::isCooldownReady() const
+{
+	return m_PlacementCooldown.timeSIsZero();
+}
+
+void Defense::countDownCooldown(float dT)
+{
+	m_PlacementCooldown.countDown(dT);
+}
+
+void Defense::resetCooldown()
+{
+	m_PlacementCooldown.resetToMax();
+}
+
+float Defense::getMaxCooldown() const
+{
+	return m_Cooldown;
+}
+
+Timer Defense::getCooldownTimer() const
+{
+	return m_PlacementCooldown;
+}
+
+uint8_t Defense::getPrice() const
+{
+	return m_ItemPrice;
 }
 
 Defense::~Defense()

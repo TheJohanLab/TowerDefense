@@ -46,7 +46,7 @@ bool ItemSelectionZone::isOnZone(int x, int y) const
 	return false;
 }
 
-inline const SDL_Rect& ItemSelectionZone::getZone() const
+const SDL_Rect& ItemSelectionZone::getZone() const
 {
 	return m_RectZone;
 }

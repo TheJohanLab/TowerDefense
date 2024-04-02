@@ -153,6 +153,9 @@
     <ClInclude Include="Model\DefenseIncludes.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="View\ItemsInfoPreview.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Data\Images\Tile Arrow Down Left.bmp">
@@ -299,6 +302,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Model\Items.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="View\ItemsInfoPreview.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -38,6 +38,7 @@ Game::~Game() {
     TextureLoader::deallocateTextures();
     delete m_InputManager;
     delete m_ItemPlacementPreview;
+    delete m_ItemsInfoPreview;
     delete m_GameLoop;
     delete m_LevelManager;
     delete m_PlayerManager;
@@ -48,6 +49,8 @@ Game::~Game() {
 void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight)
 {
     std::srand(std::time(nullptr));
+
+    Items::initItems(renderer);
 
     m_Level.setListUnits(&m_ListUnits);
     m_Level.setOnTargetReachedCallback([this](int damages) { m_PlayerManager->takeDamages(damages); });
@@ -76,12 +79,20 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, i
     m_SelectedItem = m_UI->getSelectedItem();
 
     m_ItemPlacementPreview = new ItemPlacementPreview(renderer, m_Level, *m_Shop, 0, 0, windowWidth, tileSize * 14);
-    m_InputManager->setMouseMovementCallback([this](int x, int y) { m_ItemPlacementPreview->onMove(x, y); });
+    m_ItemsInfoPreview = new ItemsInfoPreview(renderer, &m_Level);
+    m_ItemsInfoPreview->addItemInfoZone(itemEnum::TowerItem, &TowerZone);
+    m_ItemsInfoPreview->addItemInfoZone(itemEnum::TurretItem, &TurretZone);
+    m_ItemsInfoPreview->addItemInfoZone(itemEnum::ExplosionItem, &BombZone);
+    m_ItemsInfoPreview->setPlayingZone(&PlayingZone);
+
+    m_InputManager->setMouseMovementCallback([this](int x, int y) {
+        m_ItemPlacementPreview->onMove(x, y);
+        m_ItemsInfoPreview->onMove(x, y); });
     m_InputManager->setKeyPressedCallback([this](int key) { processKeyboardEvents(key); });
 
     m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
 
-    Items::initItems(renderer);
+    
 
     m_GameLoop->start(renderer);
 }
@@ -154,35 +165,54 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
             
             if (m_ItemPlacementPreview->isItemPlacementEnabled())
             {
+                Defense* selectedItem = Items::getItemData(*m_SelectedItem);
                 switch (*m_SelectedItem) {
                 case itemEnum::TowerItem:
-                    //Add wall at the mouse position.
-                    if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                    if (selectedItem->getCooldownTimer().timeSIsZero())
                     {
-                        addDefense<Tower>(renderer, posMouse);
-                        m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
-                        m_Shop->purchaseItem(*m_SelectedItem);
+                        selectedItem->resetCooldown();
+                        //Add wall at the mouse position.
+                        if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                        {
+                            addDefense<Tower>(renderer, posMouse);
+                            m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
+                            m_Shop->purchaseItem(*m_SelectedItem);
+                            *m_SelectedItem = itemEnum::None;
+                            m_ItemPlacementPreview->disablePreview();
+                        }
+
                     }
                     break;
                 case itemEnum::TurretItem:
                     //Add the selected unit at the mouse position.
-
-                    if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y) && !m_Level.isTurret((int)posMouse.x, (int)posMouse.y))
+                    if (selectedItem->getCooldownTimer().timeSIsZero())
                     {
-                        addDefense<Turret>(renderer, posMouse);
-                        m_Level.setTurret((int)posMouse.x, (int)posMouse.y);
-                        //addTurret(renderer, posMouse);
-                        m_Shop->purchaseItem(*m_SelectedItem);
+                        selectedItem->resetCooldown();
+                        if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y) && !m_Level.isTurret((int)posMouse.x, (int)posMouse.y))
+                        {
+                            addDefense<Turret>(renderer, posMouse);
+                            m_Level.setTurret((int)posMouse.x, (int)posMouse.y);
+                            //addTurret(renderer, posMouse);
+                            m_Shop->purchaseItem(*m_SelectedItem);
+                            *m_SelectedItem = itemEnum::None;
+                            m_ItemPlacementPreview->disablePreview();
+                        }
                     }
                     break;
                 case itemEnum::ExplosionItem:
-                    //Add wall at the mouse position.
-                    if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                    if (selectedItem->getCooldownTimer().timeSIsZero())
                     {
-                        addDefense<Explosion>(renderer, posMouse);
-                        //m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
-                        m_Shop->purchaseItem(*m_SelectedItem);
+                        selectedItem->resetCooldown();
+                        if (!m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+                        {
+                            addDefense<Explosion>(renderer, posMouse);
+                            //m_Level.setTileWall((int)posMouse.x, (int)posMouse.y);
+                            m_Shop->purchaseItem(*m_SelectedItem);
+                            *m_SelectedItem = itemEnum::None;
+                            m_ItemPlacementPreview->disablePreview();
+                        }
                     }
+                    //Add wall at the mouse position.
                     break;
                 }
             
@@ -239,6 +269,8 @@ void Game::update(SDL_Renderer* renderer, float dT) {
 
     updateProjectiles(dT);
     updateGameStateDisplay(dT);
+
+    m_UI->update(dT);
     
 }
 
@@ -394,6 +426,8 @@ void Game::draw(SDL_Renderer* renderer) {
 
     m_ItemPlacementPreview->draw(renderer, tileSize);
     m_UI->draw(renderer);
+
+    m_ItemsInfoPreview->draw(renderer, tileSize);
 
     m_GameStateDisplay->draw(renderer);
 

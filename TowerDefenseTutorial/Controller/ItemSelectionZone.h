@@ -26,6 +26,6 @@ public:
 
 	bool isOnZone(int x, int y) const;
 
-	inline const SDL_Rect& getZone() const;
+	const SDL_Rect& getZone() const;
 };
 

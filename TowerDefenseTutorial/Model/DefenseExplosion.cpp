@@ -5,7 +5,7 @@ Explosion::Explosion(SDL_Renderer* renderer, Vector2D pos)
 	:Defense(renderer, 
 		TextureLoader::loadTexture(renderer, "Bomb.bmp"), 
 		TextureLoader::loadTexture(renderer, "BombPreview.bmp"), 
-		pos, 2.0f, 2, 5, 0.0f),
+		pos, 2.0f, 2, 5, 0.0f,3, 10.0f),
 	m_ExplosionTimer(0.8f), m_BombTimer(2.0f), m_Exploded(false),
 	m_Animation({0,8,100,32,32})
 {
@@ -19,6 +19,7 @@ Explosion::~Explosion()
 
 void Explosion::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits, std::vector<Projectile>& listProjectiles)
 {
+	m_PlacementCooldown.countDown(dT);
 	m_BombTimer.countDown(dT);
 	if (m_BombTimer.timeSIsZero() )
 	{

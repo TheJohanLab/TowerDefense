@@ -8,6 +8,7 @@
 #include "../Utils/Vector2D.h"
 #include "../Model/Shop.h"
 #include "../Controller/ItemSelectionZone.h"
+#include "../Model/Defense.h"
 
 class UI
 {
@@ -16,8 +17,8 @@ private:
 
 	struct UIItem
 	{
-		SDL_Texture* texture;
-		uint8_t price;
+		itemEnum itemEnum;
+		Defense* objectItem;
 	};
 
 	static UI* instance;
@@ -51,7 +52,6 @@ private:
 	std::vector<UIItem> m_UIItems;
 
 
-
 public:
 	
 	static UI* getInstance(); 
@@ -60,6 +60,7 @@ public:
 	void initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int UIWidth, int UIHeight, 
 		const uint8_t* playerLifePoints, const Shop* shop);
 
+	void update(float dT);
 	void draw(SDL_Renderer* renderer) const;
 
 	void selectItem(itemEnum selectedItem, int x, int y);
@@ -71,10 +72,11 @@ private:
 
 	void drawBackground(SDL_Renderer* renderer) const;
 	void drawItems(SDL_Renderer* renderer) const;
-	void drawItemPrice(SDL_Renderer* renderer, UIItem Item, SDL_Rect itemPos) const;
+	void drawItemPrice(SDL_Renderer* renderer, const Defense& item, SDL_Rect itemPos) const;
 	void drawHearts(SDL_Renderer* renderer) const;
 	void drawGems(SDL_Renderer* renderer) const;
 	void drawItemSelector(SDL_Renderer* renderer) const;
+	void drawCooldown(SDL_Renderer* renderer, UIItem item) const;
 	
 };
 

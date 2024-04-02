@@ -1,8 +1,8 @@
 #include "UI.h"
-#include "../Controller/TextureLoader.h"
-#include <algorithm>
 #include <string>
-
+#include <algorithm>
+#include "../Controller/TextureLoader.h"
+#include "../Model/Items.h"
 
 UI* UI::instance = nullptr;
 
@@ -32,6 +32,12 @@ void UI::draw(SDL_Renderer* renderer) const
 	drawHearts(renderer);
 	drawItems(renderer);
 	drawItemSelector(renderer);
+
+	for (const auto& item : m_UIItems)
+	{
+		if (!item.objectItem->getCooldownTimer().timeSIsZero())
+			drawCooldown(renderer, item);
+	}
 }
 
 
@@ -47,7 +53,7 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int
 	m_UIWidth = UIWidth;
 	m_UIHeight = UIHeight;
 
-	m_SelectedItem = itemEnum::TowerItem;
+	m_SelectedItem = itemEnum::None;
 
 	if (renderer != nullptr)
 	{
@@ -63,11 +69,20 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int
 		m_ItemSelectorTexture = TextureLoader::loadTexture(m_renderer, "ItemSelector.bmp");
 
 
-		m_UIItems.push_back({ m_WallTexture, m_Shop->getItemPrice(itemEnum::TowerItem) });
-		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::TurretItem) });
-		m_UIItems.push_back({ m_BombTexture, m_Shop->getItemPrice(itemEnum::ExplosionItem) });
+		m_UIItems.push_back({ itemEnum::TowerItem,  Items::getItemData(itemEnum::TowerItem) });
+		m_UIItems.push_back({ itemEnum::TurretItem, Items::getItemData(itemEnum::TurretItem) });
+		m_UIItems.push_back({ itemEnum::ExplosionItem, Items::getItemData(itemEnum::ExplosionItem) });
+
 	}
 
+}
+
+void UI::update(float dT)
+{
+	for (auto& item : m_UIItems)
+	{
+		item.objectItem->countDownCooldown(dT);
+	}
 }
 
 void UI::drawBackground(SDL_Renderer* renderer) const
@@ -129,8 +144,9 @@ void UI::drawItems(SDL_Renderer* renderer) const
 		int i = 0;
 		for (const auto& item : m_UIItems)
 		{
+			SDL_Texture* currentTexture = item.objectItem->getTexture();
 			int w, h;
-			SDL_QueryTexture(item.texture, NULL, NULL, &w, &h);
+			SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
 			SDL_Rect rect =
 			{
 				(int)width - (w * 3) + i * 150,
@@ -138,28 +154,28 @@ void UI::drawItems(SDL_Renderer* renderer) const
 				w * 2,
 				h * 2
 			};
-			SDL_RenderCopy(renderer, item.texture, NULL, &rect);
+			SDL_RenderCopy(renderer, currentTexture, NULL, &rect);
 
-			drawItemPrice(renderer, item, rect);
+			drawItemPrice(renderer,*item.objectItem, rect);
 			i++;
 		}
 
 	}
 }
 
-void UI::drawItemPrice(SDL_Renderer* renderer, UIItem item, SDL_Rect itemPos) const
+void UI::drawItemPrice(SDL_Renderer* renderer, const Defense& item, SDL_Rect itemPos) const
 {
 	int w, h;
 	SDL_QueryTexture(m_GemTexture, NULL, NULL, &w, &h);
 
-	for (int i = 0; i < item.price; i++)
+	for (int i = 0; i < item.getPrice(); i++)
 	{
 
 		int w, h;
-		SDL_QueryTexture(item.texture, NULL, NULL, &w, &h);
+		SDL_QueryTexture(item.getTexture(), NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
-			itemPos.x - itemPos.w/2 + ((i+1.0f)/(item.price+1.0f))*(itemPos.w*1.75),
+			itemPos.x - itemPos.w/2 + ((i+1.0f)/(item.getPrice() + 1.0f)) * (itemPos.w * 1.75),
 			itemPos.y - (w * 1 / 3),
 			w/2 ,
 			h/2
@@ -216,7 +232,7 @@ void UI::drawGems(SDL_Renderer* renderer) const
 
 void UI::drawItemSelector(SDL_Renderer* renderer) const
 {
-	if (renderer != nullptr)
+	if (renderer != nullptr && m_SelectedItem != itemEnum::None)
 	{
 		int w, h;
 		SDL_QueryTexture(m_ItemSelectorTexture, NULL, NULL, &w, &h);
@@ -242,9 +258,29 @@ void UI::drawItemSelector(SDL_Renderer* renderer) const
 	}
 }
 
+void UI::drawCooldown(SDL_Renderer* renderer, UIItem item) const
+{
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+	
+	float maxCooldown = item.objectItem->getMaxCooldown();
+	float currentCooldown = item.objectItem->getCooldownTimer().getCurrentTime();
+
+	SDL_Rect rect =
+	{
+		(45 + (int)item.itemEnum * ((107) + 40)),
+		m_WindowHeight - m_UIHeight + 40,
+		107*(maxCooldown - currentCooldown)/maxCooldown,
+		83
+	};
+
+
+	SDL_RenderFillRect(renderer, &rect);
+}
+
 void UI::selectItem(itemEnum selectedItem, int x, int y)
 {
-	m_SelectedItem = selectedItem;
+	if (Items::getItemData(selectedItem)->isCooldownReady())
+		m_SelectedItem = selectedItem;
 }
 
 

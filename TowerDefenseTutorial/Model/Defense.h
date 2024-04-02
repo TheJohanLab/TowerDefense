@@ -11,10 +11,12 @@ class Defense
 {
 protected:
 	Vector2D m_Pos;
-	Timer m_TimerWeapon;
+	Timer m_TimerWeapon, m_PlacementCooldown;
 	uint8_t m_Damages;
 	uint8_t m_WeaponRange;
 	float m_WeaponAngle, m_SpeedAngular;
+	uint8_t m_ItemPrice;
+	float m_Cooldown;
 	bool m_Alive = true;
 
 	std::weak_ptr<Unit> targetUnit;
@@ -23,7 +25,8 @@ protected:
 	SDL_Texture* m_TexturePreview = nullptr;
 	SDL_Texture* m_WeaponRangeTexture = nullptr;
 
-	Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular);
+	Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, Vector2D pos, 
+		float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular, uint8_t itemPrice, float placementCooldown);
 	std::weak_ptr<Unit> findEnemyUnit(std::vector<std::shared_ptr<Unit>>& listUnits);
 	bool updateAngle(float dT);
 
@@ -45,5 +48,12 @@ public:
 
 	SDL_Texture* getTexture() const;
 	SDL_Texture* getPreviewTexture() const;
+
+	bool isCooldownReady() const;
+	void countDownCooldown(float dT);
+	void resetCooldown();
+	float getMaxCooldown() const;
+	Timer getCooldownTimer() const;
+	uint8_t getPrice() const;
 };
 

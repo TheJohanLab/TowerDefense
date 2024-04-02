@@ -18,7 +18,7 @@ Turret::Turret(SDL_Renderer* renderer, Vector2D pos)
 	:Defense(renderer, 
 		TextureLoader::loadTexture(renderer, "Turret.bmp"),
 		TextureLoader::loadTexture(renderer, "TurretPreview.bmp"),
-		pos, 0.7f, 2, 2, MathAddon::angleDegToRad(180.0f))
+		pos, 0.7f, 2, 2, MathAddon::angleDegToRad(180.0f), 2, 2.0f)
 {
 
 	m_TurretBaseTexture = TextureLoader::loadTexture(renderer, "TurretBase.bmp");
@@ -39,7 +39,8 @@ void Turret::update(SDL_Renderer* renderer, float dT,
 		angle -= MathAddon::angleDegToRad(360.0f);
 	*/
 
-	//Update the timer
+
+	m_PlacementCooldown.countDown(dT);
 	m_TimerWeapon.countDown(dT);
 
 	//check if a target has been found but is no longer alive or is out of weapon range

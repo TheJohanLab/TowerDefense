@@ -139,6 +139,7 @@
     <ClInclude Include="Controller\GameLoop.h" />
     <ClInclude Include="Controller\KeyboardManager.h" />
     <ClInclude Include="Controller\DefenseFactory.h" />
+    <ClInclude Include="View\ItemsInfoPreview.h" />
     <ClInclude Include="Model\DefenseExplosion.h" />
     <ClInclude Include="Model\Defense.h" />
     <ClInclude Include="Model\DefenseIncludes.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Controller\GameLoop.cpp" />
     <ClCompile Include="Controller\KeyboardManager.cpp" />
     <ClCompile Include="Controller\DefenseFactory.cpp" />
+    <ClCompile Include="View\ItemsInfoPreview.cpp" />
     <ClCompile Include="Model\DefenseExplosion.cpp" />
     <ClCompile Include="Model\Defense.cpp" />
     <ClCompile Include="Model\Items.cpp" />

@@ -12,14 +12,14 @@ class Items
 
 private:
 
-	static std::map<itemEnum, std::unique_ptr<Defense>> m_ItemMap;
+	static std::map<itemEnum, std::shared_ptr<Defense>> m_ItemMap;
 
 public:
 	Items();
 	~Items();
 
 	static void initItems(SDL_Renderer* renderer);
-	static const Defense* getItemData(itemEnum item);
+	static Defense* getItemData(itemEnum item);
 	
 
 };

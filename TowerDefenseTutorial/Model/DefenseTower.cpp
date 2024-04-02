@@ -7,7 +7,7 @@ Tower::Tower(SDL_Renderer* renderer, Vector2D pos)
 	:Defense(renderer, 
 		TextureLoader::loadTexture(renderer, "Tower.bmp"), 
 		TextureLoader::loadTexture(renderer, "TowerPreview.bmp"), 
-		pos, 2.0f, 1, 4, MathAddon::angleDegToRad(180.0f))
+		pos, 2.0f, 1, 4, MathAddon::angleDegToRad(180.0f), 1, 2.0f)
 {
 	m_ProjectileTexture = TextureLoader::loadTexture(renderer, "TowerProjectile.bmp");
 }
@@ -18,6 +18,7 @@ Tower::~Tower()
 
 void Tower::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits, std::vector<Projectile>& listProjectiles)
 {
+	m_PlacementCooldown.countDown(dT);
 	m_TimerWeapon.countDown(dT);
 
 	//check if a target has been found but is no longer alive or is out of weapon range

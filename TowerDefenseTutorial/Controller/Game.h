@@ -30,6 +30,7 @@ private:
 	InputManager* m_InputManager = nullptr;
 	KeyboardManager* m_KeyBoardManager = nullptr;
 	ItemPlacementPreview* m_ItemPlacementPreview = nullptr;
+	ItemsInfoPreview* m_ItemsInfoPreview = nullptr;
 	GameStatus* m_GameStatus = nullptr;
 	GameLoop* m_GameLoop = nullptr;
 	LevelLoaderManager* m_LevelManager = nullptr;

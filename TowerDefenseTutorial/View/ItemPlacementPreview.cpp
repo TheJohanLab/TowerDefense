@@ -21,14 +21,13 @@ ItemPlacementPreview::ItemPlacementPreview(SDL_Renderer* renderer, Level& level,
 }
 
 
-
 ItemPlacementPreview::~ItemPlacementPreview()
 {
 }
 
 void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 {
-	if (renderer != nullptr && m_PreviewPos != nullptr)
+	if (renderer != nullptr && m_PreviewPos != nullptr && m_PreviewEnabled)
 	{
 		Vector2D posMouse((float)m_PreviewPos->x / tileSize, (float)m_PreviewPos->y / tileSize);
 		int w, h;
@@ -56,23 +55,26 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 
 		}*/
 
-		const Defense* currentItem = Items::getItemData(*m_ItemSelected);
-		SDL_Texture* currentTexture = currentItem->getPreviewTexture();
-
-
-		SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
-		m_Buildable ? SDL_SetTextureColorMod(currentTexture, 255, 255, 255) : SDL_SetTextureColorMod(currentTexture, 255, 0, 0);
-
-		SDL_Rect rect =
+		if (*m_ItemSelected != itemEnum::None)
 		{
-			(int)posMouse.x * tileSize + offsetX,
-			(int)posMouse.y * tileSize + offsetY,
-			w,
-			h
-		};
-		SDL_RenderCopy(renderer, currentTexture, NULL, &rect);
+			const Defense* currentItem = Items::getItemData(*m_ItemSelected);
+			SDL_Texture* currentTexture = currentItem->getPreviewTexture();
 
-		currentItem->drawWeaponRange(renderer, tileSize, posMouse.x, posMouse.y);
+
+			SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
+			m_Buildable ? SDL_SetTextureColorMod(currentTexture, 255, 255, 255) : SDL_SetTextureColorMod(currentTexture, 255, 0, 0);
+
+			SDL_Rect rect =
+			{
+				(int)posMouse.x * tileSize + offsetX,
+				(int)posMouse.y * tileSize + offsetY,
+				w,
+				h
+			};
+			SDL_RenderCopy(renderer, currentTexture, NULL, &rect);
+
+			currentItem->drawWeaponRange(renderer, tileSize, posMouse.x, posMouse.y);
+		}
 	}
 
 }
@@ -81,14 +83,41 @@ void ItemPlacementPreview::onMove(int x, int y)
 {
 	//std::cout << "x : " << x << ", y : " << y << "\n";
 
+	if (*m_ItemSelected != itemEnum::None)
+	{
+		drawItemPreview(x, y);
+
+	}
+	else
+		drawItemInfos(x, y);
+
+
+	
+}
+
+bool ItemPlacementPreview::isItemPlacementEnabled() const
+{
+	return m_Buildable;
+}
+
+void ItemPlacementPreview::disablePreview()
+{
+	m_PreviewEnabled = false;
+}
+
+
+void ItemPlacementPreview::drawItemPreview(int x, int y)
+{
 	int tileX = x / TILE_SIZE;
 	int tileY = y / TILE_SIZE;
+
+	m_PreviewEnabled = true;
 
 	if (m_Shop.isBuyable(*m_ItemSelected) &&
 		*m_ItemSelected != itemEnum::None && isOnPlayingZone(x, y) &&
 		((*m_ItemSelected == itemEnum::TowerItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
-		(*m_ItemSelected == itemEnum::ExplosionItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
-		(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY))) &&
+			(*m_ItemSelected == itemEnum::ExplosionItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
+			(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY))) &&
 		!m_Level.isEnemyOnTile(tileX, tileY) &&
 		!m_Level.isTileTarget(tileX, tileY) &&
 		!m_Level.isTileSpawner(tileX, tileY) &&
@@ -99,9 +128,10 @@ void ItemPlacementPreview::onMove(int x, int y)
 		m_LastPreviewPos.x = x;
 		m_LastPreviewPos.y = y;
 		m_PreviewPos = &m_LastPreviewPos;
+
 		m_Buildable = true;
 	}
-	else if (*m_ItemSelected != itemEnum::None && isOnPlayingZone(x, y)) 
+	else if (*m_ItemSelected != itemEnum::None && isOnPlayingZone(x, y))
 	{
 		m_LastPreviewPos.x = x;
 		m_LastPreviewPos.y = y;
@@ -109,16 +139,15 @@ void ItemPlacementPreview::onMove(int x, int y)
 		m_Buildable = false;
 	}
 	else
+	{
 		m_PreviewPos = nullptr;
-
-	
+	}
 }
 
-bool ItemPlacementPreview::isItemPlacementEnabled() const
+void ItemPlacementPreview::drawItemInfos(int x, int y)
 {
-	return m_Buildable;
-}
 
+}
 
 bool ItemPlacementPreview::isOnPlayingZone(int mouseX, int mouseY) const
 {

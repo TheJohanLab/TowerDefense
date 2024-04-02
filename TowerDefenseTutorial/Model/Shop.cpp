@@ -25,6 +25,8 @@ void Shop::addMoney(uint8_t amount)
 
 bool Shop::isBuyable(itemEnum item) const
 {
+	if (item == itemEnum::None)
+		return false;
 	return (m_ItemPrices.at(item) <= m_Money);
 }
 

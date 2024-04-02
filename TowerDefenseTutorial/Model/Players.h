@@ -7,11 +7,11 @@ class Player
 private:
 	uint8_t m_LifePoints;
 	uint8_t m_Score;
-	uint8_t m_Coins;
+	uint8_t m_Gems;
 
 public:
 	Player(uint8_t MaxlifePoints)
-		:m_LifePoints(MaxlifePoints), m_Score(0), m_Coins(200)
+		:m_LifePoints(MaxlifePoints), m_Score(0), m_Gems(10)
 	{}
 
 	~Player() {}
