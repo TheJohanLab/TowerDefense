@@ -9,7 +9,7 @@
 #define NUMBER_OF_LAYER 4
 
 
-enum itemEnum
+enum itemEnum : char
 {
 	TowerItem,
 	TurretItem,

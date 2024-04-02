@@ -1,14 +1,16 @@
 #include "Defense.h"
+#include "Unit.h"
+#include "Projectile.h"
 
-Defense::Defense(SDL_Renderer* renderer, SDL_Texture* texture, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular)
-	:m_Texture(texture), m_Pos(pos), m_TimerWeapon(Timer(timerWeapon)), m_Damages(damages), 
+Defense::Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular)
+	:m_Texture(texture), m_TexturePreview(texturePreview), m_Pos(pos), m_TimerWeapon(Timer(timerWeapon)), m_Damages(damages),
 	m_WeaponRange(weaponRange), m_SpeedAngular(speedAngular),
 	m_WeaponAngle(0.0f)
 {
 	m_WeaponRangeTexture = TextureLoader::loadTexture(renderer, "Range.bmp");
 }
 
-void Defense::drawWeaponRange(SDL_Renderer* renderer, int tileSize) const
+void Defense::drawWeaponRange(SDL_Renderer* renderer, int tileSize, int posX, int posY) const
 {
 
 	if (renderer != nullptr && m_WeaponRangeTexture != nullptr)
@@ -18,8 +20,8 @@ void Defense::drawWeaponRange(SDL_Renderer* renderer, int tileSize) const
 		SDL_QueryTexture(m_WeaponRangeTexture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
-			(int)(m_Pos.x * tileSize) - m_WeaponRange * tileSize,
-			(int)(m_Pos.y * tileSize) - m_WeaponRange * tileSize,
+			(int)(posX * tileSize) - m_WeaponRange * tileSize,
+			(int)(posY * tileSize) - m_WeaponRange * tileSize,
 			m_WeaponRange * 2 * tileSize,
 			m_WeaponRange * 2 * tileSize
 		};
@@ -38,6 +40,11 @@ bool Defense::isAlive() const
 SDL_Texture* Defense::getTexture() const
 {
 	return m_Texture;
+}
+
+SDL_Texture* Defense::getPreviewTexture() const
+{
+	return m_TexturePreview;
 }
 
 Defense::~Defense()

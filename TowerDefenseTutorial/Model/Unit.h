@@ -10,8 +10,8 @@
 #include "HealthBar.h"
 #include "SpriteAnimation.h"
 
-#include "../Listeners/OnBaseReachedListener.h"
-#include "../Listeners/OnDestroyUnitListener.h"
+//#include "../Listeners/OnBaseReachedListener.h"
+//#include "../Listeners/OnDestroyUnitListener.h"
 
 #define MAX_HEALTH (uint8_t)4
 class Game;
@@ -56,7 +56,7 @@ protected:
 
 
 	std::function<void(uint8_t)> m_onUnitDestroyedCallback;
-	OnBaseReachedListener onBaseReachedObserver;
-	OnDestroyUnitListener onDestroyUnitObserver;
+	//OnBaseReachedListener onBaseReachedObserver;
+	//OnDestroyUnitListener onDestroyUnitObserver;
 
 };

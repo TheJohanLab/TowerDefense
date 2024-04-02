@@ -141,6 +141,7 @@
     <ClInclude Include="Controller\DefenseFactory.h" />
     <ClInclude Include="Model\DefenseExplosion.h" />
     <ClInclude Include="Model\Defense.h" />
+    <ClInclude Include="Model\DefenseIncludes.h" />
     <ClInclude Include="Model\Items.h" />
     <ClInclude Include="Model\UnitSkeleton.h" />
     <ClInclude Include="Model\UnitBat.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="Controller\DefenseFactory.cpp" />
     <ClCompile Include="Model\DefenseExplosion.cpp" />
     <ClCompile Include="Model\Defense.cpp" />
+    <ClCompile Include="Model\Items.cpp" />
     <ClCompile Include="View\GameStateDisplay.cpp" />
     <ClCompile Include="View\LevelView.cpp" />
     <ClCompile Include="Model\HealthBar.cpp" />

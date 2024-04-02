@@ -21,7 +21,7 @@ public:
 	~ItemSelectionZone();
 
 	void setZone(const SDL_Rect& zone);
-	void setOnClickListener(std::function<void(itemEnum item, int mouseButtonStatus, int, int)> onClickFunction);
+	void setOnClickListener(std::function<void(itemEnum item, int mouseButtonStatus, int, int )> onClickFunction);
 	virtual void onClick(int mouseButtonStatus, int x, int y);
 
 	bool isOnZone(int x, int y) const;

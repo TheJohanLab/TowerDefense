@@ -3,7 +3,7 @@
 #include "UI.h"
 #include "../Controller/TextureLoader.h"
 #include "../Controller/Pathfinding.h"
-
+#include "../Model/Items.h"
 
 
 ItemPlacementPreview::ItemPlacementPreview(SDL_Renderer* renderer, Level& level, Shop& shop, int x, int y, int w, int h)
@@ -32,10 +32,12 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 	{
 		Vector2D posMouse((float)m_PreviewPos->x / tileSize, (float)m_PreviewPos->y / tileSize);
 		int w, h;
-		SDL_Texture* currentTexture;
+		
 		int offsetX = 0;
 		int offsetY = 0;
-		switch (*m_ItemSelected)
+	
+		
+		/*switch (*m_ItemSelected)
 		{
 		case itemEnum::TurretItem:
 			currentTexture = m_TurretPreviewTexture;
@@ -52,7 +54,10 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 			currentTexture = m_TowerPreviewTexture;
 			break;
 
-		}
+		}*/
+
+		const Defense* currentItem = Items::getItemData(*m_ItemSelected);
+		SDL_Texture* currentTexture = currentItem->getPreviewTexture();
 
 
 		SDL_QueryTexture(currentTexture, NULL, NULL, &w, &h);
@@ -66,6 +71,8 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 			h
 		};
 		SDL_RenderCopy(renderer, currentTexture, NULL, &rect);
+
+		currentItem->drawWeaponRange(renderer, tileSize, posMouse.x, posMouse.y);
 	}
 
 }
@@ -79,9 +86,9 @@ void ItemPlacementPreview::onMove(int x, int y)
 
 	if (m_Shop.isBuyable(*m_ItemSelected) &&
 		*m_ItemSelected != itemEnum::None && isOnPlayingZone(x, y) &&
-		(*m_ItemSelected == itemEnum::TowerItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
+		((*m_ItemSelected == itemEnum::TowerItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
 		(*m_ItemSelected == itemEnum::ExplosionItem && !m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) ||
-		(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY)) &&
+		(*m_ItemSelected == itemEnum::TurretItem && m_Level.isTileWall(tileX, tileY) && !m_Level.isTurret(tileX, tileY))) &&
 		!m_Level.isEnemyOnTile(tileX, tileY) &&
 		!m_Level.isTileTarget(tileX, tileY) &&
 		!m_Level.isTileSpawner(tileX, tileY) &&

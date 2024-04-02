@@ -13,6 +13,7 @@
 class Turret : public Defense
 {
 private:
+	SDL_Texture* m_TurretBaseTexture = nullptr;
 	SDL_Texture* m_TurretHeadTexture = nullptr;
 	SDL_Texture* m_ProjectileTexture = nullptr;
 public:

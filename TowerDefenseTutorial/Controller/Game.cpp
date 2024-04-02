@@ -7,6 +7,7 @@
 #include "../Model/DefenseTower.h"
 #include "../Model/DefenseTurret.h"
 #include "../Model/DefenseExplosion.h"
+#include "../Model/Items.h"
 
 
 Game::Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight, int playingAreaWidth, int playingAreaHeight) 
@@ -79,6 +80,8 @@ void Game::initGame(SDL_Renderer* renderer, int windowWidth, int windowHeight, i
     m_InputManager->setKeyPressedCallback([this](int key) { processKeyboardEvents(key); });
 
     m_PlayerManager->setOnPlayersDeathCallback([this, renderer]() { gameOver(renderer); });
+
+    Items::initItems(renderer);
 
     m_GameLoop->start(renderer);
 }

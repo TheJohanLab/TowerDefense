@@ -25,7 +25,7 @@ void ItemSelectionZone::setZone(const SDL_Rect& zone)
 	m_RectZone = zone;
 }
 
-void ItemSelectionZone::setOnClickListener(std::function<void(itemEnum item, int, int, int)> onClickFunction)
+void ItemSelectionZone::setOnClickListener(std::function<void(itemEnum item, int, int, int )> onClickFunction)
 {
 	m_OnClickFunction = onClickFunction;
 }

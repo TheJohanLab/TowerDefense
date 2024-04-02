@@ -2,8 +2,12 @@
 #include "../Controller/TextureLoader.h"
 #include "../Utils/MathAddon.h"
 
+
 Tower::Tower(SDL_Renderer* renderer, Vector2D pos)
-	:Defense(renderer, TextureLoader::loadTexture(renderer, "Wall.bmp"), pos, 2.0f, 1, 4, MathAddon::angleDegToRad(180.0f))
+	:Defense(renderer, 
+		TextureLoader::loadTexture(renderer, "Tower.bmp"), 
+		TextureLoader::loadTexture(renderer, "TowerPreview.bmp"), 
+		pos, 2.0f, 1, 4, MathAddon::angleDegToRad(180.0f))
 {
 	m_ProjectileTexture = TextureLoader::loadTexture(renderer, "TowerProjectile.bmp");
 }
@@ -37,7 +41,7 @@ void Tower::update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr
 void Tower::draw(SDL_Renderer* renderer, int tileSize)
 {
 	drawTower(renderer, tileSize);
-	drawWeaponRange(renderer, tileSize);
+	//drawWeaponRange(renderer, tileSize);
 }
 
 

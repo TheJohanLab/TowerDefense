@@ -1,5 +1,7 @@
 #include "DefenseTurret.h"
 #include "../Controller/TextureLoader.h"
+#include "../Utils/Utils.h"
+
 
 //const float Turret::speedAngular = MathAddon::angleDegToRad(180.0f);
 //const float Turret::weaponRange = 2.0f;
@@ -13,8 +15,13 @@
 //}
 
 Turret::Turret(SDL_Renderer* renderer, Vector2D pos)
-	:Defense(renderer, TextureLoader::loadTexture(renderer, "TurretBase.bmp"), pos, 0.7f, 2, 2, MathAddon::angleDegToRad(180.0f))
+	:Defense(renderer, 
+		TextureLoader::loadTexture(renderer, "Turret.bmp"),
+		TextureLoader::loadTexture(renderer, "TurretPreview.bmp"),
+		pos, 0.7f, 2, 2, MathAddon::angleDegToRad(180.0f))
 {
+
+	m_TurretBaseTexture = TextureLoader::loadTexture(renderer, "TurretBase.bmp");
 	m_TurretHeadTexture = TextureLoader::loadTexture(renderer, "TurretHead.bmp");
 	m_ProjectileTexture = TextureLoader::loadTexture(renderer, "Projectile.bmp");
 }
@@ -59,7 +66,7 @@ void Turret::draw(SDL_Renderer* renderer, int tileSize)
 {
 	drawTurretBase(renderer, tileSize);
 	drawTurretHead(renderer, tileSize);
-	drawWeaponRange(renderer, tileSize);
+	//drawWeaponRange(renderer, tileSize);
 }
 
 //bool Turret::updateAngle(float dT)
@@ -161,11 +168,11 @@ void Turret::drawTurretHead(SDL_Renderer* renderer, uint8_t tileSize) const
 
 void Turret::drawTurretBase(SDL_Renderer* renderer, uint8_t tileSize) const
 {
-	if (renderer != nullptr && m_Texture != nullptr)
+	if (renderer != nullptr && m_TurretBaseTexture != nullptr)
 	{
 		// Draw the image at the turret's position and angle
 		int w, h;
-		SDL_QueryTexture(m_Texture, NULL, NULL, &w, &h);
+		SDL_QueryTexture(m_TurretBaseTexture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
 			(int)m_Pos.x * tileSize ,
@@ -174,7 +181,7 @@ void Turret::drawTurretBase(SDL_Renderer* renderer, uint8_t tileSize) const
 			h
 		};
 
-		SDL_RenderCopy(renderer, m_Texture, NULL, &rect);
+		SDL_RenderCopy(renderer, m_TurretBaseTexture, NULL, &rect);
 	}
 }
 

@@ -20,9 +20,10 @@ protected:
 	std::weak_ptr<Unit> targetUnit;
 
 	SDL_Texture* m_Texture = nullptr;
+	SDL_Texture* m_TexturePreview = nullptr;
 	SDL_Texture* m_WeaponRangeTexture = nullptr;
 
-	Defense(SDL_Renderer* renderer, SDL_Texture* texture, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular);
+	Defense(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Texture* texturePreview, Vector2D pos, float timerWeapon, uint8_t damages, uint8_t weaponRange, float speedAngular);
 	std::weak_ptr<Unit> findEnemyUnit(std::vector<std::shared_ptr<Unit>>& listUnits);
 	bool updateAngle(float dT);
 
@@ -38,10 +39,11 @@ public:
 
 	bool checkIfOnTile(int x, int y) const;
 
-	void drawWeaponRange(SDL_Renderer* renderer, int tileSize) const;
+	void drawWeaponRange(SDL_Renderer* renderer, int tileSize, int posX, int posY) const;
 
 	bool isAlive() const;
 
 	SDL_Texture* getTexture() const;
+	SDL_Texture* getPreviewTexture() const;
 };
 

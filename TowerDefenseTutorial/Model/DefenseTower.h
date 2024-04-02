@@ -1,8 +1,6 @@
 #pragma once
 
 #include "SDL2/SDL.h"
-#include "../Utils/Vector2D.h"
-
 #include "Defense.h"
 
 class Tower : public Defense

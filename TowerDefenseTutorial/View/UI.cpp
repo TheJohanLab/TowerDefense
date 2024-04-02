@@ -31,6 +31,7 @@ void UI::draw(SDL_Renderer* renderer) const
 	drawGems(renderer);
 	drawHearts(renderer);
 	drawItems(renderer);
+	drawItemSelector(renderer);
 }
 
 
@@ -53,15 +54,18 @@ void UI::initUI(SDL_Renderer* renderer, int windowsWidth, int windowsHeight, int
 		m_BackgroundTexture = TextureLoader::loadTexture(m_renderer, "UI.bmp");
 		m_WallTexture = TextureLoader::loadTexture(m_renderer, "WallUI.bmp");
 		m_TurretTexture = TextureLoader::loadTexture(m_renderer, "TurretUI.bmp");
+		m_BombTexture = TextureLoader::loadTexture(m_renderer, "BombUI.bmp");
 		m_EmptyHeartTexture = TextureLoader::loadTexture(m_renderer, "EmptyHeart.bmp");
 		m_HalfHeartTexture = TextureLoader::loadTexture(m_renderer, "HalfHeart.bmp");
 		m_FullHeartTexture = TextureLoader::loadTexture(m_renderer, "FullHeart.bmp");
 		m_GemTexture = TextureLoader::loadTexture(m_renderer, "Gem.bmp");
 		m_EmptyGemTexture = TextureLoader::loadTexture(m_renderer, "EmptyGem.bmp");
+		m_ItemSelectorTexture = TextureLoader::loadTexture(m_renderer, "ItemSelector.bmp");
+
 
 		m_UIItems.push_back({ m_WallTexture, m_Shop->getItemPrice(itemEnum::TowerItem) });
 		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::TurretItem) });
-		m_UIItems.push_back({ m_TurretTexture, m_Shop->getItemPrice(itemEnum::ExplosionItem) });
+		m_UIItems.push_back({ m_BombTexture, m_Shop->getItemPrice(itemEnum::ExplosionItem) });
 	}
 
 }
@@ -210,6 +214,33 @@ void UI::drawGems(SDL_Renderer* renderer) const
 
 }
 
+void UI::drawItemSelector(SDL_Renderer* renderer) const
+{
+	if (renderer != nullptr)
+	{
+		int w, h;
+		SDL_QueryTexture(m_ItemSelectorTexture, NULL, NULL, &w, &h);
+
+		SDL_Rect src = {
+			109 * static_cast<int>((SDL_GetTicks() / 500) % 2),
+			0,
+			w/2,
+			h
+		};
+		SDL_Rect rect =
+		{
+			(43 + (int)m_SelectedItem*((w/2)+40)),
+			m_WindowHeight - m_UIHeight + 35,
+			w/2,
+			h
+		};
+
+
+
+		SDL_RenderCopy(renderer, m_ItemSelectorTexture, &src, &rect);
+		
+	}
+}
 
 void UI::selectItem(itemEnum selectedItem, int x, int y)
 {

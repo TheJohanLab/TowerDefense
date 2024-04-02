@@ -40,11 +40,13 @@ private:
 	SDL_Texture* m_BackgroundTexture = nullptr;
 	SDL_Texture* m_WallTexture = nullptr;
 	SDL_Texture* m_TurretTexture = nullptr;
+	SDL_Texture* m_BombTexture = nullptr;
 	SDL_Texture* m_EmptyHeartTexture = nullptr;
 	SDL_Texture* m_HalfHeartTexture = nullptr;
 	SDL_Texture* m_FullHeartTexture = nullptr;
 	SDL_Texture* m_GemTexture = nullptr;
 	SDL_Texture* m_EmptyGemTexture = nullptr;
+	SDL_Texture* m_ItemSelectorTexture = nullptr;
 
 	std::vector<UIItem> m_UIItems;
 
@@ -72,6 +74,7 @@ private:
 	void drawItemPrice(SDL_Renderer* renderer, UIItem Item, SDL_Rect itemPos) const;
 	void drawHearts(SDL_Renderer* renderer) const;
 	void drawGems(SDL_Renderer* renderer) const;
+	void drawItemSelector(SDL_Renderer* renderer) const;
 	
 };
 
