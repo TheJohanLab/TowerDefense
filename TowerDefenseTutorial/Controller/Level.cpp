@@ -247,3 +247,8 @@ bool Level::isEnemyOnTile(int x, int y)
 
     return false;
 }
+
+void Level::clearTile(int x, int y)
+{
+    setTileType(x, y, TileType::BUILDABLE);
+}

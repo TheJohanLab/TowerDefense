@@ -1,8 +1,9 @@
 #include "PlayerManager.h"
 #include <algorithm>
+#include "../Utils/Utils.h"
 
 PlayerManager::PlayerManager(uint8_t maxLifePoints, uint8_t maxGems)
-	:m_Player(Player(maxLifePoints, maxGems)), m_gemsRegenerationTimer(Timer(2.0f))
+	:m_Player(Player(maxLifePoints, maxGems)), m_gemsRegenerationTimer(Timer(float(GEM_REGENERATION / 1000.0f )))
 {
 	m_gemsRegenerationTimer.resetToMax();
 }
@@ -52,12 +53,7 @@ void PlayerManager::update(float dT)
 			m_Player.setGems(std::min(uint8_t(m_Player.getGems()+1), m_Player.getMaxGems()));
 			m_gemsRegenerationTimer.resetToMax();
 		}
-
-		
 	}
-
-	
-
 }
 
 

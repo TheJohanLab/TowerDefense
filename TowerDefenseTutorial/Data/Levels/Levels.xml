@@ -13,11 +13,11 @@
 					<unitCounters>
 						<unitCounter>
 							<type>MUSHROOM</type>
-							<count>3</count>
+							<count>1</count>
 						</unitCounter>
 						<unitCounter>
 							<type>BAT</type>
-							<count>1</count>
+							<count>3</count>
 						</unitCounter>
 						<unitCounter>
 							<type>SKELETTON</type>
@@ -61,7 +61,7 @@
 			</assaults>
 			<timerBetweenassaults>
 				<assault1>8</assault1>
-				<assault1>15</assault1>
+				<assault1>60</assault1>
 				<assault1>20</assault1>
 			</timerBetweenassaults>
 		</wave1>

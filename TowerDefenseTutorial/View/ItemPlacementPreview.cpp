@@ -35,7 +35,11 @@ void ItemPlacementPreview::draw(SDL_Renderer* renderer, int tileSize) const
 		int offsetX = 0;
 		int offsetY = 0;
 	
-		
+		if (*m_ItemSelected == itemEnum::TurretItem)
+		{
+			offsetX = m_TurretPreviewOffsetX;
+			offsetY = m_TurretPreviewOffsetY;
+		}
 		/*switch (*m_ItemSelected)
 		{
 		case itemEnum::TurretItem:

@@ -78,6 +78,8 @@ public:
 	bool isPathObstructed(int x, int y) const;
 	bool isEnemyOnTile(int x, int y);
 
+	void clearTile(int x, int y);
+
 private:
 
 	TileType getTileType(int x, int y) const;

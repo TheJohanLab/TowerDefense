@@ -22,8 +22,8 @@ void Defense::drawWeaponRange(SDL_Renderer* renderer, int tileSize, int posX, in
 		SDL_QueryTexture(m_WeaponRangeTexture, NULL, NULL, &w, &h);
 		SDL_Rect rect =
 		{
-			(int)(posX * tileSize) - m_WeaponRange * tileSize,
-			(int)(posY * tileSize) - m_WeaponRange * tileSize,
+			(int)(posX * tileSize) - m_WeaponRange * tileSize + tileSize / 2,
+			(int)(posY * tileSize) - m_WeaponRange * tileSize + tileSize / 2,
 			m_WeaponRange * 2 * tileSize,
 			m_WeaponRange * 2 * tileSize
 		};

@@ -6,6 +6,7 @@
 #define TILE_SIZE 32
 #define FLOW_DISTANCE_MAX 255
 #define SPAWN_TIMER_MS 200 
+#define GEM_REGENERATION 4000
 
 #define NUMBER_OF_LAYER 4
 

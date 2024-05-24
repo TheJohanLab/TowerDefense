@@ -162,7 +162,7 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
     if (m_Shop->isBuyable(*m_SelectedItem) && mouseButtonStatus > 0) {
         switch (mouseButtonStatus) {
         case SDL_BUTTON_LEFT:
-            
+
             if (m_ItemPlacementPreview->isItemPlacementEnabled())
             {
                 Defense* selectedItem = Items::getItemData(*m_SelectedItem);
@@ -212,30 +212,37 @@ void Game::processMouseEvents(SDL_Renderer* renderer, int mouseButtonStatus, int
                             m_ItemPlacementPreview->disablePreview();
                         }
                     }
-                    //Add wall at the mouse position.
                     break;
                 }
-            
-                
-            }
-            break;
-        case SDL_BUTTON_RIGHT:
-            
-            //Remove turret is on tile
-            if (removeTurretsAtMousePosition(posMouse))
-            {
-                //m_Shop->sellItem(itemEnum::TurretItem);
-                break;
-            }
 
-            if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
-            {
-                m_Level.removeWall((int)posMouse.x, (int)posMouse.y);
-                //m_Shop->sellItem(itemEnum::TowerItem);
-            }
 
+            }
             break;
         }
+    };
+
+    if (mouseButtonStatus == SDL_BUTTON_RIGHT)
+    {
+        //TODO Refactor this part
+        //  -> Add a collection for each type of defense to handle individually each erase
+            
+        //Remove turret is on tile
+        if (m_Level.isTurret((int)posMouse.x, (int)posMouse.y) || m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+        {
+            removeTurretsAtMousePosition(posMouse);
+            m_Level.clearTile((int)posMouse.x, (int)posMouse.y);
+                //m_Shop->sellItem(itemEnum::TurretItem);*
+                //m_Level.removeTurret((int)posMouse.x, (int)posMouse.y);
+                
+        }
+        /*else if (m_Level.isTileWall((int)posMouse.x, (int)posMouse.y))
+        {
+            m_Level.removeWall((int)posMouse.x, (int)posMouse.y);
+            //m_Shop->sellItem(itemEnum::TowerItem);
+        }*/
+
+            
+        
     }
 }
 
@@ -470,19 +477,21 @@ void Game::addTurret(SDL_Renderer* renderer, Vector2D posMouse)
 
 bool Game::removeTurretsAtMousePosition(Vector2D posMouse)
 {
+    bool ret = false;
     for (auto it = m_ListDefenses.begin(); it != m_ListDefenses.end();)
     {
         if ((*it)->checkIfOnTile((int)posMouse.x, (int)posMouse.y))
         {
             m_Level.removeTurret((int)posMouse.x, (int)posMouse.y);
             it = m_ListDefenses.erase(it);
-            return true;
+            //return true;
+            ret = true;
         }
         else
             it++;
     }
 
-    return false;
+    return ret;
        
 }
 
